@@ -20,7 +20,7 @@ To install panda3d, use `pip` not `conda install`. I would recommend installing 
   - binocular_omr_grating.py  (black and white grating)
   - binocular_omr_sin.py  (single drifting sinusoid)
 
-## Organization of modules
+## Organization of modules (not done yet)
 - stimuli.py : contains classes and functions for stimulus control
 - experiments.py : contains classes and functions for experimental design
 - examples.py : contains examples of stimuli and experiments
