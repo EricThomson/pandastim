@@ -1,7 +1,7 @@
 # pandastim
 <img align = "right" width = "120" src=".\images\omr_sin_example.png ">
 
-Python package for generating visual stimuli using [Panda3d](https://www.panda3d.org/). Created in [Eva Naumann's lab](https://www.naumannlab.org/). While the stimulus set reflects our fishy interests, this package is flexible enough to do visual psychophysics in any species.
+Python package for generating visual stimuli using [Panda3d](https://www.panda3d.org/). Created in [Eva Naumann's lab](https://www.naumannlab.org/). While the stimulus set reflects our fishy interests, pandastim is flexible enough for doing visual psychophysics in any species.
 
 ### Installation
 Note this assumes you are using anaconda and Python 3.X. Create an environment and install stuff.
