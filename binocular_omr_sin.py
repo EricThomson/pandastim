@@ -4,16 +4,19 @@ blah blah bglah
 """
 from direct.showbase.ShowBase import ShowBase
 from panda3d.core import Texture, CardMaker, TextureStage
-from panda3d.core import ColorBlendAttrib
+from panda3d.core import ColorBlendAttrib, WindowProperties
 import numpy as np 
 from direct.gui.OnscreenText import OnscreenText 
 
 from direct.task import Task
 
-#Stim features
-bandRadius = 2  #pixels in original image: this will be scaled
+#General parameters
+window_size = 500
 bgcolor = (0, 0, 0, 1)
+
+#Stim features
 texSize = 512
+bandRadius = 2  #pixels in original image: this will be scaled
 frequency = 15
 rotation = 30
 position = (0.2, 0, -0.1)  #x,y,z
@@ -23,7 +26,7 @@ if abs(position[0]) > 1 or abs(position[2]) > 1:
 print("Position: ", position)
 
 #Sinusoid
-texSize = 256
+texSize = 512
 spatial_freq = 15
 def sin3d(X, freq = 1):
     return np.sin(X*freq)
@@ -47,7 +50,12 @@ class MyApp(ShowBase):
     def __init__(self):
         ShowBase.__init__(self)
 
-
+        #Set window title and size
+        self.windowProps = WindowProperties()
+        self.windowProps.setSize(window_size, window_size)
+        self.windowProps.setTitle("Drifting grating")
+        base.win.requestProperties(self.windowProps)  #base is a panda3d global
+        
         #CREATE TEXTURE STAGES
         #Sine
         self.sinTexture = Texture("sin")
@@ -97,7 +105,7 @@ class MyApp(ShowBase):
                                   fg = (1,1,1,1),
                                   bg = bgcolor,
                                   pos = (position[0], position[2]), 
-                                  scale = 0.05)
+                                  scale = 0.02)
         
         #Add texture move procedure to the task manager
         self.taskMgr.add(self.moveTextureTask, "moveTextureTask")

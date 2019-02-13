@@ -15,9 +15,19 @@ from panda3d.core import Texture, CardMaker, TextureStage
 from panda3d.core import WindowProperties
 from direct.task import Task
 
+#General parameters
+window_size = 800
+
+#Experimental paramters
+stim_durations = (4, 4, 6, 5)
+angles = (-20, 20, 45, 90)
+shift_velocities = (-0.25, 0.4, 0.2, -0.4)
+inter_stimulus_times = (4, 3, 3, 2.5, 5) #baseline to start before, all the way to end
+
 #Sinusoid
 texSize = 256
 spatial_freq = 10
+bgcolor = (0.5, 0.5, 0.5, 1)
 def sin3d(X, freq = 1):
     return np.sin(X*freq)
 def sin8bit(X, freq = 1):
@@ -29,13 +39,7 @@ y = np.linspace(0, 2*np.pi, texSize+1)
 X, Y = np.meshgrid(x[:texSize],y[:texSize])
 sinTex = sin8bit(X, freq = spatial_freq)
 
-#Experimental parameters
-stim_durations = (4, 4, 6, 5)
-angles = (-20, 20, 45, 90)
-shift_velocities = (-0.25, 0.4, 0.2, -0.4)
-inter_stimulus_times = (4, 3, 3, 2.5, 5) #baseline to start before, all the way to end
-bgcolor = (0.5, 0.5, 0.5, 1)
-
+#Derive event structure
 num_stim = len(stim_durations)
 event_durations =  [y for x in zip_longest(inter_stimulus_times, stim_durations) for y in x if y is not None]
 event_change_times = np.cumsum(event_durations)[:-1]
@@ -53,8 +57,9 @@ class MyApp(ShowBase):
         self.stim_num = -1  #increments to 0 when we hit stimulus time
         self.baseline_stim = True #when stim is baseline vs texture
         
-        #Set window title (need to update with each stim)
+        #Set window title (need to update with each stim) and size
         self.windowProps = WindowProperties()
+        self.windowProps.setSize(window_size, window_size)
         self.windowProps.setTitle("Full field: running")
         base.win.requestProperties(self.windowProps)  #base is a panda3d global
         
