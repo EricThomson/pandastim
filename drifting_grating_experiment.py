@@ -1,43 +1,40 @@
 """
-drifting_sinusoid(): pandastim package
-Single full-field drifting sinusoid.
+drifting_gratingusoid(): pandastim package
+gratinggle full-field drifting gratingusoid.
 
-To do:
-    Add print statements to every bit here.
-    Change window title with each stimulus?
-    Add something to plot stimulus versus time
     
 """
 import numpy as np 
 from itertools import zip_longest
+from scipy import signal
 from direct.showbase.ShowBase import ShowBase
 from panda3d.core import Texture, CardMaker, TextureStage
 from panda3d.core import WindowProperties
 from direct.task import Task
 
 #General parameters
-window_size = 800
+window_size = 512
 
 #Experimental paramters
 stim_durations = (4, 4, 6, 5)
 angles = (-20, 20, 45, 90)
-shift_velocities = (-0.2, 0.1, 0.25, -0.4)
+shift_velocities = (-0.15, 0.05, 0.25, -0.1)
 inter_stimulus_times = (4, 3, 3, 2.5, 5) #baseline to start before, all the way to end
 
-#Sinusoid
-texSize = 256
+#Grating texture
+texSize = 512
 spatial_freq = 10
 bgcolor = (0.5, 0.5, 0.5, 1)
-def sin3d(X, freq = 1):
-    return np.sin(X*freq)
-def sin8bit(X, freq = 1):
-    sin_float = sin3d(X, freq=freq)
-    sin_pos = (sin_float+1)*127.5; #from 0-255
-    return np.asarray(sin_pos, dtype = np.uint8)
+def squareWave(X, freq = 1):
+    return signal.square(X*freq)
+def square8bit(X, freq = 1):
+    square_float = squareWave(X, freq = freq)
+    square_pos = (square_float+1)*127.5; #from 0-255
+    return np.asarray(square_pos, dtype = np.uint8)
 x = np.linspace(0, 2*np.pi, texSize+1)
 y = np.linspace(0, 2*np.pi, texSize+1)
-X, Y = np.meshgrid(x[:texSize],y[:texSize])
-sinTex = sin8bit(X, freq = spatial_freq)
+X, Y = np.meshgrid(x[:texSize], y[:texSize])
+gratingTex = square8bit(X, spatial_freq)
 
 #Derive event structure
 num_stim = len(stim_durations)
@@ -64,10 +61,10 @@ class MyApp(ShowBase):
         base.win.requestProperties(self.windowProps)  #base is a panda3d global
         
         #Create texture stage
-        self.sinTexture = Texture("sin")
-        self.sinTexture.setup2dTexture(texSize, texSize, Texture.T_unsigned_byte, Texture.F_luminance) 
-        self.sinTexture.setRamImage(sinTex)   
-        self.sinTextureStage = TextureStage('sin')
+        self.gratingTexture = Texture("grating")
+        self.gratingTexture.setup2dTexture(texSize, texSize, Texture.T_unsigned_byte, Texture.F_luminance) 
+        self.gratingTexture.setRamImage(gratingTex)   
+        self.gratingTextureStage = TextureStage('grating')
                                                                     
         #Create scenegraph
         cm = CardMaker('card1')
@@ -90,18 +87,18 @@ class MyApp(ShowBase):
                 if self.baseline_stim:
                     self.stim_num += 1  #bring to correct index
                     self.card1.setColor((1, 1, 1, 1))  #make this an add mode
-                    self.card1.setTexture(self.sinTextureStage, self.sinTexture) 
+                    self.card1.setTexture(self.gratingTextureStage, self.gratingTexture) 
                     self.card1.setR(angles[self.stim_num]) 
                     print("\nstim_num: ", self.stim_num)
                 else:  #have been showing stim so turn it off
                     self.card1.setColor(bgcolor)  
-                    self.card1.clearTexture(self.sinTextureStage)  #turn off stage
+                    self.card1.clearTexture(self.gratingTextureStage)  #turn off stage
                 self.baseline_stim = not self.baseline_stim   #toggle whether baseline or stim 
                 self.event_change_num += 1
             print("event_change_num: ", self.event_change_num)
         if not self.baseline_stim:
             shiftMag = task.time*shift_velocities[self.stim_num]
-            self.card1.setTexPos(self.sinTextureStage, shiftMag, 0, 0) #u, v, w
+            self.card1.setTexPos(self.gratingTextureStage, shiftMag, 0, 0) #u, v, w
 
         if task.time <= event_change_times[-1]:
             return Task.cont #taskMgr will continue to call task

@@ -15,11 +15,11 @@ window_size = 500
 bgcolor = (0, 0, 0, 1)
 
 #Stim features
-texSize = 1024
-bandRadius = 3  #pixels in original image: this will be scaled
+texSize = 512
+bandRadius = 1  #pixels in original image: this will be scaled
 frequency = 15
-rotation = -40
-position = (-0.2, 0, 0.1)  #x,y,z
+rotation = 40
+position = (-0.4, 0, 0.45)  #x,y,z
 if abs(position[0]) > 1 or abs(position[2]) > 1:
     raise ValueError('Position shift must remain within NDC [-1, 1]')
     
@@ -116,7 +116,7 @@ class MyApp(ShowBase):
         
     #Procedure to move the camera
     def moveTextureTask(self, task):
-        shiftMag = task.time*0.1
+        shiftMag = task.time*0.05
         self.card1.setTexPos(self.sinTextureStage, shiftMag, 0, 0) #u, v, w
         self.card2.setTexPos(self.sinTextureStage, -shiftMag, 0, 0) #u, v, w
         return Task.cont #as long as this is returned, the taskMgr will continue to call it
