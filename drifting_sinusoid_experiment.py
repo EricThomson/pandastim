@@ -65,7 +65,8 @@ class MyApp(ShowBase):
         
         #Create texture stage
         self.sinTexture = Texture("sin")
-        self.sinTexture.setup2dTexture(texSize, texSize, Texture.T_unsigned_byte, Texture.F_luminance) 
+        self.sinTexture.setup2dTexture(texSize, texSize, 
+                                       Texture.T_unsigned_byte, Texture.F_luminance) 
         self.sinTexture.setRamImage(sinTex)   
         self.sinTextureStage = TextureStage('sin')
                                                                     
@@ -85,7 +86,8 @@ class MyApp(ShowBase):
     #Procedure to handle changes on each frame, if needed
     def moveTextureTask(self, task):
         if task.time >= event_change_times[self.event_change_num]:
-            #If changing to baseline event, turn off texture else turn it on and set angle
+            #If changing to baseline, turn off texture.
+            #Otherwise turn it on and set angle
             if self.event_change_num < num_event_changes:
                 if self.baseline_stim:
                     self.stim_num += 1  #bring to correct index

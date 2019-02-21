@@ -1,23 +1,30 @@
 """
-blah blah bglah
+binocular_omr_grating.py
+Part of pandastim package: https://github.com/EricThomson/pandastim
+
+Creates single instance of binocular stimulus as used in experiment from Naumann 
+et al 2016 [1], with grating instead of sinusoid to maximize contrast.
+
+[1] Naumann et al (2016) From whole-brain data to functional circuit models. 
+Cell 167: 947-960.
 
 """
+import numpy as np 
 from direct.showbase.ShowBase import ShowBase
 from panda3d.core import Texture, CardMaker, TextureStage
 from panda3d.core import ColorBlendAttrib, WindowProperties
-import numpy as np 
 from scipy import signal
 from direct.gui.OnscreenText import OnscreenText 
 from direct.task import Task
 
 #General parameters
-window_size = 500
+window_size = 512
 bgcolor = (0, 0, 0, 1)
 
 #Stim features
 texSize = 512
-bandRadius = 1  #pixels in original image: this will be scaled
-frequency = 15
+bandRadius = 1  #pixels in original texture: this will be scaled
+frequency = 15  #as we are using NDCs this is arbitrary units
 rotation = 40
 position = (-0.4, 0, 0.45)  #x,y,z
 if abs(position[0]) > 1 or abs(position[2]) > 1:
@@ -27,6 +34,7 @@ print("Position: ", position)
 
 #Grating
 spatial_freq = 20
+velocity = 0.07
 def squareWave(X, freq = 1):
     return signal.square(X*freq)
 def square8bit(X, freq = 1):
@@ -116,7 +124,7 @@ class MyApp(ShowBase):
         
     #Procedure to move the camera
     def moveTextureTask(self, task):
-        shiftMag = task.time*0.05
+        shiftMag = task.time*velocity
         self.card1.setTexPos(self.sinTextureStage, shiftMag, 0, 0) #u, v, w
         self.card2.setTexPos(self.sinTextureStage, -shiftMag, 0, 0) #u, v, w
         return Task.cont #as long as this is returned, the taskMgr will continue to call it
