@@ -21,6 +21,7 @@ Check out the list of examples in [examples/examples_readme.md](examples/example
 - Add examples of full field stuff you might want:
   - circle (fish lure)
   - just a flat color
+- Combine FullFieldDrift and FullFieldStatic classes into one module.
 - Add experiment for static (save data to file options etc)
 - Add exp for grating.
 - Add generic experiment.
