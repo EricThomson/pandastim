@@ -21,7 +21,6 @@ Check out the list of examples in `examples/examples_readme.txt`, and run those 
 - Add examples of full field stuff you might want:
   - circle (fish lure)
   - just a flat color
-- could be useful to disentangle chromatic, orientation, and motion representations using light sheet.
 - Add experiment for static
 - Add exp for grating.
 - Add generic experiment.
@@ -57,7 +56,8 @@ Check out the list of examples in `examples/examples_readme.txt`, and run those 
 
 #### Notes
 - panda3d doesn't listen to windows scale setting, so 800 is 800.
-- It typically looks like textures are drifting vertically or horizontally even when they are not. This is the well-known 'aperture problem'. To convince yourself that the bars are actually moving perpendicular to the angle, just increase the window size until you can see their edges.
+- It typically looks like textures are drifting vertically or horizontally even when they are not. This is the well-known 'aperture problem'. To convince yourself that the bars are actually moving perpendicular to the angle, just increase the window size until you can see their edges. Question: is this a problem when analyzing fish data?
+- Could be useful to disentangle chromatic, orientation, and motion representations using light sheet. Talk to linsday glickfeld. Look at more traditional spatiotemporalchromatic representations.
 
 #### To think about
 - Should we start at same position each time, or randomize phase?
