@@ -14,14 +14,14 @@ Note this assumes you are using anaconda and Python 3.X. Create an environment a
 I recommend installing the panda3d SDK from the web site, as it comes with useful examples.
 
 **Tests**   
-Check out the list of examples in [examples/examples_readme.txt](examples/examples_readme.txt), and run those that strike your fancy. For instance, `examples/drifting_fullfield_sin.py`
+Check out the list of examples in [examples/examples_readme.md](examples/examples_readme.md), and run those that strike your fancy. For instance, `examples/drifting_fullfield_sin.py`
 
 ### To do (short term)
 - finish fullfield_static_stimulus.py and remove any remnants of drifting class.
 - Add examples of full field stuff you might want:
   - circle (fish lure)
   - just a flat color
-- Add experiment for static
+- Add experiment for static (save data to file options etc)
 - Add exp for grating.
 - Add generic experiment.
 - Add two exp examples.
@@ -31,17 +31,14 @@ Check out the list of examples in [examples/examples_readme.txt](examples/exampl
 - Refactor and clean up code
 - What is reasonable range of speeds for fish?
 
+
 ### To do (medium term)
-- Make general class for showing drifting matrix, not one for every stimulus? That will sacrifice readability for "good" design. Talk to people about this.
-- Set up stimulus class so you don't keep repeating sin, grating, etc.
-- Set up `Experiment` class for this and get it to work.
-- Organize modules (stimuli.py, experiments.py, examples.py)
-- Add new stimuli (arbitrary matrix, full-field monochrome, fish attractor,)
+- For different classes, you should make the array type an input, or make it detect it and do this on the fly (not everything will be of type `T_unsigned_byte`: either way, this needs to be taken care of).
 - Center text for text bit it is right justified.
 - how to change color of middle band?
 - Add color to stimuli (in particular, red)
 - Add expanding or contracting circle or both (very different from drifter! this will be a scaling-based dynamic stimulus)
-- Add drifting noise stimulus to examples
+- Add drifting noise stimulus to drifting_fullfield examples.
 
 ### To do (long term)
 - check with photodiode at different locations on window: is it identical?
@@ -53,6 +50,7 @@ Check out the list of examples in [examples/examples_readme.txt](examples/exampl
 - Add masks (e.g., circles or whatever)
 - Currently real tests intead of bare asserts?
 - Consider porting to `pixel2d` (basics are in working/).
+- Write up instructions on how to add new stimuli (basically make a numpy array, put it in stimuli.py, and then follow the examples whether you want a static, drifting stimulus, or experiment)
 
 #### Notes
 - panda3d doesn't listen to windows scale setting, so 800 is 800.
