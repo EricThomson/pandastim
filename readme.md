@@ -14,7 +14,7 @@ Note this assumes you are using anaconda and Python 3.X. Create an environment a
 I recommend installing the panda3d SDK from the web site, as it comes with useful examples.
 
 **Tests**   
-Check out the list of examples in `examples/examples_readme.txt`, and run those that strike your fancy. For instance, `examples/drifting_fullfield_sin.py`
+Check out the list of examples in [examples/examples_readme.txt](examples/examples_readme.txt), and run those that strike your fancy. For instance, `examples/drifting_fullfield_sin.py`
 
 ### To do (short term)
 - finish fullfield_static_stimulus.py and remove any remnants of drifting class.
