@@ -1,24 +1,22 @@
 """
-drifting_sinusoid_stimulus(): pandastim package
-Single full-field drifting sinusoid.
+FullFieldDriftingStim: part of pandastim package
+Class to present full field drifting stimulus of any type.
 
-To do:
-    Functionalize app stop using globals
-    
-    
-    
+Created using panda3d.  
+https://github.com/EricThomson/pandastim  
 """
 import numpy as np 
 from direct.showbase.ShowBase import ShowBase
-from direct.task import Task
 from panda3d.core import Texture, CardMaker, TextureStage
 from panda3d.core import WindowProperties
 import stimuli
 
-
-#%%
-class MyApp(ShowBase):
-    def __init__(self, texture_array, angle, velocity, 
+class FullFieldStatic(ShowBase):
+    """
+    Takes in texture array
+    Generates drifting texture.
+    """
+    def __init__(self, texture_array, angle = 0, velocity = 0.1, 
                  window_size = 512, texture_size = 512):
         super().__init__()
         
@@ -29,7 +27,7 @@ class MyApp(ShowBase):
         #Set window title (need to update with each stim) and size
         self.windowProps = WindowProperties()
         self.windowProps.setSize(window_size, window_size)
-        self.windowProps.setTitle("Full field: running")
+        self.windowProps.setTitle("FullFieldStatic()")
         base.win.requestProperties(self.windowProps)  #base is a panda3d global
         
         #Create texture stage
@@ -50,24 +48,15 @@ class MyApp(ShowBase):
         #Transform the model(s)
         self.card1.setScale(np.sqrt(2))
         self.card1.setR(self.angle)
-        
-        #Add task to taskmgr to translate texture 
-        self.taskMgr.add(self.moveTextureTask, "moveTextureTask")
-        
-    def moveTextureTask(self, task):
-        new_position = task.time*self.velocity
-        self.card1.setTexPos(self.textureStage, new_position, 0, 0) #u, v, w
-        return Task.cont 
+              
+
  
 if __name__ == '__main__':
-    
-    #Stim params
-    stim_params = {'velocity': 0.1, 'spatial_freq': 30, 'angle': 90}
-    #Windows
+    #Test with grating
+    stim_params = {'spatial_freq': 15, 'angle': -45}
     texture_size = 512
     window_size = 512
-    #Create texture
     tex_array = stimuli.grating_texture_byte(texture_size, stim_params['spatial_freq'])
-    app = MyApp(tex_array, stim_params["angle"], stim_params["velocity"], 
-                window_size = window_size, texture_size = texture_size)
-    app.run()
+    pandastim_static = FullFieldStatic(tex_array, angle = stim_params["angle"], 
+                                        window_size = window_size, texture_size = texture_size)
+    pandastim_static.run()

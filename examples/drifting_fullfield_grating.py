@@ -8,7 +8,7 @@ Simple full-field drifting grating example
 import sys
 sys.path.append('..')  #put parent directory in python path
 
-from drifting_fullfield_stimulus import FullFieldDrift
+from fullfield_drifting_stimulus import FullFieldDrift
 from stimuli import grating_texture_byte
 
 stim_params = {'velocity': -0.18, 'spatial_freq': 10, 'angle': -30}

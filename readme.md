@@ -11,21 +11,18 @@ Note this assumes you are using anaconda and Python 3.X. Create an environment a
     conda install numpy scipy
     pip install panda3d
 
-It might be a good idea to install the panda3d SDK at their web site, as it comes with lots of great examples.
+I recommend installing the panda3d SDK from the web site, as it comes with useful examples.
 
 **Tests**   
-Run the following scripts to make sure things are working:    
-- binocular_omr_grating.py #binocular black and white grating
-- binocular_omr_sinusoid.py  #sinusoid binocular
-- drifting_sinusoid_experiment.py #full field sinuosoid trials
-- drifting_grating_experiment.py #full field grating trials
+Check out the list of examples from examples/examples_readme.txt, and run those that strike your fancy. For instance, `examples/drifting_fullfield_sin.py`
 
 ### To do (short term)
-- Clean up code (main is getting cluttered)
-- Add static stimulus examples
+- finish fullfield_static_stimulus.py just make sure it is
+not full of remnants of drifting.
+- Add examples of full field stuff you might want:
   - circle
   - color
-- Add experiment for sinusoid drifter.
+- Add experiment for static
 - Add exp for grating.
 - Add generic experiment.
 - Add two exp examples.
@@ -60,7 +57,7 @@ Run the following scripts to make sure things are working:
 
 #### Notes
 - panda3d doesn't listen to windows scale setting, so 800 is 800.
-- For thinking about how to store parameters/data about a particular object (e.g., a sinusoid) in a struct-like way, this is a very helpful source of ideas: https://stackoverflow.com/questions/35988/c-like-structures-in-python
+- It typically looks like textures are drifting vertically or horizontally even when they are not. This is the well-known 'aperture problem'. To convince yourself that the bars are actually moving perpendicular to the angle, just increase the window size until you can see their edges.
 
 #### To think about
 - Should we start at same position each time, or randomize phase?
