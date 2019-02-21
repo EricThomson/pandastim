@@ -14,14 +14,14 @@ Note this assumes you are using anaconda and Python 3.X. Create an environment a
 I recommend installing the panda3d SDK from the web site, as it comes with useful examples.
 
 **Tests**   
-Check out the list of examples from examples/examples_readme.txt, and run those that strike your fancy. For instance, `examples/drifting_fullfield_sin.py`
+Check out the list of examples in `examples/examples_readme.txt`, and run those that strike your fancy. For instance, `examples/drifting_fullfield_sin.py`
 
 ### To do (short term)
-- finish fullfield_static_stimulus.py just make sure it is
-not full of remnants of drifting.
+- finish fullfield_static_stimulus.py and remove any remnants of drifting class.
 - Add examples of full field stuff you might want:
-  - circle
-  - color
+  - circle (fish lure)
+  - just a flat color
+- could be useful to disentangle chromatic, orientation, and motion representations using light sheet.
 - Add experiment for static
 - Add exp for grating.
 - Add generic experiment.
@@ -41,7 +41,7 @@ not full of remnants of drifting.
 - Center text for text bit it is right justified.
 - how to change color of middle band?
 - Add color to stimuli (in particular, red)
-- Add expanding or contracting circle or both (very different from drifter! this will have scaling)
+- Add expanding or contracting circle or both (very different from drifter! this will be a scaling-based dynamic stimulus)
 - Add drifting noise stimulus to examples
 
 ### To do (long term)
