@@ -1,9 +1,8 @@
 """
-fullfield_drifting_stimulus.py part of pandastim package
+pandastim/fullfield_drifting_stimulus.py 
 Contains FullFieldDrift class to present full field drifting stimulus of any type.
 
-Created using panda3d.  
-https://github.com/EricThomson/pandastim  
+Part of pandastim package: https://github.com/EricThomson/pandastim 
 """
 import numpy as np 
 from direct.showbase.ShowBase import ShowBase

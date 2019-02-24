@@ -1,33 +1,18 @@
 # -*- coding: utf-8 -*-
 """
-stimuli.py: module in pandastim package
-Code related to producing stimuli
-https://github.com/EricThomson/pandastim
+pandastim/stimuli.py
+Classes and functions used to create the visual stimuli (e.g., texture arrays).
 
-Includes classes and functions for generating textures (e.g., sines and gratings),
-and other resources directly related to generating stimuli.
-
-
-Component types:
-https://www.panda3d.org/reference/python/classpanda3d_1_1core_1_1Texture.html#a81f78fc173dedefe5a049c0aa3eed2c0
-    T_unsigned_byte 	(1byte = 8 bits: 0 to 255)
-    T_unsigned_short (2 bytes (16 bits): 0 to 65535, but this is platform dependent)
-    T_float 	 (floats: not sure if single (32 bit) or double (64 bit))
-    T_unsigned_int_24_8 	 (packed: one 24 bit for depth, one 8 bit for stencil)
-    T_int 	(signed int)
-    T_byte 	(signed byte: from -128 to 127)
-    T_short 	(signed short: 2 bytes from -32768 to 32767)
-    T_half_float (2 bytes: may sometimes be good if you are inside the 0-1 range)
-    T_unsigned_int (4 bytes (32 bits): from 0 to ~4 billion)
+Part of pandastim package: https://github.com/EricThomson/pandastim 
 """
 
 import numpy as np
 from scipy import signal  #for grating (square wave)
 import matplotlib.pyplot as plt
-
+from matplotlib.patches import Circle
 
 """
-SINUSOID: note if you want a flat-out sine float, just use np.sin(freq*x) 
+SINES: note if you want a flat-out sine float, just use np.sin(freq*x) 
 """
 
 def sin_byte(X, freq = 1):
@@ -73,6 +58,22 @@ def grating_texture_byte(texture_size = 512, spatial_frequency = 10):
     y = np.linspace(0, 2*np.pi, texture_size+1)
     X, Y = np.meshgrid(x[:texture_size],y[:texture_size])
     return grating_byte(X, freq = spatial_frequency)
+
+    
+""" CIRCLE (fish lure) """
+def circle_texture_byte(texture_size = 512, circle_center = (0,0), circle_radius = 100, 
+                        bg_intensity = 0, face_intensity = 255):
+    """ Create an array with a circle with radius circle_radius, centered at circle_center
+    with face color face_intensity on background bg_intensity"""
+    if face_intensity > 255 or bg_intensity < 0:
+        raise ValueError('Circle intensity must be between 0 and 255')
+    x = np.linspace(-texture_size/2, texture_size/2, texture_size)
+    y = np.linspace(-texture_size/2, texture_size/2, texture_size)
+    X, Y = np.meshgrid(x, y)
+    circle_texture = bg_intensity*np.ones((texture_size, texture_size), dtype = np.uint8)
+    circle_mask = (X - circle_center[0])**2 + (Y - circle_center[1])**2 <= circle_radius**2
+    circle_texture[circle_mask] = face_intensity
+    return circle_texture
     
 
 #%% 
@@ -113,4 +114,8 @@ if __name__ == "__main__":
     plt.title('grating_tex_byte()')
     
 
-    
+    #Circle byte
+    circle_tex_byte = circle_texture_byte()
+    plt.figure(5)
+    plt.imshow(circle_tex_byte, cmap = 'gray')
+    plt.title('circle_tex_byte()')

@@ -3,8 +3,9 @@ List of examples to see how the code works or run to test initial install.
 
 ### Full field static stimuli
 Nonmoving stimuli that use the `FullFieldStatic` class.
-- add one
-- add another
+- static_fullfield_sine.py
+- static_fullfield_circle.py
+- static_fullfield_red.py
 
 ### Full field drifting stimuli
 Textures that drift across the window forever, using the `FullFieldDrift` class.
