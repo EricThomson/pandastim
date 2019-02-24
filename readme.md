@@ -18,38 +18,31 @@ Check out the list of examples in [examples/examples_readme.md](examples/example
 
 ### To do (short term)
 - change all 'sin' to sine sa
-- fullfield_static_stimulus.py and remove any remnants of drifting class. sa
-- Add circle example (just black and white) sa
-- Work through examples of color textures. su
-  - add flat color example to texture(s) su
-  - add arbitrary static color textures su
-  - add arbitrary drifting color textures m
-- Add automatic handling of data types: not everything will be of type `T_unsigned_byte`. You will have 2 byte, 1 byte, rgb, etc.. You need to deal with this.
+- Add single colored background static. sa
 - Combine FullFieldDrift and FullFieldStatic classes into one module.
 - Add exception handling (e.g., 0 to 255 etc type stuff)
-- Make sure you are following the coding convetions below.
+- Make sure you are following the coding conventions below.
 - Add experiment for static (save data to file options etc)
 - Add exp for grating.
-- Add generic experiment.
-- Add two exp examples.
+- Add generic experiment class
+- Add two experiments to examples.
 - Add arbitrary left and right angles and velocities.
 - Add varying frequencies to sinusoid experiment.
-- Add contrast to sine
 - Refactor and clean up code
 - What is reasonable range of speeds for fish?
 
 
 ### To do (medium term)
-- Center text for text bit it is right justified.
+- Add automatic handling of data types: not everything will be of type `T_unsigned_byte`. You will have 2 byte, 1 byte, rgb, etc.. You need to deal with this.
 - how to change color of middle band?
-- Add color to stimuli (in particular, red)
-- Add expanding or contracting circle or both (very different from drifter! this will be a scaling-based dynamic stimulus)
 - Add drifting noise stimulus to drifting_fullfield examples.
+- Add expanding or contracting circle or both (very different from drifter! this will be a scaling-based dynamic stimulus)
+- Add contrast to sine
 
 ### To do (long term)
+- Center text for text bit it is right justified.
 - check with photodiode at different locations on window: is it identical?
 - Ensure it works in real-time with inputs about fish location.
-- Add some simple gui controls?
 - Optimize
   - do diagnostics: https://www.panda3d.org/manual/?title=Performance_Tuning
   - try compressing textures (https://www.panda3d.org/manual/?title=Texture_Compression) (note need 4x size for tex)
@@ -57,6 +50,7 @@ Check out the list of examples in [examples/examples_readme.md](examples/example
 - Currently real tests intead of bare asserts?
 - Consider porting to `pixel2d` (basics are in working/).
 - Write up instructions on how to add new stimuli (basically make a numpy array, put it in stimuli.py, and then follow the examples whether you want a static, drifting stimulus, or experiment)
+- Add some simple gui controls?
 - Make the circle edges smooth. Something like: https://yellowsplash.wordpress.com/2009/10/23/fast-antialiased-circles-and-ellipses-from-xiaolin-wus-concepts/
 
 #### Notes
