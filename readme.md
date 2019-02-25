@@ -16,13 +16,16 @@ I recommend installing the panda3d SDK from the web site, as it comes with usefu
 **Tests**   
 Check out the list of examples in [examples/examples_readme.md](examples/examples_readme.md), and run those that strike your fancy. For instance, `examples/drifting_fullfield_sin.py`
 
-### To do (short term)
-- change all 'sin' to sine sa
-- Add single colored background static. sa
-- Combine FullFieldDrift and FullFieldStatic classes into one module.
+### To do (ongoing)
 - Add exception handling (e.g., 0 to 255 etc type stuff)
 - Make sure you are following the coding conventions below.
-- Add experiment for static (save data to file options etc)
+- Keep eye open for rgb vs bgr for color texture.
+
+### To do (short term)
+- Finish combining FullFieldDrift and FullFieldStatic classes into one module.
+- Get all the examples working.
+- Fix automatic handling of data types and formats: not everything will be of type `T_unsigned_byte`. You will have 2 byte, 1 byte, rgb, etc.. You need to deal with this.
+- Add experiment for static (save data to file options etc) (e.g., grating)
 - Add exp for grating.
 - Add generic experiment class
 - Add two experiments to examples.
@@ -33,8 +36,8 @@ Check out the list of examples in [examples/examples_readme.md](examples/example
 
 
 ### To do (medium term)
-- Add automatic handling of data types: not everything will be of type `T_unsigned_byte`. You will have 2 byte, 1 byte, rgb, etc.. You need to deal with this.
-- how to change color of middle band?
+
+- Independent color of middle band.
 - Add drifting noise stimulus to drifting_fullfield examples.
 - Add expanding or contracting circle or both (very different from drifter! this will be a scaling-based dynamic stimulus)
 - Add contrast to sine

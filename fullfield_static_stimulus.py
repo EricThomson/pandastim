@@ -33,6 +33,7 @@ class FullFieldStatic(ShowBase):
         super().__init__()
 
         self.texture_array = texture_array
+        self.ndims = self.texture_array.ndim
         self.angle = angle
         
         #Set window title (need to update with each stim) and size
@@ -42,15 +43,26 @@ class FullFieldStatic(ShowBase):
         ShowBaseGlobal.base.win.requestProperties(self.windowProps)  #base is a panda3d global
         
         #Create texture stage
-        self.texture = Texture("sin")
+        self.texture = Texture("static")
                
-        #Select Texture Format (https://www.panda3d.org/reference/python/classpanda3d_1_1core_1_1Texture.html#ab4e88c89b3b7ea1735996cc4def22d58)
-        #Select Texture ComponentType (https://www.panda3d.org/reference/python/classpanda3d_1_1core_1_1Texture.html#a81f78fc173dedefe5a049c0aa3eed2c0)
+        #Select Texture Format (color or b/w etc)
+        #https://www.panda3d.org/reference/python/classpanda3d_1_1core_1_1Texture.html#ab4e88c89b3b7ea1735996cc4def22d58
+        if self.ndims == 2:
+            self.data_format = Texture.F_luminance #grayscale
+        elif self.ndims == 3:
+            self.data_format = Texture.F_rgb8
+        else:
+            raise ValueError("Texture needs to be 2d or 3d")
+
+        #Select Texture ComponentType (e.g., uint8 or whatever)
+        #https://www.panda3d.org/reference/python/classpanda3d_1_1core_1_1Texture.html#a81f78fc173dedefe5a049c0aa3eed2c0
+        self.data_type = Texture.T_unsigned_byte
+        
         self.texture.setup2dTexture(texture_size, texture_size, 
-                               Texture.T_unsigned_byte, Texture.F_luminance) 
+                               self.data_type, self.data_format) 
         
         self.texture.setRamImage(self.texture_array)   
-        self.textureStage = TextureStage("sin")
+        self.textureStage = TextureStage("static")
                                                                     
         #Create scenegraph
         cm = CardMaker('card1')
