@@ -22,11 +22,10 @@ Check out the list of examples in [examples/examples_readme.md](examples/example
 - Keep eye open for rgb vs bgr for color texture.
 
 ### To do (short term)
-- Finish combining FullFieldDrift and FullFieldStatic classes into one module.
-- Get all the examples working.
-- Fix automatic handling of data types and formats: not everything will be of type `T_unsigned_byte`. You will have 2 byte, 1 byte, rgb, etc.. You need to deal with this.
+- Finish porting drifting over with automatic data typing and rgb detection.
+  - add color drifting example 
 - Add experiment for static (save data to file options etc) (e.g., grating)
-- Add exp for drifting.
+- Add experimant for drifting.
 - Add generic experiment class
 - Add two experiments to examples.
 - Add arbitrary left and right angles and velocities.
