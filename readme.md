@@ -26,14 +26,14 @@ Check out the list of examples in [examples/examples_readme.md](examples/example
 - Get all the examples working.
 - Fix automatic handling of data types and formats: not everything will be of type `T_unsigned_byte`. You will have 2 byte, 1 byte, rgb, etc.. You need to deal with this.
 - Add experiment for static (save data to file options etc) (e.g., grating)
-- Add exp for grating.
+- Add exp for drifting.
 - Add generic experiment class
 - Add two experiments to examples.
 - Add arbitrary left and right angles and velocities.
 - Add varying frequencies to sinusoid experiment.
 - Refactor and clean up code
 - What is reasonable range of speeds for fish?
-
+- remove references to 'byte' just make that default: name deviants eg 2byte.
 
 ### To do (medium term)
 

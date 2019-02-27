@@ -4,7 +4,22 @@ Classes to generate stimuli in pandastim: subclasses of Showbase.
 
 Part of pandastim package: https://github.com/EricThomson/pandastim 
 
+Component types:
+https://www.panda3d.org/reference/python/classpanda3d_1_1core_1_1Texture.html#a81f78fc173dedefe5a049c0aa3eed2c0
+    T_unsigned_byte 	(1byte = 8 bits: 0 to 255)
+    T_unsigned_short (2 bytes (16 bits): 0 to 65535, but this is platform dependent)
+    T_float 	 (floats: not sure if single (32 bit) or double (64 bit))
+    T_unsigned_int_24_8 	 (packed: one 24 bit for depth, one 8 bit for stencil)
+    T_int 	(signed int)
+    T_byte 	(signed byte: from -128 to 127)
+    T_short 	(signed short: 2 bytes from -32768 to 32767)
+    T_half_float (2 bytes: may sometimes be good if you are inside the 0-1 range)
+    T_unsigned_int (4 bytes (32 bits): from 0 to ~4 billion)
+    
+    
+    
 To do: 
+    - if user enters no CL argument, just pick one
     - fix up component selection currently just picks unsigned byte.
     - Write better docs so people can actually call this (stimulus_classes.py 2 or whtaewver)
     - consider renaming this module?
@@ -27,6 +42,7 @@ class FullFieldStatic(ShowBase):
         super().__init__()
 
         self.texture_array = texture_array
+        self.texture_dtype = type(self.texture_array.flat[0])
         self.ndims = self.texture_array.ndim
         self.angle = angle
         
@@ -39,23 +55,29 @@ class FullFieldStatic(ShowBase):
         #Create texture stage
         self.texture = Texture("static")
                
-        #Select Texture Format (color or b/w etc)
-        #https://www.panda3d.org/reference/python/classpanda3d_1_1core_1_1Texture.html#ab4e88c89b3b7ea1735996cc4def22d58
-        if self.ndims == 2:
-            self.data_format = Texture.F_luminance #grayscale
-        elif self.ndims == 3:
-            self.data_format = Texture.F_rgb8
-        else:
-            raise ValueError("Texture needs to be 2d or 3d")
-
         #Select Texture ComponentType (e.g., uint8 or whatever)
         #https://www.panda3d.org/reference/python/classpanda3d_1_1core_1_1Texture.html#a81f78fc173dedefe5a049c0aa3eed2c0
-        self.data_type = Texture.T_unsigned_byte
+        #To do: add if/else to handle 2 byte etc
+        if self.texture_dtype == np.uint8:
+            self.texture_component_type = Texture.T_unsigned_byte
+        elif self.texture_dtype == np.uint16:
+            self.texture_component_type = Texture.T_unsigned_short
         
-        self.texture.setup2dTexture(texture_size, texture_size, 
-                               self.data_type, self.data_format) 
-        
-        self.texture.setRamImage(self.texture_array)   
+        #Select Texture Format (color or b/w etc)
+        if self.ndims == 2:
+            self.texture_format = Texture.F_luminance #grayscale
+            self.texture.setup2dTexture(texture_size, texture_size, 
+                                   self.texture_component_type, self.texture_format)  
+            self.texture.setRamImageAs(self.texture_array, "L") 
+        elif self.ndims == 3:
+            self.texture_format = Texture.F_rgb8
+            self.texture.setup2dTexture(texture_size, texture_size, 
+                                   self.texture_component_type, self.texture_format)  
+            self.texture.setRamImageAs(self.texture_array, "RGB") 
+        else:
+            raise ValueError("Texture needs to be 2d or 3d")
+       
+     
         self.textureStage = TextureStage("static")
                                                                     
         #Create scenegraph
@@ -89,13 +111,13 @@ class FullFieldDrift(ShowBase):
         ShowBaseGlobal.base.win.requestProperties(self.windowProps)  #base is a panda3d global
         
         #Create texture stage
-        self.texture = Texture("sin")
+        self.texture = Texture("drifting")
                
         self.texture.setup2dTexture(texture_size, texture_size, 
                                Texture.T_unsigned_byte, Texture.F_luminance) 
         
         self.texture.setRamImage(self.texture_array)   
-        self.textureStage = TextureStage("sin")
+        self.textureStage = TextureStage("drifting")
                                                                     
         #Create scenegraph
         cm = CardMaker('card1')
@@ -131,6 +153,7 @@ if __name__ == '__main__':
         pandastim_static = FullFieldStatic(grating_texture, angle = stim_params["angle"], 
                                             window_size = window_size, texture_size = texture_size)
         pandastim_static.run()
+        
     elif test_case == '2':
         #Test FullFieldDrift()
         stim_params = {'velocity': 0.125, 'spatial_freq': 15, 'angle': 45}

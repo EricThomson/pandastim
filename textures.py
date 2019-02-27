@@ -54,12 +54,39 @@ def sin_texture_byte(texture_size = 512, spatial_frequency = 10):
     X, Y = np.meshgrid(x[:texture_size],y[:texture_size])
     return sin_byte(X, freq = spatial_frequency)
     
+def sin_texture_2byte(texture_size = 512, spatial_frequency = 10):
+    """
+    Create sinusoidal 2 byte numpy array that is wrap-periodic (the last
+    element is cut off when it wraps around to the beginning it
+    is smooth)
+    """
+    x = np.linspace(0, 2*np.pi, texture_size+1)
+    y = np.linspace(0, 2*np.pi, texture_size+1)
+    X, Y = np.meshgrid(x[:texture_size],y[:texture_size])
+    return sin_2byte(X, freq = spatial_frequency)
+    
+def sin_texture_rgb(texture_size = 512, spatial_frequency = 10, rgb = (255, 255, 255)):
+    """ sinusoid that goes from 0 0 0 to the given rgb value. For fish often want red."""
+    if not (all([x >= 0 for x in rgb]) and all([x <= 255 for x in rgb])):
+        raise ValueError("rgb values must lie in [0,255]")
+    x = np.linspace(0, 2*np.pi, texture_size+1)
+    y = np.linspace(0, 2*np.pi, texture_size+1)
+    X, Y = np.meshgrid(x[:texture_size],y[:texture_size])
+    R = np.uint8((rgb[0]/255)*sin_byte(X, freq = spatial_frequency))
+    G = np.uint8((rgb[1]/255)*sin_byte(X, freq = spatial_frequency))
+    B = np.uint8((rgb[2]/255)*sin_byte(X, freq = spatial_frequency))
+    rgb_sin = np.zeros((texture_size, texture_size, 3), dtype = np.uint8)
+    rgb_sin[...,0] = R
+    rgb_sin[...,1] = G
+    rgb_sin[...,2] = B
+    return rgb_sin
 
 """ GRATINGS """
 def grating_byte(X, freq = 1):
     grating_float = signal.square(X*freq)
     grating_transformed = (grating_float+1)*127.5; #from 0-255
     return np.uint8(grating_transformed)
+
 
 def grating_texture_byte(texture_size = 512, spatial_frequency = 10):
     x = np.linspace(0, 2*np.pi, texture_size+1)
@@ -83,11 +110,12 @@ def circle_texture_byte(texture_size = 512, circle_center = (0,0), circle_radius
     circle_texture[circle_mask] = face_intensity
     return circle_texture
     
+
 """ PURE COLOR """
 def rgb_texture_byte(texture_size = 512, rgb = (0, 0, 0)):
     """ Create an rgb array. Note you could make a card just by setting its 
     bgcolor, but this can be useful for combining multiple hues in different regions,
-    while bgcolor is always a single color."""
+    while bgcolor is always a single color"""
     if not (all([x >= 0 for x in rgb]) and all([x <= 255 for x in rgb])):
         raise ValueError("rgb values must lie in [0,255]")
 
@@ -149,5 +177,11 @@ if __name__ == "__main__":
     plt.figure(6)
     plt.imshow(purple_texture)
     plt.title('rgb_texture_byte()')
+    
+    #sine rgb
+    red_sin = sin_texture_rgb(texture_size = 512, spatial_frequency = 10, rgb = (255, 0, 0))
+    plt.figure(7)
+    plt.imshow(red_sin)
+    plt.title('sin_texture_rgb()')
     plt.show()
 

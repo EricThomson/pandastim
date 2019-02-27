@@ -8,10 +8,10 @@ Part of pandastim package: https://github.com/EricThomson/pandastim
 import sys
 sys.path.append('..')  #put parent directory in python path
 
-from fullfield_static_stimulus import FullFieldStatic
-from stimuli import circle_texture_byte
+from stimulus_classes import FullFieldStatic
+from textures import circle_texture_byte
 
-stim_params = {'radius': 20, 'center': (100, -20), 'bg_intensity': 50, 'face_intensity': 255}
+stim_params = {'radius': 20, 'center': (100, -100), 'bg_intensity': 50, 'face_intensity': 255}
 texture_size = 512
 window_size = 512
 circle_texture = circle_texture_byte(texture_size, stim_params['center'], stim_params['radius'], 
