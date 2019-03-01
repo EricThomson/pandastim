@@ -22,12 +22,18 @@ Check out the list of examples in [examples/examples_readme.md](examples/example
 - Keep eye open for rgb vs bgr for color texture.
 
 ### To do (short term)
-- Finish porting drifting over with automatic data typing and rgb detection.
-  - add color drifting example 
-- Add experiment for static (save data to file options etc) (e.g., grating)
-- Add experimant for drifting.
-- Add generic experiment class
-- Add two experiments to examples.
+- Redo binocular stimuli with classes
+  - binocular static class
+  - binocular drifting class
+  - then redo examples with these classes
+  - redo binocular grating now that you've refactored
+  - redo binocular sine example now that you've refactored
+  - Add binocular stimulus class?
+- Add experiments
+  - Add experiment for static (save data to file options etc) (e.g., grating)
+  - Add experiment for drifting.
+  - Add generic experiment class
+  - Add two experiments to examples.
 - Add arbitrary left and right angles and velocities.
 - Add varying frequencies to sinusoid experiment.
 - Refactor and clean up code
@@ -54,6 +60,8 @@ Check out the list of examples in [examples/examples_readme.md](examples/example
 - Write up instructions on how to add new stimuli (basically make a numpy array, put it in stimuli.py, and then follow the examples whether you want a static, drifting stimulus, or experiment)
 - Add some simple gui controls?
 - Make the circle edges smooth. Something like: https://yellowsplash.wordpress.com/2009/10/23/fast-antialiased-circles-and-ellipses-from-xiaolin-wus-concepts/
+- Make abstract stimulus class, drift/static are instances?
+  - turn creation of texture_stage (componenttype/format setting) into a method
 
 #### Notes
 - panda3d doesn't listen to windows scale setting, so 800 is 800.
@@ -62,7 +70,6 @@ Check out the list of examples in [examples/examples_readme.md](examples/example
 
 #### To think about
 - Should we start at same position each time, or randomize phase?
-
 
 #### Conventions
 - UpperCamelCase for class names; lower_case_underscore for vars/functions.

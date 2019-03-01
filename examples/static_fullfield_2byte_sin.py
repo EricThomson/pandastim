@@ -11,7 +11,7 @@ sys.path.append('..')  #put parent directory in python path
 from stimulus_classes import FullFieldStatic
 from textures import sin_texture_2byte
 
-stim_params = {'spatial_freq': 15, 'angle': -45}
+stim_params = {'spatial_freq': 12, 'angle': 45}
 texture_size = 512
 window_size = 512
 sin_texture = sin_texture_2byte(texture_size, stim_params['spatial_freq'])

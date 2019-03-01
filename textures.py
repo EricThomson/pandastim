@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 pandastim/textures.py
-Functions used to create textures used in visual stimuli.
+Functions used to create textures used for display by classes in stimulus_classes.py.
 
 Part of pandastim package: https://github.com/EricThomson/pandastim 
 """
@@ -10,15 +10,7 @@ import numpy as np
 from scipy import signal  #for grating (square wave)
 import matplotlib.pyplot as plt
 
-from direct.showbase.ShowBase import ShowBase
-from panda3d.core import Texture, CardMaker, TextureStage
-from panda3d.core import WindowProperties
-from direct.showbase import ShowBaseGlobal  #global vars defined by p3d
 
-
-"""
-TEXTURES
-"""
 """SINUSOIDS:
     Note for a float, just use np.sin(freq*x) 
 """
@@ -81,7 +73,9 @@ def sin_texture_rgb(texture_size = 512, spatial_frequency = 10, rgb = (255, 255,
     rgb_sin[...,2] = B
     return rgb_sin
 
-""" GRATINGS """
+""" 
+GRATINGS 
+"""
 def grating_byte(X, freq = 1):
     grating_float = signal.square(X*freq)
     grating_transformed = (grating_float+1)*127.5; #from 0-255
@@ -95,7 +89,9 @@ def grating_texture_byte(texture_size = 512, spatial_frequency = 10):
     return grating_byte(X, freq = spatial_frequency)
 
     
-""" CIRCLE """
+""" 
+CIRCLE 
+"""
 def circle_texture_byte(texture_size = 512, circle_center = (0,0), circle_radius = 100, 
                         bg_intensity = 0, face_intensity = 255):
     """ Create an array with a circle with radius circle_radius, centered at circle_center
@@ -111,7 +107,9 @@ def circle_texture_byte(texture_size = 512, circle_center = (0,0), circle_radius
     return circle_texture
     
 
-""" PURE COLOR """
+""" 
+PURE COLOR 
+"""
 def rgb_texture_byte(texture_size = 512, rgb = (0, 0, 0)):
     """ Create an rgb array. Note you could make a card just by setting its 
     bgcolor, but this can be useful for combining multiple hues in different regions,

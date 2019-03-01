@@ -1,6 +1,9 @@
 """
 pandastim/stimulus_classes.py
-Classes to generate stimuli in pandastim: subclasses of Showbase.
+Classes to present visual stimuli in pandastim: subclasses of Showbase.
+Two main classes: 
+    FullFieldStatic() -- show nonmoving textures
+    FullFieldDrift() -- show textures that translate on each frame refresh
 
 Part of pandastim package: https://github.com/EricThomson/pandastim 
 
@@ -14,15 +17,8 @@ https://www.panda3d.org/reference/python/classpanda3d_1_1core_1_1Texture.html#a8
     T_byte 	(signed byte: from -128 to 127)
     T_short 	(signed short: 2 bytes from -32768 to 32767)
     T_half_float (2 bytes: may sometimes be good if you are inside the 0-1 range)
-    T_unsigned_int (4 bytes (32 bits): from 0 to ~4 billion)
-    
-    
-    
-To do: 
-    - if user enters no CL argument, just pick one
-    - fix up component selection currently just picks unsigned byte.
-    - Write better docs so people can actually call this (stimulus_classes.py 2 or whtaewver)
-    - consider renaming this module?
+    T_unsigned_int (4 bytes (32 bits): from 0 to ~4 billion)   
+
 """
 import sys
 import numpy as np 
@@ -36,7 +32,8 @@ import textures
 #%%
 class FullFieldStatic(ShowBase):
     """
-    Presents given texture array at given angle
+    Presents static (non-moving) texture arrray (numpy array), either grayscale (NxN array)
+    or rgb (NxNx3 array).  Arrays are either one or two byte unsigned ints. 
     """
     def __init__(self, texture_array, angle = 0, window_size = 512, texture_size = 512):
         super().__init__()
@@ -56,8 +53,6 @@ class FullFieldStatic(ShowBase):
         self.texture = Texture("static")
                
         #Select Texture ComponentType (e.g., uint8 or whatever)
-        #https://www.panda3d.org/reference/python/classpanda3d_1_1core_1_1Texture.html#a81f78fc173dedefe5a049c0aa3eed2c0
-        #To do: add if/else to handle 2 byte etc
         if self.texture_dtype == np.uint8:
             self.texture_component_type = Texture.T_unsigned_byte
         elif self.texture_dtype == np.uint16:
@@ -77,7 +72,6 @@ class FullFieldStatic(ShowBase):
         else:
             raise ValueError("Texture needs to be 2d or 3d")
        
-     
         self.textureStage = TextureStage("static")
                                                                     
         #Create scenegraph
@@ -101,6 +95,8 @@ class FullFieldDrift(ShowBase):
         super().__init__()
         
         self.texture_array = texture_array
+        self.texture_dtype = type(self.texture_array.flat[0])
+        self.ndims = self.texture_array.ndim
         self.angle = angle
         self.velocity = velocity
         
@@ -113,10 +109,26 @@ class FullFieldDrift(ShowBase):
         #Create texture stage
         self.texture = Texture("drifting")
                
-        self.texture.setup2dTexture(texture_size, texture_size, 
-                               Texture.T_unsigned_byte, Texture.F_luminance) 
+        #Select Texture ComponentType (e.g., uint8 or whatever)
+        if self.texture_dtype == np.uint8:
+            self.texture_component_type = Texture.T_unsigned_byte
+        elif self.texture_dtype == np.uint16:
+            self.texture_component_type = Texture.T_unsigned_short
         
-        self.texture.setRamImage(self.texture_array)   
+        #Select Texture Format (color or b/w etc)
+        if self.ndims == 2:
+            self.texture_format = Texture.F_luminance #grayscale
+            self.texture.setup2dTexture(texture_size, texture_size, 
+                                   self.texture_component_type, self.texture_format)  
+            self.texture.setRamImageAs(self.texture_array, "L") 
+        elif self.ndims == 3:
+            self.texture_format = Texture.F_rgb8
+            self.texture.setup2dTexture(texture_size, texture_size, 
+                                   self.texture_component_type, self.texture_format)  
+            self.texture.setRamImageAs(self.texture_array, "RGB") 
+        else:
+            raise ValueError("Texture needs to be 2d or 3d")
+       
         self.textureStage = TextureStage("drifting")
                                                                     
         #Create scenegraph
@@ -140,7 +152,8 @@ class FullFieldDrift(ShowBase):
 #%%
 if __name__ == '__main__':
     if len(sys.argv) == 1:
-        print(sys.argv[0], ": at command line enter 1 to test Static Grating, 2 Drifting Sin")
+        print(sys.argv[0], ": at command line enter 1 to test Static Grating [default], 2 Drifting Sin.")
+        test_case = '1'
     else:
         test_case = sys.argv[1]
         

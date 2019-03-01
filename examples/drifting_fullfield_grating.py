@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 """
-pandastim/examples/drifting_fullfield_grating: module in pandastim package
-https://github.com/EricThomson/pandastim
+pandastim/examples/drifting_fullfield_grating.py
+Example of how to show a drifting grating.
 
-Simple full-field drifting grating example
+Part of pandastim package: https://github.com/EricThomson/pandastim 
 """
 import sys
 sys.path.append('..')  #put parent directory in python path
 
-from fullfield_drifting_stimulus import FullFieldDrift
-from stimuli import grating_texture_byte
+from stimulus_classes import FullFieldDrift
+from textures import grating_texture_byte
 
 stim_params = {'velocity': -0.18, 'spatial_freq': 10, 'angle': -30}
 texture_size = 512

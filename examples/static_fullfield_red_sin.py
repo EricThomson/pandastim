@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-pandastim/examples/static_fullfield_red.py
-Example of how to show a static rgb stimuilus (simple full field color)
+pandastim/examples/static_fullfield_red_sin.py
+Example of full-field red sinusoid (static: no movement)
 
 Part of pandastim package: https://github.com/EricThomson/pandastim 
 """

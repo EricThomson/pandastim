@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 pandastim/examples/static_fullfield_red.py
-Example of how to show a static rgb stimuilus (simple full field color)
+Example of how to show a super-simple static rgb stimuilus (simple full field color)
 
 Part of pandastim package: https://github.com/EricThomson/pandastim 
 """
