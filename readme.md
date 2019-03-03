@@ -22,23 +22,24 @@ Check out the list of examples in [examples/examples_readme.md](examples/example
 - Keep eye open for rgb vs bgr for color texture.
 
 ### To do (short term)
-- Redo binocular stimuli with classes
-  - binocular static class
-  - binocular drifting class
-  - then redo examples with these classes
-  - redo binocular grating now that you've refactored
-  - redo binocular sine example now that you've refactored
-  - Add binocular stimulus class?
+- remove references to 'byte' just make that default:
+  - make others explicit 2byte or whatever
+- Refactor: making names follow underscore_convention in stim_classes
+- Instead of separate static/drifting, just set velocity to 0 in drifting
+  - Do this for FullFieldDrift
+    - Make FullFieldStatic an instance of the Drift w velocity = 0
+    - Fix all examples with new class instances (minimize changes needed)
+  - Do same with binicoular (currently static_binocular_grating)
+    - Get it working nicely with arbitrary frequency, angle, velocity on L/R
+    - Then add to stimulus_classes.
+- Update examples readme .md
 - Add experiments
   - Add experiment for static (save data to file options etc) (e.g., grating)
   - Add experiment for drifting.
   - Add generic experiment class
-  - Add two experiments to examples.
-- Add arbitrary left and right angles and velocities.
-- Add varying frequencies to sinusoid experiment.
-- Refactor and clean up code
-- What is reasonable range of speeds for fish?
-- remove references to 'byte' just make that default: name deviants eg 2byte.
+  - Add experiment for binocular
+  - Add three experiments to examples.
+
 
 ### To do (medium term)
 

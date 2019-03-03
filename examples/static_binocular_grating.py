@@ -1,11 +1,13 @@
 """
-pandastim/examples/binocular_omr_grating.py
-Creates single instance of binocular stimulus as used in experiment from Naumann 
-et al 2016 [1], with grating instead of sinusoid to maximize contrast.
+pandastim/examples/static_binocular_grating.py
+How to show different gratings to the left and right side of window.
 
-[1] Naumann et al (2016) From whole-brain data to functional circuit models. 
-Cell 167: 947-960.
+Part of pandastim package: https://github.com/EricThomson/pandastim 
 """
+import sys
+sys.path.append('..')  #put parent directory in python path
+
+
 import numpy as np 
 from direct.showbase.ShowBase import ShowBase
 from panda3d.core import Texture, CardMaker, TextureStage
@@ -16,17 +18,16 @@ from direct.task import Task
 from textures import grating_texture_byte
 
 
-
-
-class BinocularStatic(ShowBase):
-    def __init__(self, texture_array, angle = 0, position = (0, 0),
-                 window_size = 512, texture_size = 512, bgcolor = (0, 0, 0, 1)):
+class BinocularDrifting(ShowBase):
+    def __init__(self, texture_array, angle = 0, position = (0, 0), velocity = 0,
+                 band_radius = 3, window_size = 512, texture_size = 512, bgcolor = (0, 0, 0, 1)):
         super().__init__()
 
         self.texture_array = texture_array
         self.texture_dtype = type(self.texture_array.flat[0])
         self.ndims = self.texture_array.ndim
         self.angle = angle
+        self.velocity = velocity
         
         #Set window title and size
         self.windowProps = WindowProperties()
@@ -34,6 +35,12 @@ class BinocularStatic(ShowBase):
         self.windowProps.setTitle("BinocularStatic")
         ShowBaseGlobal.base.win.requestProperties(self.windowProps)  #base is a panda3d global
         
+        #CREATE MASKS
+        self.leftMask = 255*np.ones((texture_size,texture_size), dtype=np.uint8) 
+        self.leftMask[:, :texture_size//2 + band_radius] = 0
+        self.rightMask = 255*np.ones((texture_size,texture_size), dtype=np.uint8)    
+        self.rightMask[:, texture_size//2 - band_radius:] = 0  
+    
         #CREATE TEXTURE STAGES
         #Grating
         self.grating_texture = Texture("Grating")  #T_unsigned_byte
@@ -43,12 +50,12 @@ class BinocularStatic(ShowBase):
         #Mask left (with card 1)
         self.leftMaskTex = Texture("left_mask")
         self.leftMaskTex.setup2dTexture(texture_size, texture_size, Texture.T_unsigned_byte, Texture.F_luminance) 
-        self.leftMaskTex.setRamImage(leftMask)  
+        self.leftMaskTex.setRamImage(self.leftMask)  
         self.leftMaskTexStage = TextureStage('left_mask')
         #Mask right (with card 2)
         self.rightMaskTex = Texture("right_mask")
         self.rightMaskTex.setup2dTexture(texture_size, texture_size, Texture.T_unsigned_byte, Texture.F_luminance) 
-        self.rightMaskTex.setRamImage(rightMask)  
+        self.rightMaskTex.setRamImage(self.rightMask)  
         self.rightMaskTexStage = TextureStage('right_mask')
                                                                            
         #CREATE CARDS/SCENEGRAPH
@@ -68,7 +75,6 @@ class BinocularStatic(ShowBase):
         self.card1.setAttrib(ColorBlendAttrib.make(ColorBlendAttrib.M_add))
         self.card2.setAttrib(ColorBlendAttrib.make(ColorBlendAttrib.M_add))
         
-               
         #BASIC TRANSFORMS
         self.card1.setScale(np.sqrt(8))  #to handle shifts to +/-1
         self.card1.setR(self.angle) 
@@ -86,7 +92,8 @@ class BinocularStatic(ShowBase):
                                   scale = 0.02)
         
         #Add texture move procedure to the task manager
-        #self.taskMgr.add(self.moveTextureTask, "moveTextureTask")
+        if self.velocity != 0:
+            self.taskMgr.add(self.moveTextureTask, "moveTextureTask")
         
     #Procedure to move the camera
     def moveTextureTask(self, task):
@@ -97,23 +104,18 @@ class BinocularStatic(ShowBase):
  
 
 if __name__ == '__main__':
-    stim_params = {'spatial_freq': 15, 'angle': -45, 'position': (10, 0, 20)}
+    stim_params = {'spatial_freq': 20, 'angle': 30, 'velocity': 0, 
+                   'position': (0, 0, 0), 'band_radius': 4}
     texture_size = 512
     window_size = 512  
     bgcolor = (0, 0, 0, 1)
     grating_texture = grating_texture_byte(texture_size, stim_params['spatial_freq'])
 
-    #Create masks
-    band_radius = 2
-    leftMask = 255*np.ones((texture_size,texture_size), dtype=np.uint8)      #127.5
-    leftMask[:, :texture_size//2 + band_radius] = 0
-    rightMask = 255*np.ones((texture_size,texture_size), dtype=np.uint8)      #127.5
-    rightMask[:, texture_size//2 - band_radius:] = 0  #Check index on this
-    
-
-    binocular_static = BinocularStatic(grating_texture, 
+    binocular_static = BinocularDrifting(grating_texture, 
                                        angle = stim_params["angle"],
                                        position = stim_params["position"], 
+                                       velocity = stim_params["velocity"],
+                                       band_radius = stim_params['band_radius'],
                                        window_size = window_size,
                                        texture_size = texture_size, 
                                        bgcolor = bgcolor)
