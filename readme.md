@@ -1,10 +1,10 @@
 # pandastim
 <img align = "right" width = "120" src=".\images\omr_sin_example.png ">
 
-Python package for generating visual stimuli using [Panda3d](https://www.panda3d.org/). Created in [Eva Naumann's lab](https://www.naumannlab.org/). While the stimulus set reflects our fishy interests, pandastim is flexible enough for doing visual psychophysics in any species.
+Python package for generating visual stimuli using [Panda3d](https://www.panda3d.org/).
 
 ### Installation
-Note this assumes you are using anaconda and Python 3.X. Create an environment and install stuff.
+This assumes you are using Anaconda and Python 3. Create an environment and install stuff.
 
     conda create --name pstim
     conda activate pstim
@@ -13,8 +13,7 @@ Note this assumes you are using anaconda and Python 3.X. Create an environment a
 
 I recommend installing the panda3d SDK from the web site, as it comes with useful examples.
 
-**Tests**   
-Check out the list of examples in [examples/examples_readme.md](examples/examples_readme.md), and run those that strike your fancy. For instance, `examples/drifting_fullfield_sin.py`
+To test the installation, check out the list of examples in [examples/examples_readme.md](examples/examples_readme.md), and run those that strike your fancy. For instance, `examples/drifting_fullfield_sin.py`
 
 ### To do (ongoing)
 - Add exception handling (e.g., 0 to 255 etc type stuff)
@@ -22,16 +21,11 @@ Check out the list of examples in [examples/examples_readme.md](examples/example
 - Keep eye open for rgb vs bgr for color texture.
 
 ### To do (short term)
-- remove references to 'byte' just make that default:
-  - make others explicit 2byte or whatever
-- Refactor: making names follow underscore_convention in stim_classes
-- Instead of separate static/drifting, just set velocity to 0 in drifting
-  - Do this for FullFieldDrift
-    - Make FullFieldStatic an instance of the Drift w velocity = 0
-    - Fix all examples with new class instances (minimize changes needed)
-  - Do same with binicoular (currently static_binocular_grating)
-    - Get it working nicely with arbitrary frequency, angle, velocity on L/R
-    - Then add to stimulus_classes.
+- Make FullFieldStatic a child of FullFieldDrift
+  - Improve docstrings for both of them
+- Do same with binicoular (currently static_binocular_grating)
+  - Get it working nicely with arbitrary frequency, angle, velocity on L/R
+  - Then add to stimulus_classes.
 - Update examples (grating, sinusoid, red grating)
 - Add experiments
   - Add experiment for static (save data to file options etc) (e.g., grating)

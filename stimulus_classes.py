@@ -29,60 +29,6 @@ from direct.showbase import ShowBaseGlobal  #global vars defined by p3d
 from direct.task import Task
 import textures
 
-#%%
-class FullFieldStatic(ShowBase):
-    """
-    Presents static (non-moving) texture arrray (numpy array), either grayscale (NxN array)
-    or rgb (NxNx3 array).  Arrays are either one or two byte unsigned ints. 
-    """
-    def __init__(self, texture_array, angle = 0, window_size = 512, texture_size = 512):
-        super().__init__()
-
-        self.texture_array = texture_array
-        self.texture_dtype = type(self.texture_array.flat[0])
-        self.ndims = self.texture_array.ndim
-        self.angle = angle
-        
-        #Set window title (need to update with each stim) and size
-        self.window_properties = WindowProperties()
-        self.window_properties.setSize(window_size, window_size)
-        self.window_properties.setTitle("FullFieldStatic( )")
-        ShowBaseGlobal.base.win.requestProperties(self.window_properties)  #base is a panda3d global
-        
-        #Create texture stage
-        self.texture = Texture("static")
-               
-        #Select Texture ComponentType (e.g., uint8 or whatever)
-        if self.texture_dtype == np.uint8:
-            self.texture_component_type = Texture.T_unsigned_byte
-        elif self.texture_dtype == np.uint16:
-            self.texture_component_type = Texture.T_unsigned_short
-        
-        #Select Texture Format (color or b/w etc)
-        if self.ndims == 2:
-            self.texture_format = Texture.F_luminance #grayscale
-            self.texture.setup2dTexture(texture_size, texture_size, 
-                                   self.texture_component_type, self.texture_format)  
-            self.texture.setRamImageAs(self.texture_array, "L") 
-        elif self.ndims == 3:
-            self.texture_format = Texture.F_rgb8
-            self.texture.setup2dTexture(texture_size, texture_size, 
-                                   self.texture_component_type, self.texture_format)  
-            self.texture.setRamImageAs(self.texture_array, "RGB") 
-        else:
-            raise ValueError("Texture needs to be 2d or 3d")
-       
-        self.textureStage = TextureStage("static")
-                                                                    
-        #Create scenegraph
-        cm = CardMaker('card1')
-        cm.setFrameFullscreenQuad()
-        self.card1 = self.aspect2d.attachNewNode(cm.generate())  
-        self.card1.setTexture(self.textureStage, self.texture)  #ts, tx
-       
-        #Transform the model(s)
-        self.card1.setScale(np.sqrt(2))
-        self.card1.setR(self.angle)
         
 #%%
 class FullFieldDrift(ShowBase):
@@ -141,14 +87,26 @@ class FullFieldDrift(ShowBase):
         self.card1.setScale(np.sqrt(2))
         self.card1.setR(self.angle)
         
-        #Add task to taskmgr to translate texture 
-        self.taskMgr.add(self.moveTextureTask, "moveTextureTask")
+        if self.velocity != 0:
+            #Add task to taskmgr to translate texture 
+            self.taskMgr.add(self.moveTextureTask, "moveTextureTask")
         
     def moveTextureTask(self, task):
         new_position = -task.time*self.velocity
         self.card1.setTexPos(self.textureStage, new_position, 0, 0) #u, v, w
         return Task.cont          
 
+
+#%%
+class FullFieldStatic(FullFieldDrift):
+    """
+    Presents static (non-moving) texture arrray (numpy array), either grayscale (NxN array)
+    or rgb (NxNx3 array).  Arrays are either one or two byte unsigned ints. 
+    """
+    def __init__(self, texture_array, angle = 0, window_size = 512, texture_size = 512):
+        self.velocity = 0
+        super().__init__(texture_array, angle, self.velocity, window_size, texture_size)
+        
 #%%
 if __name__ == '__main__':
     if len(sys.argv) == 1:
@@ -162,7 +120,7 @@ if __name__ == '__main__':
         stim_params = {'spatial_freq': 15, 'angle': -45}
         texture_size = 512
         window_size = 512
-        grating_texture = textures.grating_texture_byte(texture_size, stim_params['spatial_freq'])
+        grating_texture = textures.grating_texture(texture_size, stim_params['spatial_freq'])
         pandastim_static = FullFieldStatic(grating_texture, angle = stim_params["angle"], 
                                             window_size = window_size, texture_size = texture_size)
         pandastim_static.run()
@@ -172,7 +130,7 @@ if __name__ == '__main__':
         stim_params = {'velocity': 0.125, 'spatial_freq': 15, 'angle': 45}
         texture_size = 512
         window_size = 512
-        tex_array = textures.grating_texture_byte(texture_size, stim_params['spatial_freq'])
+        tex_array = textures.grating_texture(texture_size, stim_params['spatial_freq'])
         pandastim_drifter = FullFieldDrift(tex_array, angle = stim_params["angle"], 
                                            velocity = stim_params["velocity"], window_size = window_size, 
                                            texture_size = texture_size)
