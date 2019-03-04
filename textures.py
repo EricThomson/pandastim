@@ -35,7 +35,7 @@ def sin_2byte(X, freq = 1):
     return np.uint16(sin_transformed)
 
 
-def sin_texture_byte(texture_size = 512, spatial_frequency = 10):
+def sin_texture(texture_size = 512, spatial_frequency = 10):
     """
     Create sinusoidal numpy array that is wrap-periodic (the last
     element is cut off when it wraps around to the beginning it
@@ -82,7 +82,7 @@ def grating_byte(X, freq = 1):
     return np.uint8(grating_transformed)
 
 
-def grating_texture_byte(texture_size = 512, spatial_frequency = 10):
+def grating_texture(texture_size = 512, spatial_frequency = 10):
     x = np.linspace(0, 2*np.pi, texture_size+1)
     y = np.linspace(0, 2*np.pi, texture_size+1)
     X, Y = np.meshgrid(x[:texture_size],y[:texture_size])
@@ -92,7 +92,7 @@ def grating_texture_byte(texture_size = 512, spatial_frequency = 10):
 """ 
 CIRCLE 
 """
-def circle_texture_byte(texture_size = 512, circle_center = (0,0), circle_radius = 100, 
+def circle_texture(texture_size = 512, circle_center = (0,0), circle_radius = 100, 
                         bg_intensity = 0, face_intensity = 255):
     """ Create an array with a circle with radius circle_radius, centered at circle_center
     with face color face_intensity on background bg_intensity"""
@@ -110,7 +110,7 @@ def circle_texture_byte(texture_size = 512, circle_center = (0,0), circle_radius
 """ 
 PURE COLOR 
 """
-def rgb_texture_byte(texture_size = 512, rgb = (0, 0, 0)):
+def rgb_texture(texture_size = 512, rgb = (0, 0, 0)):
     """ Create an rgb array. Note you could make a card just by setting its 
     bgcolor, but this can be useful for combining multiple hues in different regions,
     while bgcolor is always a single color"""
@@ -127,7 +127,7 @@ def rgb_texture_byte(texture_size = 512, rgb = (0, 0, 0)):
     return rgb_texture
 
 
-#%% 
+#%%  for main, plot a bunch of instances/slices
 if __name__ == "__main__":
     num_vals = 256
     spatial_freq = 15
@@ -153,28 +153,28 @@ if __name__ == "__main__":
     assert(y2[0] == y2[-1])
     
     #sin_texture_byte
-    sin_tex_byte = sin_texture_byte()
+    sin_tex_byte = sin_texture()
     plt.figure(3)
     plt.imshow(sin_tex_byte, cmap = 'gray')
-    plt.title('sin_tex_byte()')
+    plt.title('sin_texture()')
     
     #grating_texture_byte
-    grating_tex_byte = grating_texture_byte()
+    grating_tex_byte = grating_texture()
     plt.figure(4)
     plt.imshow(grating_tex_byte, cmap = 'gray')
-    plt.title('grating_tex_byte()')
+    plt.title('grating_texture()')
 
     #Circle byte
-    circle_tex_byte = circle_texture_byte()
+    circle_tex_byte = circle_texture()
     plt.figure(5)
     plt.imshow(circle_tex_byte, cmap = 'gray')
-    plt.title('circle_tex_byte()')
+    plt.title('circle_texture()')
     
     #rgb_texture_byte
-    purple_texture = rgb_texture_byte(rgb = (125, 0 , 125))
+    purple_texture = rgb_texture(rgb = (125, 0 , 125))
     plt.figure(6)
     plt.imshow(purple_texture)
-    plt.title('rgb_texture_byte()')
+    plt.title('rgb_texture()')
     
     #sine rgb
     red_sin = sin_texture_rgb(texture_size = 512, spatial_frequency = 10, rgb = (255, 0, 0))

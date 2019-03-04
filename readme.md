@@ -32,7 +32,7 @@ Check out the list of examples in [examples/examples_readme.md](examples/example
   - Do same with binicoular (currently static_binocular_grating)
     - Get it working nicely with arbitrary frequency, angle, velocity on L/R
     - Then add to stimulus_classes.
-- Update examples readme .md
+- Update examples (grating, sinusoid, red grating)
 - Add experiments
   - Add experiment for static (save data to file options etc) (e.g., grating)
   - Add experiment for drifting.

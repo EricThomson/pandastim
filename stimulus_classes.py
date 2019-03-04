@@ -44,10 +44,10 @@ class FullFieldStatic(ShowBase):
         self.angle = angle
         
         #Set window title (need to update with each stim) and size
-        self.windowProps = WindowProperties()
-        self.windowProps.setSize(window_size, window_size)
-        self.windowProps.setTitle("FullFieldStatic( )")
-        ShowBaseGlobal.base.win.requestProperties(self.windowProps)  #base is a panda3d global
+        self.window_properties = WindowProperties()
+        self.window_properties.setSize(window_size, window_size)
+        self.window_properties.setTitle("FullFieldStatic( )")
+        ShowBaseGlobal.base.win.requestProperties(self.window_properties)  #base is a panda3d global
         
         #Create texture stage
         self.texture = Texture("static")
@@ -101,10 +101,10 @@ class FullFieldDrift(ShowBase):
         self.velocity = velocity
         
         #Set window title (need to update with each stim) and size
-        self.windowProps = WindowProperties()
-        self.windowProps.setSize(window_size, window_size)
-        self.windowProps.setTitle("FullFieldDrift: running")
-        ShowBaseGlobal.base.win.requestProperties(self.windowProps)  #base is a panda3d global
+        self.window_properties = WindowProperties()
+        self.window_properties.setSize(window_size, window_size)
+        self.window_properties.setTitle("FullFieldDrift: running")
+        ShowBaseGlobal.base.win.requestProperties(self.window_properties)  #base is a panda3d global
         
         #Create texture stage
         self.texture = Texture("drifting")
