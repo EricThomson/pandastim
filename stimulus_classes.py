@@ -33,8 +33,23 @@ import textures
 #%%
 class FullFieldDrift(ShowBase):
     """
-    Takes in texture array
-    Generates drifting texture.
+    Show drifting texture forever.
+    Takes in texture array and other parameters, and shows texture drifting indefinitely.
+    Texture array can be grayscale or rgb.
+    
+    Usage:
+        FullFieldStatic(texture_array, 
+                        angle = 0, 
+                        velocity = 0.1,
+                        window_size = 512, 
+                        texture_size = 512)
+        
+    Note(s): 
+        Positive angles are clockwise, negative ccw.
+        Velocity is in NDC, so 1.0 is the entire window width (i.e., super-fast).
+        Make texture_size a power of 2: this makes the GPU happier.
+        Textures are automatically scaled to fit window_size.
+        The texture array can be np.uint8 or np.uint16, and 2d (gray) or NxNx3 (rgb)
     """
     def __init__(self, texture_array, angle = 0, velocity = 0.1, 
                  window_size = 512, texture_size = 512):
@@ -100,12 +115,28 @@ class FullFieldDrift(ShowBase):
 #%%
 class FullFieldStatic(FullFieldDrift):
     """
-    Presents static (non-moving) texture arrray (numpy array), either grayscale (NxN array)
-    or rgb (NxNx3 array).  Arrays are either one or two byte unsigned ints. 
+    Show a single full-field texture.
+    Takes in texture array (a 2d numpy array) and other parameters, and shows that texture,
+    not moving, just sitting there. Child of FullFieldDrift, with velocity parameter
+    set to 0. Texture array can be grayscale or rgb.
+    
+    Usage:
+        FullFieldStatic(texture_array, 
+                        angle = 0, 
+                        window_size = 512, 
+                        texture_size = 512)
+        
+    Note(s): 
+        Positive angles are clockwise, negative ccw.
+        Velocity is in NDC, so 1.0 is the entire window width (i.e., super-fast).
+        Make texture_size a power of 2: this makes the GPU happier.
+        Textures are automatically scaled to fit window_size.
+        The texture array can be np.uint8 or np.uint16, and 2d (gray) or NxNx3 (rgb)
     """
     def __init__(self, texture_array, angle = 0, window_size = 512, texture_size = 512):
         self.velocity = 0
         super().__init__(texture_array, angle, self.velocity, window_size, texture_size)
+        
         
 #%%
 if __name__ == '__main__':
@@ -127,10 +158,10 @@ if __name__ == '__main__':
         
     elif test_case == '2':
         #Test FullFieldDrift()
-        stim_params = {'velocity': 0.125, 'spatial_freq': 15, 'angle': 45}
+        stim_params = {'velocity': 0.125, 'spatial_freq': 10, 'angle': 40}
         texture_size = 512
         window_size = 512
-        tex_array = textures.grating_texture(texture_size, stim_params['spatial_freq'])
+        tex_array = textures.sin_texture(texture_size, stim_params['spatial_freq'])
         pandastim_drifter = FullFieldDrift(tex_array, angle = stim_params["angle"], 
                                            velocity = stim_params["velocity"], window_size = window_size, 
                                            texture_size = texture_size)
