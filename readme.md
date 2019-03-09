@@ -21,12 +21,15 @@ To test the installation, check out the list of examples in [examples/examples_r
 - Keep eye open for rgb vs bgr for color texture.
 
 ### To do (short term)
-- Make binocularstatic/binoculardrift child/parent
-  - Move to stimulus_classes and move this to examples
-  - Get it working nicely with arbitrary frequency, angle, velocity on L/R
+- Make binocularstatic/binoculardrift child/parent. Get working with:
+  - Independent angles
+  - Independent velocities
+  - Independent textures
+  - Add sinusoid, colored sin, different colored static, to binoc examples. And sinusoid/color (or whatever) to the thing:
   - Add rgb/uint16 handing.
-  - Update all binoc examples, remove from main package directory.
-- Add experiments
+    - independent on each side also
+- Change examples in stimulus_classes don't just use two gratings.
+- Refactor experiments
   - Add experiment for static (save data to file options etc) (e.g., grating)
   - Add experiment for drifting.
   - Add generic experiment class

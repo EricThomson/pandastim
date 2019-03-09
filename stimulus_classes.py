@@ -300,7 +300,7 @@ if __name__ == '__main__':
                                            bgcolor = bgcolor)
         binocular_static.run()
     elif test_case == '4':
-        stim_params = {'spatial_freq': 30, 'angle': 30, 'velocity': 0.03, 
+        stim_params = {'spatial_freq': 30, 'angle': 30, 'velocity': 0.025, 
                        'position': (0, 0, 0), 'band_radius': 4}
         texture_size = 512
         window_size = 512  
