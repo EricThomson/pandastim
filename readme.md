@@ -21,22 +21,21 @@ To test the installation, check out the list of examples in [examples/examples_r
 - Keep eye open for rgb vs bgr for color texture.
 
 ### To do (short term)
-- Make FullFieldStatic a child of FullFieldDrift
-  - Improve docstrings for both of them
-- Do same with binicoular (currently static_binocular_grating)
+- Make binocularstatic/binoculardrift child/parent
+  - Move to stimulus_classes and move this to examples
   - Get it working nicely with arbitrary frequency, angle, velocity on L/R
-  - Then add to stimulus_classes.
-- Update examples (grating, sinusoid, red grating)
+  - Add rgb/uint16 handing.
+  - Update all binoc examples, remove from main package directory.
 - Add experiments
   - Add experiment for static (save data to file options etc) (e.g., grating)
   - Add experiment for drifting.
   - Add generic experiment class
   - Add experiment for binocular
   - Add three experiments to examples.
-
+  - Why is new position negative of what you expect?
 
 ### To do (medium term)
-
+- Update all docstrings in textures.py
 - Independent color of middle band.
 - Add drifting noise stimulus to drifting_fullfield examples.
 - Add expanding or contracting circle or both (very different from drifter! this will be a scaling-based dynamic stimulus)
