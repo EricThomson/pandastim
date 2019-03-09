@@ -21,21 +21,27 @@ To test the installation, check out the list of examples in [examples/examples_r
 - Keep eye open for rgb vs bgr for color texture.
 
 ### To do (short term)
-- Make binocularstatic/binoculardrift child/parent. Get working with:
-  - Independent angles
-  - Independent velocities
+- Make binocularstatic/binoculardrift child/parent.
+  Get working with angles.
+    - Mask image reflected why?
+    - Position
+    - Rotation    
+- Independent velocities (and velocities should be changeable independent of angles unless you always want them moving orthogonal to one of the given stim or animal angles?  for gratings/sinusoids it won't matter but for dots or whatever it will matter: basically if there is no aperture illusion it will matter)
+  - Should angle be opposite in sign for texture stage operations?
   - Independent textures
   - Add sinusoid, colored sin, different colored static, to binoc examples. And sinusoid/color (or whatever) to the thing:
   - Add rgb/uint16 handing.
     - independent on each side also
 - Change examples in stimulus_classes don't just use two gratings.
+- Fix window title of drift/static versions they shouldn't inherit that.
 - Refactor experiments
   - Add experiment for static (save data to file options etc) (e.g., grating)
   - Add experiment for drifting.
   - Add generic experiment class
   - Add experiment for binocular
   - Add three experiments to examples.
-  - Why is new position negative of what you expect?
+  - NBote new position is negative of what you expect because it being applied
+  to a texture *stage* uv coordinates, not the texture: https://www.panda3d.org/manual/?title=Texture_Transforms
 
 ### To do (medium term)
 - Update all docstrings in textures.py
@@ -44,6 +50,7 @@ To test the installation, check out the list of examples in [examples/examples_r
 - Add expanding or contracting circle or both (very different from drifter! this will be a scaling-based dynamic stimulus)
 - Add contrast to sine
 - Bring 'notes' for `FullfieldDrift` into readme.md?
+- Make animal angle a decorated property and when it is changed change the window title?
 
 ### To do (long term)
 - Center text for text bit it is right justified.
@@ -60,6 +67,7 @@ To test the installation, check out the list of examples in [examples/examples_r
 - Make the circle edges smooth. Something like: https://yellowsplash.wordpress.com/2009/10/23/fast-antialiased-circles-and-ellipses-from-xiaolin-wus-concepts/
 - Make abstract stimulus class, drift/static are instances?
   - turn creation of texture_stage (componenttype/format setting) into a method
+- To make plaids is pretty easy, just supereimpose two guys at two angles as in BinocularDrift fail 1am 3//9/19.
 
 #### Notes
 - panda3d doesn't listen to windows scale setting, so 800 is 800.

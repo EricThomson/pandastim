@@ -45,7 +45,8 @@ def sin_texture(texture_size = 512, spatial_frequency = 10):
     y = np.linspace(0, 2*np.pi, texture_size+1)
     X, Y = np.meshgrid(x[:texture_size],y[:texture_size])
     return sin_byte(X, freq = spatial_frequency)
-    
+
+
 def sin_texture_2byte(texture_size = 512, spatial_frequency = 10):
     """
     Create sinusoidal 2 byte numpy array that is wrap-periodic (the last
