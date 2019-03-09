@@ -22,7 +22,7 @@ To test the installation, check out the list of examples in [examples/examples_r
 
 ### To do (short term)
 - Make binocularstatic/binoculardrift child/parent.
-  Get working with angles.
+  Get working with angles.Use the rdb trick.
     - Mask image reflected why?
     - Position
     - Rotation    
@@ -88,4 +88,4 @@ To test the installation, check out the list of examples in [examples/examples_r
       - Example if it will be helpful
 
 #### Acknowledgments
-The panda3d developers are a generous bunch, and answered dozens of questions about the basic mechanics of how panda3d works. Special shout-out to rdb.
+The panda3d developers are a generous bunch, and answered dozens of questions about the basic mechanics of how panda3d works. Special shout-out to rdb, one of the developers of panda3d, who provided amazing help figuring out the nitty-gritty details of how things work.
