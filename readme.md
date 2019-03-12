@@ -21,19 +21,16 @@ To test the installation, check out the list of examples in [examples/examples_r
 - Keep eye open for rgb vs bgr for color texture.
 
 ### To do (short term)
-- Make binocularstatic/binoculardrift child/parent.
-  Get working with angles.Use the rdb trick.
-    - Mask image reflected why?
-    - Position
-    - Rotation    
-- Independent velocities (and velocities should be changeable independent of angles unless you always want them moving orthogonal to one of the given stim or animal angles?  for gratings/sinusoids it won't matter but for dots or whatever it will matter: basically if there is no aperture illusion it will matter)
-  - Should angle be opposite in sign for texture stage operations?
-  - Independent textures
-  - Add sinusoid, colored sin, different colored static, to binoc examples. And sinusoid/color (or whatever) to the thing:
-  - Add rgb/uint16 handing.
-    - independent on each side also
+- Incorporate trs stage transform into `BinocularDrift`
+  - Get two static textures working (same texture on each side)
+  - Get two moving textures working
+- Independent velocities
+- Add rgb handling
+- Add uint16 handling
+- Two independent textures (or make that a parent class with option of two)
+- Add a bunch of examples (sinusoid, colored sin, different colored static)
 - Change examples in stimulus_classes don't just use two gratings.
-- Fix window title of drift/static versions they shouldn't inherit that.
+- Fix window title of drift/static versions: they shouldn't inherit title!
 - Refactor experiments
   - Add experiment for static (save data to file options etc) (e.g., grating)
   - Add experiment for drifting.
@@ -51,7 +48,7 @@ To test the installation, check out the list of examples in [examples/examples_r
 - Add contrast to sine
 - Bring 'notes' for `FullfieldDrift` into readme.md?
 - Make animal angle a decorated property and when it is changed change the window title?
-
+- Add PR to p3d
 ### To do (long term)
 - Center text for text bit it is right justified.
 - check with photodiode at different locations on window: is it identical?
@@ -80,12 +77,12 @@ To test the installation, check out the list of examples in [examples/examples_r
 #### Conventions
 - UpperCamelCase for class names; lower_case_underscore for vars/functions.
 - Documentation:
-  - Module: path to module/one line description//pandastim blurb
+  - Module: path to module/one line description//longer desciption if needed//pandastim blurb
   - Functions/classes :
     - If simple, just one-line description
     - If not simple:
       - one-line description and enumeration of inputs/outputs w/types
-      - Example if it will be helpful
+      - Example if needed
 
 #### Acknowledgments
-The panda3d developers are a generous bunch, and answered dozens of questions about the basic mechanics of how panda3d works. Special shout-out to rdb, one of the developers of panda3d, who provided amazing help figuring out the nitty-gritty details of how things work.
+The panda3d developers are a generous bunch, and answered dozens of questions about the basic mechanics of how panda3d works. rdb provided lots of help at each stage of figuring out how to  efficiently do 2d things in a 3d game engine (in particular how to combine masks and texture transformations on models in ways that fit together).
