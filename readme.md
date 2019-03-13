@@ -21,11 +21,12 @@ To test the installation, check out the list of examples in [examples/examples_r
 - Keep eye open for rgb vs bgr for color texture.
 
 ### To do (short term)
-- Incorporate trs stage transform into `BinocularDrift`
-  - should i do separate tasks for right and left movement? If one of them has zero velocity etc... Or maybe make four tasks and do a if else: one for both v = 0, one for both nonzero, and one each for one moving.
-
-- Add rgb handling
-- Add uint16 handling
+- Refact binocular_drift_working.py
+  - make clearer: e.g., naming convention with masks is really confusing.
+  - separate tasks for right and left movement? If one of them has zero velocity etc... Or maybe make four tasks and do a if else: one for both v = 0, one for both nonzero, and one each for one moving.
+  - Add rgb handling
+  - Add uint16 handlin
+  - Clean up stimulus_classes example. E.g  what should be stim_params dict
 - Two independent textures (or make that the parent class with identical textures a child class)
 - Add a bunch of examples (sinusoid, colored sin, different colored static)
 - Change examples in stimulus_classes don't just use two gratings.
@@ -88,4 +89,4 @@ To test the installation, check out the list of examples in [examples/examples_r
       - Example if needed
 
 #### Acknowledgments
-The panda3d developers are a generous bunch, and answered dozens of questions about the basic mechanics of how panda3d works. rdb provided lots of help at each stage of figuring out how to  efficiently do 2d things in a 3d game engine (in particular how to combine masks and texture transformations on models in ways that fit together).
+Thanks to the panda3d developers who answered dozens of my questions. In particular, rdb provided lots of help figuring out how to efficiently do 2d things in a 3d game engine.
