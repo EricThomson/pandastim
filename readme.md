@@ -22,14 +22,14 @@ To test the installation, check out the list of examples in [examples/examples_r
 
 ### To do (short term)
 - Incorporate trs stage transform into `BinocularDrift`
-  - Get two static textures working (same texture on each side)
-  - Get two moving textures working
-- Independent velocities
+  - should i do separate tasks for right and left movement? If one of them has zero velocity etc... Or maybe make four tasks and do a if else: one for both v = 0, one for both nonzero, and one each for one moving.
+
 - Add rgb handling
 - Add uint16 handling
-- Two independent textures (or make that a parent class with option of two)
+- Two independent textures (or make that the parent class with identical textures a child class)
 - Add a bunch of examples (sinusoid, colored sin, different colored static)
 - Change examples in stimulus_classes don't just use two gratings.
+- Fill in rotating_mask_drifting_grating.py in examples: make sure it works.
 - Fix window title of drift/static versions: they shouldn't inherit title!
 - Refactor experiments
   - Add experiment for static (save data to file options etc) (e.g., grating)
@@ -49,6 +49,7 @@ To test the installation, check out the list of examples in [examples/examples_r
 - Bring 'notes' for `FullfieldDrift` into readme.md?
 - Make animal angle a decorated property and when it is changed change the window title?
 - Add PR to p3d
+- Revisit binocular_plaid_oneside.py very cool but based on mistake.
 ### To do (long term)
 - Center text for text bit it is right justified.
 - check with photodiode at different locations on window: is it identical?
@@ -65,6 +66,8 @@ To test the installation, check out the list of examples in [examples/examples_r
 - Make abstract stimulus class, drift/static are instances?
   - turn creation of texture_stage (componenttype/format setting) into a method
 - To make plaids is pretty easy, just supereimpose two guys at two angles as in BinocularDrift fail 1am 3//9/19.
+- Show a huge set of possible stimuli to show: the basis set (including plaids)
+- orientation, velocity, color, spatial frequency, temporal frequency. All of these can be shown in a binocular fashion and we can get a functional decomposition...don't need inter-individual differences, can get intra-indivfidual differences and see effects on OMR in the circuitry based on pretectal activity and fiferences in functional connectivity, a kind of internal control.  There is nothing magical about moving sinusoids or gratings: what we can have moving will reveal the functional architecture of the visual system.
 
 #### Notes
 - panda3d doesn't listen to windows scale setting, so 800 is 800.

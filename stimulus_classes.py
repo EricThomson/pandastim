@@ -244,8 +244,8 @@ class BinocularDrift(ShowBase):
         #self.right_card.setTexPos(self.grating_texture_stage, new_position, 0, 0) #u, v, w
         self.left_card.setTexPos(self.grating_texture_stage, new_position, 0, 0) #u, v, w
         return Task.cont #as long as this is returned, the taskMgr will continue to call it
- 
-    
+  
+
 class BinocularStatic(BinocularDrift):
     """
     Show static  binocular drifting textures forever.
