@@ -21,13 +21,10 @@ To test the installation, check out the list of examples in [examples/examples_r
 - Keep eye open for rgb vs bgr for color texture.
 
 ### To do (short term)
-- Refact binocular_drift_working.py
-  - make clearer: e.g., naming convention with masks is really confusing.
-  - separate tasks for right and left movement? If one of them has zero velocity etc... Or maybe make four tasks and do a if else: one for both v = 0, one for both nonzero, and one each for one moving.
+- Refact `BinocularDrift`
   - Add rgb handling
   - Add uint16 handlin
   - Clean up stimulus_classes example. E.g  what should be stim_params dict
-- Two independent textures (or make that the parent class with identical textures a child class)
 - Add a bunch of examples (sinusoid, colored sin, different colored static)
 - Change examples in stimulus_classes don't just use two gratings.
 - Fill in rotating_mask_drifting_grating.py in examples: make sure it works.
@@ -43,6 +40,7 @@ To test the installation, check out the list of examples in [examples/examples_r
 
 ### To do (medium term)
 - Update all docstrings in textures.py
+- Two independent textures for binocularDrift etc, or make that the parent class with identical textures a child class
 - Independent color of middle band.
 - Add drifting noise stimulus to drifting_fullfield examples.
 - Add expanding or contracting circle or both (very different from drifter! this will be a scaling-based dynamic stimulus)

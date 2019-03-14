@@ -140,8 +140,7 @@ class BinocularDrift(ShowBase):
                         velocities = (0,0),
                         band_radius = 2,
                         window_size = 512, 
-                        texture_size = 512,
-                        bgcolor = (0,0,0,1))
+                        texture_size = 512)
         
     Note(s): 
         angles are (left_texture_angle, right_texture_angle): >  is cw, < 0 cc2
@@ -158,7 +157,7 @@ class BinocularDrift(ShowBase):
         self.mask_position_ndc = position
         self.mask_position_uv = (self.ndc2uv(self.mask_position_ndc[0]), 
                                  self.ndc2uv(self.mask_position_ndc[1]))
-        self.scale = np.sqrt(8)
+        self.scale = np.sqrt(8)  #so it can handle arbitrary rotations and shifts
         self.texture_array = texture_array
         self.texture_dtype = type(self.texture_array.flat[0])
         self.ndims = self.texture_array.ndim
@@ -171,53 +170,47 @@ class BinocularDrift(ShowBase):
         #Set window title and size
         self.window_properties = WindowProperties()
         self.window_properties.setSize(window_size, window_size)
-        self.window_properties.setTitle("BinocularStatic")
+        self.window_properties.setTitle("BinocularDrift")
         ShowBaseGlobal.base.win.requestProperties(self.window_properties)  #base is a panda3d global
         
-        #CREATE MASKS (right mask for left stim, left mask for right stim)
-        self.right_mask = 255*np.ones((texture_size,texture_size), dtype=np.uint8)    
-        self.right_mask[:, texture_size//2 - band_radius :] = 0  
-        self.left_mask = 255*np.ones((texture_size,texture_size), dtype=np.uint8)    
-        self.left_mask[:, : texture_size//2 + band_radius] = 0  
+        #CREATE MASK ARRAYS
+        self.left_mask_array = 255*np.ones((texture_size,texture_size), dtype=np.uint8)    
+        self.left_mask_array[:, texture_size//2 - band_radius :] = 0  
+        self.right_mask_array = 255*np.ones((texture_size,texture_size), dtype=np.uint8)    
+        self.right_mask_array[:, : texture_size//2 + band_radius] = 0  
         
-        
-        if False:  #set to True to debug
-            import matplotlib.pyplot as plt
-            plt.imshow(self.left_mask, cmap = 'gray')
-            plt.show()
-    
-        #CREATE TEXTURE STAGES
-        #Grating texture 
-        self.grating_texture = Texture("Grating")  #T_unsigned_byte
-        self.grating_texture.setup2dTexture(texture_size, texture_size, 
+   
+        #STIMULUS TEXTURE
+        self.texture = Texture("Grating")  #T_unsigned_byte
+        self.texture.setup2dTexture(texture_size, texture_size, 
                                             Texture.T_unsigned_byte, Texture.F_luminance) 
-        self.grating_texture.setRamImage(self.texture_array)   
+        self.texture.setRamImage(self.texture_array)   
 
-        #TEXTURE STAGES FOR LEFT CARD
-        self.left_texture_stage = TextureStage('left_texture')       
+        #TEXTURE STAGES FOR LEFT CARD: TEXTURE AND MASK
+        self.left_texture_stage = TextureStage('left_texture_stage')       
         #Mask
-        self.right_mask_texture = Texture("right_mask")
-        self.right_mask_texture.setup2dTexture(texture_size, texture_size, 
+        self.left_mask = Texture("left_mask_texture")
+        self.left_mask.setup2dTexture(texture_size, texture_size, 
                                                Texture.T_unsigned_byte, Texture.F_luminance) 
-        self.right_mask_texture.setRamImage(self.right_mask)  
-        self.right_mask_stage = TextureStage('right_mask')
+        self.left_mask.setRamImage(self.left_mask_array)  
+        self.left_mask_stage = TextureStage('left_mask_array')
         #Multiply the texture stages together
-        self.right_mask_stage.setCombineRgb(TextureStage.CMModulate, 
+        self.left_mask_stage.setCombineRgb(TextureStage.CMModulate, 
                                     TextureStage.CSTexture, 
                                     TextureStage.COSrcColor,
                                     TextureStage.CSPrevious, 
                                     TextureStage.COSrcColor)    
                    
         #TEXTURE STAGES FOR RIGHT CARD
-        self.right_texture_stage = TextureStage('right_texture')       
+        self.right_texture_stage = TextureStage('right_texture_stage')       
         #Mask
-        self.left_mask_texture = Texture("left_mask")
-        self.left_mask_texture.setup2dTexture(texture_size, texture_size, 
+        self.right_mask = Texture("right_mask_texture")
+        self.right_mask.setup2dTexture(texture_size, texture_size, 
                                                Texture.T_unsigned_byte, Texture.F_luminance) 
-        self.left_mask_texture.setRamImage(self.left_mask)  
-        self.left_mask_stage = TextureStage('left_mask')
+        self.right_mask.setRamImage(self.right_mask_array)  
+        self.right_mask_stage = TextureStage('right_mask_stage')
         #Multiply the texture stages together
-        self.left_mask_stage.setCombineRgb(TextureStage.CMModulate, 
+        self.right_mask_stage.setCombineRgb(TextureStage.CMModulate, 
                                     TextureStage.CSTexture, 
                                     TextureStage.COSrcColor,
                                     TextureStage.CSPrevious, 
@@ -226,23 +219,23 @@ class BinocularDrift(ShowBase):
         #CREATE CARDS/SCENEGRAPH
         cm = CardMaker('stimcard')
         cm.setFrameFullscreenQuad()
+        self.setBackgroundColor((0,0,0,1))  
         self.left_card = self.aspect2d.attachNewNode(cm.generate())
         self.right_card = self.aspect2d.attachNewNode(cm.generate())
-        self.setBackgroundColor((0,0,0,1))  #set above
-        self.right_card.setAttrib(ColorBlendAttrib.make(ColorBlendAttrib.M_add))
         self.left_card.setAttrib(ColorBlendAttrib.make(ColorBlendAttrib.M_add))
+        self.right_card.setAttrib(ColorBlendAttrib.make(ColorBlendAttrib.M_add))
         
-        #SET TEXTURE STAGES
-        self.left_card.setTexture(self.left_texture_stage, self.grating_texture)  
-        self.left_card.setTexture(self.right_mask_stage, self.right_mask_texture)
-        self.right_card.setTexture(self.right_texture_stage, self.grating_texture)  
-        self.right_card.setTexture(self.left_mask_stage, self.left_mask_texture)
+        #ADD TEXTURE STAGES TO CARDS
+        self.left_card.setTexture(self.left_texture_stage, self.texture)  
+        self.left_card.setTexture(self.left_mask_stage, self.left_mask)
+        self.right_card.setTexture(self.right_texture_stage, self.texture)  
+        self.right_card.setTexture(self.right_mask_stage, self.right_mask)
         
-        #SET static transforms
+        #TRANSFORMS
         #Left texture mask
         self.mask_transform = self.trs_transform()
-        self.left_card.setTexTransform(self.right_mask_stage, self.mask_transform)
-        self.right_card.setTexTransform(self.left_mask_stage, self.mask_transform)
+        self.left_card.setTexTransform(self.left_mask_stage, self.mask_transform)
+        self.right_card.setTexTransform(self.right_mask_stage, self.mask_transform)
         #Left texture
         self.left_card.setTexScale(self.left_texture_stage, 1/self.scale)
         self.left_card.setTexRotate(self.left_texture_stage, self.left_texture_angle)
@@ -252,7 +245,14 @@ class BinocularDrift(ShowBase):
 
         #Set dynamic transforms (note this will turn into if/elif with four options)
         if self.left_velocity != 0 and self.right_velocity != 0:
-            self.taskMgr.add(self.texture_update, "moveTextureTask")
+            print("Moving both textures")
+            self.taskMgr.add(self.textures_update, "move_both")
+        elif self.left_velocity != 0 and self.right_velocity == 0:
+            print("Moving left texture")
+            self.taskMgr.add(self.left_texture_update, "move_left")
+        elif self.left_velocity == 0 and self.right_velocity != 0:
+            print("Moving right texture")
+            self.taskMgr.add(self.right_texture_update, "move_right")
 
 
         self.title = OnscreenText("x",
@@ -263,14 +263,22 @@ class BinocularDrift(ShowBase):
                                   scale = 0.05)
           
     #Move the texture
-    def texture_update(self, task):
-        #Move texture in whatever direction
+    def textures_update(self, task):
         left_tex_position = -task.time*self.left_velocity #negative b/c texture stage
         right_tex_position = -task.time*self.right_velocity
         self.left_card.setTexPos(self.left_texture_stage, left_tex_position, 0, 0) 
         self.right_card.setTexPos(self.right_texture_stage, right_tex_position, 0, 0)
         return task.cont
     
+    def left_texture_update(self, task):
+        left_tex_position = -task.time*self.left_velocity #negative b/c texture stage
+        self.left_card.setTexPos(self.left_texture_stage, left_tex_position, 0, 0) 
+        return task.cont
+    
+    def right_texture_update(self, task):
+        right_tex_position = -task.time*self.right_velocity
+        self.right_card.setTexPos(self.right_texture_stage, right_tex_position, 0, 0)
+        return task.cont
 
     def trs_transform(self):
         """ trs = translate rotate scale transform for mask stage 
@@ -295,21 +303,22 @@ class BinocularDrift(ShowBase):
 class BinocularStatic(BinocularDrift):
     """
     Show static  binocular drifting textures forever.
-    Child of BinocularDrift, with velocity automatically set to 0.
+    Child of BinocularDrift, with velocities automatically set to (0,0)
     
         BinocularDrift(texture_array, 
-                        angle = 0, 
+                        stim_angles = (0, 0), 
+                        mask_angle = 0,
                         position = (0,0),
                         band_radius = 3,
                         window_size = 512, 
-                        texture_size = 512,
-                        bgcolor = (0,0,0,1))
+                        texture_size = 512)
     """
-    def __init__(self, texture_array, angle = 0, position = (0, 0), band_radius = 3, 
-                 window_size = 512, texture_size = 512, bgcolor = (0, 0, 0, 1)):
-        self.velocity = 0
-        super().__init__(texture_array, angle, position, self.velocity, 
-                         band_radius, window_size, texture_size, bgcolor)
+
+    def __init__(self, texture_array, stim_angles = (0, 0), mask_angle = 0,  
+                 position = (0, 0), band_radius = 3, window_size = 512, texture_size = 512):
+        self.velocities = (0, 0)
+        super().__init__(texture_array, stim_angles, mask_angle, position, self.velocities, 
+                         band_radius, window_size, texture_size)
         
         
 #%%
@@ -330,8 +339,8 @@ if __name__ == '__main__':
         stim_params = {'spatial_freq': 15, 'angle': -45}
         texture_size = 512
         window_size = 512
-        grating_texture = textures.grating_texture(texture_size, stim_params['spatial_freq'])
-        pandastim_static = FullFieldStatic(grating_texture, angle = stim_params["angle"], 
+        texture = textures.grating_texture(texture_size, stim_params['spatial_freq'])
+        pandastim_static = FullFieldStatic(texture, angle = stim_params["angle"], 
                                             window_size = window_size, texture_size = texture_size)
         pandastim_static.run()
         
@@ -347,31 +356,36 @@ if __name__ == '__main__':
         pandastim_drifter.run()
         
     elif test_case == '3':
-        stim_params = {'spatial_freq': 20, 'angle': 30, 
-                       'position': (0, 0), 'band_radius': 4}
+        
+#            def __init__(self, texture_array, stim_angles = (0, 0), mask_angle = 0,  
+#                 position = (0, 0), band_radius = 3, window_size = 512, texture_size = 512):
+                
+                
+        stim_params = {'spatial_freq': 20, 'stim_angles': (30, 90), 'velocities': (0,0),
+                       'position': (0, 0), 'band_radius': 1}
+        mask_angle = 45
         texture_size = 512
         window_size = 512  
-        bgcolor = (0, 0, 0, 1)
-        grating_texture = textures.grating_texture(texture_size, stim_params['spatial_freq'])
+        texture = textures.grating_texture(texture_size, stim_params['spatial_freq'])
     
-        binocular_static = BinocularStatic(grating_texture, 
-                                           angle = stim_params["angle"],
+        binocular_static = BinocularStatic(texture, 
+                                           stim_angles = stim_params["stim_angles"],
+                                           mask_angle = mask_angle,
                                            position = stim_params["position"], 
                                            band_radius = stim_params['band_radius'],
                                            window_size = window_size,
-                                           texture_size = texture_size, 
-                                           bgcolor = bgcolor)
+                                           texture_size = texture_size)
         binocular_static.run()
         
     elif test_case == '4':
-        stim_params = {'spatial_freq': 30, 'stim_angles': (0, 90), 'velocities': (-0.04, 0.01), 
+        stim_params = {'spatial_freq': 30, 'stim_angles': (-45, 90), 'velocities': (.05, .01), 
                        'position': (0.1, -.4), 'band_radius': 2}
-        mask_angle = 0
+        mask_angle = 25
         texture_size = 512
         window_size = 512  
-        grating_texture = textures.grating_texture(texture_size, stim_params['spatial_freq'])
+        texture = textures.grating_texture(texture_size, stim_params['spatial_freq'])
     
-        binocular_drifting = BinocularDrift(grating_texture, 
+        binocular_drifting = BinocularDrift(texture, 
                                            stim_angles = stim_params["stim_angles"],
                                            mask_angle = mask_angle,
                                            position = stim_params["position"], 
