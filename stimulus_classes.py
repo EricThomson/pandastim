@@ -63,11 +63,11 @@ class FullFieldDrift(ShowBase):
         #Set window title (need to update with each stim) and size
         self.window_properties = WindowProperties()
         self.window_properties.setSize(window_size, window_size)
-        self.window_properties.setTitle("FullFieldDrift: running")
+        self.window_properties.setTitle("FullFieldDrift")
         ShowBaseGlobal.base.win.requestProperties(self.window_properties)  #base is a panda3d global
         
         #Create texture stage
-        self.texture = Texture("drifting")
+        self.texture = Texture("stimulus")
                
         #Select Texture ComponentType (e.g., uint8 or whatever)
         if self.texture_dtype == np.uint8:
@@ -124,7 +124,8 @@ class FullFieldStatic(FullFieldDrift):
     def __init__(self, texture_array, angle = 0, window_size = 512, texture_size = 512):
         self.velocity = 0
         super().__init__(texture_array, angle, self.velocity, window_size, texture_size)
-        
+        self.window_properties.setTitle("FullFieldStatic")
+        ShowBaseGlobal.base.win.requestProperties(self.window_properties)  #base is a panda3d global
         
 class BinocularDrift(ShowBase):
     """
@@ -166,7 +167,7 @@ class BinocularDrift(ShowBase):
         self.left_velocity = velocities[0]
         self.right_velocity = velocities[1]
         self.mask_angle = mask_angle #this will change fairly frequently
-        
+               
         #Set window title and size
         self.window_properties = WindowProperties()
         self.window_properties.setSize(window_size, window_size)
@@ -180,11 +181,27 @@ class BinocularDrift(ShowBase):
         self.right_mask_array[:, : texture_size//2 + band_radius] = 0  
         
    
-        #STIMULUS TEXTURE
-        self.texture = Texture("Grating")  #T_unsigned_byte
-        self.texture.setup2dTexture(texture_size, texture_size, 
-                                            Texture.T_unsigned_byte, Texture.F_luminance) 
-        self.texture.setRamImage(self.texture_array)   
+        ##SET UP TEXTURE
+        self.texture = Texture("stimulus")
+        #Select Texture ComponentType (e.g., uint8 or whatever)
+        if self.texture_dtype == np.uint8:
+            self.texture_component_type = Texture.T_unsigned_byte
+        elif self.texture_dtype == np.uint16:
+            self.texture_component_type = Texture.T_unsigned_short
+            
+        #Select Texture Format (color or b/w etc)
+        if self.ndims == 2:
+            self.texture_format = Texture.F_luminance #grayscale
+            self.texture.setup2dTexture(texture_size, texture_size, 
+                                   self.texture_component_type, self.texture_format)  
+            self.texture.setRamImageAs(self.texture_array, "L") 
+        elif self.ndims == 3:
+            self.texture_format = Texture.F_rgb8
+            self.texture.setup2dTexture(texture_size, texture_size, 
+                                   self.texture_component_type, self.texture_format)  
+            self.texture.setRamImageAs(self.texture_array, "RGB") 
+        else:
+            raise ValueError("Texture needs to be 2d or 3d") 
 
         #TEXTURE STAGES FOR LEFT CARD: TEXTURE AND MASK
         self.left_texture_stage = TextureStage('left_texture_stage')       
@@ -319,7 +336,8 @@ class BinocularStatic(BinocularDrift):
         self.velocities = (0, 0)
         super().__init__(texture_array, stim_angles, mask_angle, position, self.velocities, 
                          band_radius, window_size, texture_size)
-        
+        self.window_properties.setTitle("BinocularStatic")
+        ShowBaseGlobal.base.win.requestProperties(self.window_properties)  #base is a panda3d global
         
 #%%
 if __name__ == '__main__':
@@ -356,18 +374,13 @@ if __name__ == '__main__':
         pandastim_drifter.run()
         
     elif test_case == '3':
-        
-#            def __init__(self, texture_array, stim_angles = (0, 0), mask_angle = 0,  
-#                 position = (0, 0), band_radius = 3, window_size = 512, texture_size = 512):
-                
-                
-        stim_params = {'spatial_freq': 20, 'stim_angles': (30, 90), 'velocities': (0,0),
+                   
+        stim_params = {'spatial_freq': 20, 'stim_angles': (30, 90), 
                        'position': (0, 0), 'band_radius': 1}
-        mask_angle = 45
+        mask_angle = 45  #this will change frequently in practice so not in dict
         texture_size = 512
         window_size = 512  
         texture = textures.grating_texture(texture_size, stim_params['spatial_freq'])
-    
         binocular_static = BinocularStatic(texture, 
                                            stim_angles = stim_params["stim_angles"],
                                            mask_angle = mask_angle,
@@ -378,12 +391,12 @@ if __name__ == '__main__':
         binocular_static.run()
         
     elif test_case == '4':
-        stim_params = {'spatial_freq': 30, 'stim_angles': (-45, 90), 'velocities': (.05, .01), 
+        stim_params = {'spatial_freq': 25, 'stim_angles': (-45, 90), 'velocities': (.03, .01), 
                        'position': (0.1, -.4), 'band_radius': 2}
         mask_angle = 25
         texture_size = 512
         window_size = 512  
-        texture = textures.grating_texture(texture_size, stim_params['spatial_freq'])
+        texture = textures.sin_texture(texture_size, stim_params['spatial_freq'])
     
         binocular_drifting = BinocularDrift(texture, 
                                            stim_angles = stim_params["stim_angles"],

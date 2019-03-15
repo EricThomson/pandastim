@@ -15,30 +15,17 @@ I recommend installing the panda3d SDK from the web site, as it comes with usefu
 
 To test the installation, check out the list of examples in [examples/examples_readme.md](examples/examples_readme.md), and run those that strike your fancy. For instance, `examples/drifting_fullfield_sin.py`
 
-### To do (ongoing)
-- Add exception handling (e.g., 0 to 255 etc type stuff)
-- Make sure you are following the coding conventions below.
-- Keep eye open for rgb vs bgr for color texture.
-
 ### To do (short term)
-- Refact `BinocularDrift`
-  - Add rgb handling
-  - Add uint16 handlin
-  - Clean up stimulus_classes example. E.g  what should be stim_params dict
-- Add a bunch of examples (sinusoid, colored sin, different colored static)
-- Change examples in stimulus_classes don't just use two gratings.
-- Fill in rotating_mask_drifting_grating.py in examples: make sure it works.
-- Fix window title of drift/static versions: they shouldn't inherit title!
 - Refactor experiments
   - Add experiment for static (save data to file options etc) (e.g., grating)
   - Add experiment for drifting.
   - Add generic experiment class
   - Add experiment for binocular
-  - Add three experiments to examples.
-  - NBote new position is negative of what you expect because it being applied
-  to a texture *stage* uv coordinates, not the texture: https://www.panda3d.org/manual/?title=Texture_Transforms
+  - Add some experiments to examples.
 
 ### To do (medium term)
+- Refactoring stim classes: DRY handling dtype and dims.
+- Have window name as an optional input argument?
 - Update all docstrings in textures.py
 - Two independent textures for binocularDrift etc, or make that the parent class with identical textures a child class
 - Independent color of middle band.

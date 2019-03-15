@@ -96,7 +96,8 @@ CIRCLE
 def circle_texture(texture_size = 512, circle_center = (0,0), circle_radius = 100, 
                         bg_intensity = 0, face_intensity = 255):
     """ Create an array with a circle with radius circle_radius, centered at circle_center
-    with face color face_intensity on background bg_intensity"""
+    with face color face_intensity on background bg_intensity. Center position is in pixels
+    from center of image."""
     if face_intensity > 255 or bg_intensity < 0:
         raise ValueError('Circle intensity must be between 0 and 255')
     x = np.linspace(-texture_size/2, texture_size/2, texture_size)
@@ -105,7 +106,7 @@ def circle_texture(texture_size = 512, circle_center = (0,0), circle_radius = 10
     circle_texture = bg_intensity*np.ones((texture_size, texture_size), dtype = np.uint8)
     circle_mask = (X - circle_center[0])**2 + (Y - circle_center[1])**2 <= circle_radius**2
     circle_texture[circle_mask] = face_intensity
-    return circle_texture
+    return np.uint8(circle_texture)
     
 
 """ 

@@ -15,13 +15,22 @@ Display textures that drift across the window forever using the `FullFieldDrift`
 - drifting_fullfield_2byte_sin.py
 - drifting_fullfield_red_sin.py
 - drifting_fullfield_grating.py
+- drifting_fullfield_circle.py
 
 ### Binocular static
-Testing out `BinocularStatic` class
-- static_binocular_gratings.py
+Testing out `BinocularStatic` class.
+- static_binocular_grating.py
+- static_binocular_sin.py
+- static_binocular_2byte_sin.py
+- static_binocular_red_sin.py
+For when I have independent textures (under construction)
+- static_binocular_red_green.py
+- static_binocular_circles.py (half attempt in working)
 
-### Binocular stimuli (under construction)
-- drifting_binocular_gratings.py
+### Binocular stimuli
+Test out `BinocularDrift` class.
+- drifting_binocular_grating.py
+- drifting_binocular_green_sin.py
 
 ### Experiments (under construction)
 Standard trial-based structure: baseline/stimulus alternating, based on arrays of values you choose for different parameters for timing and stimulus values.
