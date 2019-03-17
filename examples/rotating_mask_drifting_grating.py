@@ -1,8 +1,5 @@
 """
-try8ing to version 2 of binocular drift working with arbityrary fish angle and 
-stimulus angles in each side.
-
-To do: get working with left stim ONLY
+this is just some crazy stuff not documented but keeping it on hand to show what you can do
 """
 import numpy as np 
 from direct.showbase.ShowBase import ShowBase

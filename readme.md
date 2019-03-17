@@ -17,10 +17,9 @@ To test the installation, check out the list of examples in [examples/examples_r
 
 ### To do (short term)
 - Refactor experiments
-  - Add experiment for static (save data to file options etc) (e.g., grating)
-  - Add experiment for drifting.
-  - Add generic experiment class
-  - Add experiment for binocular
+  - Add experiment for drifting sinuosid.
+  - Expand to general drifting full field experiment.
+  - Expand to generic experiment class (inc: binocular etc)
   - Add some experiments to examples.
 
 ### To do (medium term)

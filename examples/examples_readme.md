@@ -33,6 +33,3 @@ Test out `BinocularDrift` class.
 - drifting_binocular_green_sin.py
 
 ### Experiments (under construction)
-Standard trial-based structure: baseline/stimulus alternating, based on arrays of values you choose for different parameters for timing and stimulus values.
-- full sin
-- full grating
