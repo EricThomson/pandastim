@@ -16,11 +16,16 @@ I recommend installing the panda3d SDK from the web site, as it comes with usefu
 To test the installation, check out the list of examples in [examples/examples_readme.md](examples/examples_readme.md), and run those that strike your fancy. For instance, `examples/drifting_fullfield_sin.py`
 
 ### To do (short term)
-- Refactor experiments
-  - Add experiment for drifting sinuosid.
-  - Expand to general drifting full field experiment.
+- Refactor working/drifting sinusoid
+  - Incorporate ability to plot step function
+  - Finish basic experiment and make sure logic is clear
+  - Add ability to save
+  - Expand to general drifting full field experiment/import to repo.
+- Next steps with experiments
   - Expand to generic experiment class (inc: binocular etc)
   - Add some experiments to examples.
+  - should baseline itself be a texture? should we really be treating
+    baseline as this whole unique thing or just another stimulus?
 
 ### To do (medium term)
 - Refactoring stim classes: DRY handling dtype and dims.

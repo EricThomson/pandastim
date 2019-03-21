@@ -155,9 +155,9 @@ if __name__ == "__main__":
     assert(y2[0] == y2[-1])
     
     #sin_texture_byte
-    sin_tex_byte = sin_texture()
+    sin_tex = sin_texture()
     plt.figure(3)
-    plt.imshow(sin_tex_byte, cmap = 'gray')
+    plt.imshow(sin_tex, cmap = 'gray')
     plt.title('sin_texture()')
     
     #grating_texture_byte
