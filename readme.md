@@ -16,10 +16,12 @@ I recommend installing the panda3d SDK from the web site, as it comes with usefu
 To test the installation, check out the list of examples in [examples/examples_readme.md](examples/examples_readme.md), and run those that strike your fancy. For instance, `examples/drifting_fullfield_sin.py`
 
 ### To do (short term)
-- Refactor working/drifting sinusoid
-  - Incorporate ability to plot step function
-  - Finish basic experiment and make sure logic is clear
+- Refactor drifting_sin_exp2
+  - Redo basic experiment with new experiment_structure input.
+  - To add:
+    - Note
   - Add ability to save
+  - make step plot of events a function
   - Expand to general drifting full field experiment/import to repo.
 - Next steps with experiments
   - Expand to generic experiment class (inc: binocular etc)
@@ -40,6 +42,7 @@ To test the installation, check out the list of examples in [examples/examples_r
 - Make animal angle a decorated property and when it is changed change the window title?
 - Add PR to p3d
 - Revisit binocular_plaid_oneside.py very cool but based on mistake.
+- switch frame-based updating in task mgr instead of time?
 ### To do (long term)
 - Center text for text bit it is right justified.
 - check with photodiode at different locations on window: is it identical?
