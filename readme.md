@@ -17,15 +17,18 @@ To test the installation, check out the list of examples in [examples/examples_r
 
 ### To do (short term)
 - Refactor drifting_sin_exp2
-  - Redo basic experiment with new experiment_structure input.
+  - add uint16/color and test that
   - To add:
     - Note
+    - Trial structure superimposed on event structure? Each trial is stimulus and delay duration afterwards.
   - Add ability to save
   - make step plot of events a function
   - Expand to general drifting full field experiment/import to repo.
 - Next steps with experiments
+  - plot_timeline(): should that be part of class or a utility function? Probably a u8tiluty function. Create a utils.py module.
   - Expand to generic experiment class (inc: binocular etc)
   - Add some experiments to examples.
+  - have function be an array so you can have different texture on every trial.
   - should baseline itself be a texture? should we really be treating
     baseline as this whole unique thing or just another stimulus?
 
