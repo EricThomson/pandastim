@@ -22,7 +22,7 @@ Testing out `BinocularStatic` class.
 - static_binocular_grating.py
 - static_binocular_sin.py
 - static_binocular_2byte_sin.py
-- static_binocular_red_sin.py
+- static_binocular_sin_red.py
 For when I have independent textures (under construction)
 - static_binocular_red_green.py
 - static_binocular_circles.py (half attempt in working)

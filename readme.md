@@ -8,32 +8,35 @@ This assumes you are using Anaconda and Python 3. Create an environment and inst
 
     conda create --name pstim
     conda activate pstim
-    conda install numpy scipy
+    conda install numpy scipy matplotlib
     pip install panda3d
 
-I recommend installing the panda3d SDK from the web site, as it comes with useful examples.
+To test the installation, try running one of the examples in [examples/examples_readme.md](examples/examples_readme.md). For instance, `examples/drifting_fullfield_sin.py`. If you are just learning panda3d, you might consider installing the panda3d SDK, as it comes with useful examples (https://www.panda3d.org/download/).
 
-To test the installation, check out the list of examples in [examples/examples_readme.md](examples/examples_readme.md), and run those that strike your fancy. For instance, `examples/drifting_fullfield_sin.py`
 
 ### To do (short term)
-- Refactor drifting_sin_exp2
-  - add uint16/color and test that
-  - To add:
-    - Note
-    - Trial structure superimposed on event structure? Each trial is stimulus and delay duration afterwards.
   - Add ability to save
-  - make step plot of events a function
+    - Start with saving stim_params to build basic save infrastructure
+      - Save someplace simple for now, not AppData that is annoying. Maybe folder in pandastim, but put in gitignore. working/data/
+      - naming convention? use datetime as Mark does.
+    - stimulus_values, stim_durations, delay_durations, initial_baseline_duration.
+    - Add time it was ended (eg https://discourse.panda3d.org/t/window-closing-event-is-not-being-sent/13535/4)
+    - Then go from there.
+  - Trial structure superimposed on event structure? Each trial is stimulus and delay duration afterwards.
+  - make step plot of events a function/utils.py
   - Expand to general drifting full field experiment/import to repo.
-- Next steps with experiments
-  - plot_timeline(): should that be part of class or a utility function? Probably a u8tiluty function. Create a utils.py module.
   - Expand to generic experiment class (inc: binocular etc)
   - Add some experiments to examples.
   - have function be an array so you can have different texture on every trial.
   - should baseline itself be a texture? should we really be treating
-    baseline as this whole unique thing or just another stimulus?
+    baseline as this whole unique thing or just another stimulus? Eg you might want it to be circle in middle or whatever.
+  - Add note (do this with gui?)
+  - What is going on here?
 
 ### To do (medium term)
-- Refactoring stim classes: DRY handling dtype and dims.
+- when someone enters 1,0,0 or whatever for rgb fix it don't show black.
+- Gui wrapper for all of the above. Either pyqt or panda3d built-in.
+- New way of handling dtype and ndims is better: transfer to other classes, in fact: refactoring stim classes: DRY handling dtype and dims: this is also in experiment class!
 - Have window name as an optional input argument?
 - Update all docstrings in textures.py
 - Two independent textures for binocularDrift etc, or make that the parent class with identical textures a child class
@@ -47,6 +50,7 @@ To test the installation, check out the list of examples in [examples/examples_r
 - Revisit binocular_plaid_oneside.py very cool but based on mistake.
 - switch frame-based updating in task mgr instead of time?
 ### To do (long term)
+- Integrate with GUI (either DirectGUI (panda3d) or pyqt): don't start with this it is premature
 - Center text for text bit it is right justified.
 - check with photodiode at different locations on window: is it identical?
 - Ensure it works in real-time with inputs about fish location.
