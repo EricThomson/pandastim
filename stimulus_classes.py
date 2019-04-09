@@ -22,7 +22,7 @@ https://www.panda3d.org/reference/python/classpanda3d_1_1core_1_1Texture.html#a8
 """
 import sys
 import numpy as np 
-from pathlib import Path
+
 
 from direct.showbase.ShowBase import ShowBase
 from panda3d.core import Texture, CardMaker, TextureStage
@@ -348,7 +348,7 @@ class FullFieldDriftExperiment(ShowBase):
     To do: make texture_size and window_size inputs.
     """
     def __init__(self, texture_function, stim_params, experiment_structure,
-                 window_size = 512, texture_size = 512):
+                 window_size = 512, texture_size = 512, file_path = None):
         super().__init__()
         self.events = experiment_structure['event_values']
         self.event_change_times = experiment_structure['event_change_times']
@@ -359,6 +359,12 @@ class FullFieldDriftExperiment(ShowBase):
         self.texture_size = texture_size
         self.window_size = window_size
         self.bgcolor = (0.5, 0.5, 0.5, 1)
+        
+        if file_path is not None:
+            data_to_save = {'stim_params': self.stim_params,
+                            'exp_structure': experiment_structure}
+            with open(file_path, 'w') as outfile:
+                dump(data_to_save, outfile, indent = 4)
         
         #Window properties
         self.windowProps = WindowProperties()
@@ -542,14 +548,21 @@ if __name__ == '__main__':
                                            texture_size = texture_size)
         binocular_drifting.run()
     elif test_case == '5':
+        import matplotlib.pyplot as plt
+        from pathlib import Path
         from itertools import zip_longest
         from os import makedirs
-        data_dir = Path(r'C:\Users\Eric\AppData\pandastim')
+        from json_tricks import dump
+        from datetime import datetime
+        timenow = datetime.now()
+        now_string = timenow.strftime('%m%d%Y_%H%M%S')
+        filename = r'experiment_data_' + now_string + '.json'
+        dir_path = Path(r'C:\Users\Eric\Dropbox\Programming\pandastim\working\saved')
+        file_path = dir_path / filename
         try:
-            makedirs(data_dir)
+            makedirs(dir_path)
         except FileExistsError:
-            print("Storing data in", data_dir, ", which already exists.")
-        save_basename = r'ffd_experiment_data';
+            print("Storing data in", dir_path, ", which already exists.")
         window_size = 512
         texture_size = window_size 
         texture_function =  textures.sin_texture; 
@@ -576,7 +589,7 @@ if __name__ == '__main__':
                                 'event_change_times': event_change_times}   #redundant, contained in event_durs              
         exp_app = FullFieldDriftExperiment(texture_function, stim_params, experiment_structure,
                                        window_size = window_size, texture_size = texture_size,
-                                       save_path = None)
+                                       file_path = file_path)
         #app.plot_timeline()
         exp_app.run()
         

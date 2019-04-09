@@ -11,7 +11,7 @@ sys.path.append('..')  #put parent directory in python path
 from stimulus_classes import FullFieldDrift
 from textures import grating_texture
 
-stim_params = {'velocity': -0.18, 'spatial_freq': 10, 'angle': -30}
+stim_params = {'velocity': -0.18, 'spatial_freq': 13, 'angle': -30}
 texture_size = 512
 window_size = 512
 grating_texture = grating_texture(texture_size, stim_params['spatial_freq'])

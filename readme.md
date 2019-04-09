@@ -9,19 +9,22 @@ This assumes you are using Anaconda and Python 3. Create an environment and inst
     conda create --name pstim
     conda activate pstim
     conda install numpy scipy matplotlib
-    pip install panda3d
+    pip install panda3d json-tricks
 
-To test the installation, try running one of the examples in [examples/examples_readme.md](examples/examples_readme.md). For instance, `examples/drifting_fullfield_sin.py`. If you are just learning panda3d, you might consider installing the panda3d SDK, as it comes with useful examples (https://www.panda3d.org/download/).
+To test the installation, try running one of the examples in [examples/examples_readme.md](examples/examples_readme.md). For instance, `examples/drifting_fullfield_sin.py`. Note that panda3d doesn't always play nicely with IDEs, so you might need to run scripts from the command line (e.g., `python drifting_fullfield_sin.py`).
+
+If you are just learning panda3d, you might consider installing the panda3d SDK, as it comes with useful examples (https://www.panda3d.org/download/).
 
 
 ### To do (short term)
-  - Add ability to save
-    - Start with saving stim_params to build basic save infrastructure
-      - Save someplace simple for now, not AppData that is annoying. Maybe folder in pandastim, but put in gitignore. working/data/
-      - naming convention? use datetime as Mark does.
-    - stimulus_values, stim_durations, delay_durations, initial_baseline_duration.
+  - Save infrastructure -- rethink this don't just be silly.
+    This person's site seems amazong, and this seems useful:
+    https://www.pythonforthelab.com/blog/introduction-to-storing-data-in-files/
+    
+    - Save each time a new stimulus is shown
     - Add time it was ended (eg https://discourse.panda3d.org/t/window-closing-event-is-not-being-sent/13535/4)
     - Then go from there.
+    - Seems json is probably not the way to go. binary? txt? csv? pandas?
   - Trial structure superimposed on event structure? Each trial is stimulus and delay duration afterwards.
   - make step plot of events a function/utils.py
   - Expand to general drifting full field experiment/import to repo.

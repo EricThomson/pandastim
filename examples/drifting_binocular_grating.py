@@ -11,8 +11,8 @@ sys.path.append('..')  #put parent directory in python path
 from stimulus_classes import BinocularDrift
 from textures import grating_texture
 
-stim_params = {'spatial_freq': 20, 'stim_angles': (30, -30), 'velocities': (0.05, -.02),
-               'position': (0, 0), 'band_radius': 1}
+stim_params = {'spatial_freq': 20, 'stim_angles': (45, 45), 'velocities': (0.05, .05),
+               'position': (0, 0), 'band_radius': 5}
 mask_angle = 45  #this will change frequently in practice so not in dict
 texture_size = 512
 window_size = 512  
