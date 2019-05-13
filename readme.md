@@ -17,26 +17,29 @@ If you are just learning panda3d, you might consider installing the panda3d SDK,
 
 
 ### To do (short term)
-  - Save infrastructure -- rethink this don't just be silly.
-    This person's site seems amazong, and this seems useful:
+- Experiment examples
+  - Experiment we will actually use in simple form: red grating/black/white  spot.
+- Save infrastructure -- rethink
+    This seems useful:
     https://www.pythonforthelab.com/blog/introduction-to-storing-data-in-files/
-    
-    - Save each time a new stimulus is shown
-    - Add time it was ended (eg https://discourse.panda3d.org/t/window-closing-event-is-not-being-sent/13535/4)
+    - Basically need to study how to append to a dictionary value (a list) each time through, without changing the other values. Maybe make simple example that does this in a standalone working example in working, and then get it working in this code.
+    - Append each time a new stimulus is shown
+    - Include time started (eg https://discourse.panda3d.org/t/window-closing-event-is-not-being-sent/13535/4)
     - Then go from there.
-    - Seems json is probably not the way to go. binary? txt? csv? pandas?
-  - Trial structure superimposed on event structure? Each trial is stimulus and delay duration afterwards.
-  - make step plot of events a function/utils.py
-  - Expand to general drifting full field experiment/import to repo.
-  - Expand to generic experiment class (inc: binocular etc)
-  - Add some experiments to examples.
-  - have function be an array so you can have different texture on every trial.
-  - should baseline itself be a texture? should we really be treating
-    baseline as this whole unique thing or just another stimulus? Eg you might want it to be circle in middle or whatever.
-  - Add note (do this with gui?)
-  - What is going on here?
+    - Json good? binary? txt? csv? pandas? hdf5?
+- put experiments in experiments.py instead of stimulus_classes.py
+- integrate stimulus_classes into experiments instead of doing them de novo?
+- With movement task check to see if vel=0 first don't just run it
+- make step plot of events a function/utils.py
+- Make binocular experiment class
+- Make generic experiment class
+- Add some experiments to examples.
+- Add note (do this with gui?)
+
 
 ### To do (medium term)
+- for examples, make imports better (should I be appending ..?)
+  could just make pip installable.
 - when someone enters 1,0,0 or whatever for rgb fix it don't show black.
 - Gui wrapper for all of the above. Either pyqt or panda3d built-in.
 - New way of handling dtype and ndims is better: transfer to other classes, in fact: refactoring stim classes: DRY handling dtype and dims: this is also in experiment class!

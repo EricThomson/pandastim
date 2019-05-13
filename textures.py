@@ -89,6 +89,20 @@ def grating_texture(texture_size = 512, spatial_frequency = 10):
     X, Y = np.meshgrid(x[:texture_size],y[:texture_size])
     return grating_byte(X, freq = spatial_frequency)
 
+def grating_texture_rgb(texture_size = 512, spatial_frequency = 10, rgb = (255, 255, 255)):
+    """" grating goes from 000 to given rgb value."""
+    x = np.linspace(0, 2*np.pi, texture_size+1)
+    y = np.linspace(0, 2*np.pi, texture_size+1)
+    X, Y = np.meshgrid(x[:texture_size],y[:texture_size])
+    R = np.uint8((rgb[0]/255)*grating_byte(X, freq = spatial_frequency))
+    G = np.uint8((rgb[1]/255)*grating_byte(X, freq = spatial_frequency))
+    B = np.uint8((rgb[2]/255)*grating_byte(X, freq = spatial_frequency))
+    rgb_grating = np.zeros((texture_size, texture_size, 3), dtype = np.uint8)
+    rgb_grating[...,0] = R
+    rgb_grating[...,1] = G
+    rgb_grating[...,2] = B
+    return rgb_grating
+    
     
 """ 
 CIRCLE 
@@ -185,3 +199,9 @@ if __name__ == "__main__":
     plt.title('sin_texture_rgb()')
     plt.show()
 
+    #grating rgb
+    red_grating = grating_texture_rgb(texture_size = 512, spatial_frequency = 10, rgb = (255, 0, 0))
+    plt.figure(8)
+    plt.imshow(red_grating)
+    plt.title('grating_texture_rgb()')
+    plt.show()

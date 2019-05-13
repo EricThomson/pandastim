@@ -33,3 +33,7 @@ Test out `BinocularDrift` class.
 - drifting_binocular_green_sin.py
 
 ### Experiments (under construction)
+Note experiments are more complex than other classes as they require a path for saving data, setting up what texture functions to use, what parameters
+to use for each texture you will show, stimuli to show, etc..
+
+- drifting_fullfield_grating_experiment.py

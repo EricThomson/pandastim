@@ -1,0 +1,152 @@
+{
+    "stim_params": [
+        {
+            "texture": "rgb_grating",
+            "angle": 0,
+            "velocity": 0.1,
+            "kwargs": {
+                "spatial_frequency": 40,
+                "texture_size": 512,
+                "rgb": [
+                    255,
+                    0,
+                    0
+                ]
+            }
+        },
+        {
+            "texture": "rgb_grating",
+            "angle": 0,
+            "velocity": -0.1,
+            "kwargs": {
+                "spatial_frequency": 40,
+                "texture_size": 512,
+                "rgb": [
+                    255,
+                    0,
+                    0
+                ]
+            }
+        },
+        {
+            "texture": "rgb_grating",
+            "angle": 90,
+            "velocity": 0.1,
+            "kwargs": {
+                "spatial_frequency": 40,
+                "texture_size": 512,
+                "rgb": [
+                    255,
+                    0,
+                    0
+                ]
+            }
+        },
+        {
+            "texture": "rgb_grating",
+            "angle": 90,
+            "velocity": -0.1,
+            "kwargs": {
+                "spatial_frequency": 40,
+                "texture_size": 512,
+                "rgb": [
+                    255,
+                    0,
+                    0
+                ]
+            }
+        },
+        {
+            "texture": "rgb",
+            "angle": 0,
+            "velocity": 0,
+            "kwargs": {
+                "rgb": [
+                    0,
+                    0,
+                    0
+                ],
+                "texture_size": 512
+            }
+        },
+        {
+            "texture": "circle",
+            "angle": 0,
+            "velocity": 0,
+            "kwargs": {
+                "circle_radius": 20,
+                "circle_center": [
+                    0,
+                    -75
+                ]
+            }
+        }
+    ],
+    "exp_structure": {
+        "stim_values": [
+            4,
+            5,
+            4,
+            2,
+            4,
+            5,
+            4,
+            1,
+            4,
+            5,
+            4,
+            3,
+            4,
+            5,
+            4,
+            0,
+            4
+        ],
+        "stim_durations": [
+            3,
+            1,
+            3,
+            2,
+            3,
+            1,
+            3,
+            2,
+            3,
+            1,
+            3,
+            2,
+            3,
+            1,
+            3,
+            2,
+            3
+        ],
+        "stim_change_times": {
+            "__ndarray__": [
+                3,
+                4,
+                7,
+                9,
+                12,
+                13,
+                16,
+                18,
+                21,
+                22,
+                25,
+                27,
+                30,
+                31,
+                34,
+                36,
+                39
+            ],
+            "dtype": "int32",
+            "shape": [
+                17
+            ]
+        }
+    },
+    "window_size": 512,
+    "texture_size": 512
+}
