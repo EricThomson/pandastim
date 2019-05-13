@@ -19,14 +19,11 @@ If you are just learning panda3d, you might consider installing the panda3d SDK,
 ### To do (short term)
 - Experiment examples
   - Experiment we will actually use in simple form: red grating/black/white  spot.
-- Save infrastructure -- rethink
-    This seems useful:
-    https://www.pythonforthelab.com/blog/introduction-to-storing-data-in-files/
-    - Basically need to study how to append to a dictionary value (a list) each time through, without changing the other values. Maybe make simple example that does this in a standalone working example in working, and then get it working in this code.
+- Save infrastructure  https://www.pythonforthelab.com/blog/introduction-to-storing-data-in-files/
+    - Append to a dictionary value (a list) each time through, without changing the other values. Maybe simple standalone example of this.
     - Append each time a new stimulus is shown
     - Include time started (eg https://discourse.panda3d.org/t/window-closing-event-is-not-being-sent/13535/4)
-    - Then go from there.
-    - Json good? binary? txt? csv? pandas? hdf5?
+    - Decide whether to continue with json vs binary/pandas/hdf5
 - put experiments in experiments.py instead of stimulus_classes.py
 - integrate stimulus_classes into experiments instead of doing them de novo?
 - With movement task check to see if vel=0 first don't just run it
