@@ -22,7 +22,7 @@ To test the installation, try running one of the examples in [examples/examples_
 There are three main modules:
 - textures.py: defines the textures used in stimulus classes (2d numpy arrays)
 - stimulus_classes.py: defines classes used to show stimuli (e.g., full field drifting texture)
-- experiments.py: defines classes used to run experiments
+- experiments.py: defines classes used to run experiments, which are sets of stimuli. Saves as json [note currently, experiment classes are in `stimulus_classes.py`]
 
 Examples are in the `examples` folder, which contains examples of how to present different stimuli or run different types of experiments.
 
