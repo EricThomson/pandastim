@@ -11,12 +11,26 @@ This assumes you are using Anaconda and Python 3. Create an environment and inst
     conda install numpy scipy matplotlib
     pip install panda3d json-tricks
 
-To test the installation, try running one of the examples in [examples/examples_readme.md](examples/examples_readme.md). For instance, `examples/drifting_fullfield_sin.py`. Note that panda3d doesn't always play nicely with IDEs, so you might need to run scripts from the command line (e.g., `python drifting_fullfield_sin.py`).
+To install pandastim, just to go the directory where you want it installed and run:    
 
-If you are just learning panda3d, you might consider installing the panda3d SDK, as it comes with useful examples (https://www.panda3d.org/download/).
+    git clone https://github.com/EricThomson/pandastim.git
+
+To test the installation, try running one of the examples in [examples/examples_readme.md](examples/examples_readme.md). For instance, `examples/drifting_fullfield_sin.py`. Note that panda3d doesn't always play nicely with IDEs, so I typically run scripts from the command line (e.g., `python -m examples.drifting_fullfield_sin.py`).
+
+
+### Structure
+There are three main modules:
+- textures.py: defines the textures used in stimulus classes (2d numpy arrays)
+- stimulus_classes.py: defines classes used to show stimuli (e.g., full field drifting texture)
+- experiments.py: defines classes used to run experiments
+
+Examples are in the `examples` folder, which contains examples of how to present different stimuli or run different types of experiments.
 
 
 ### To do (short term)
+- Create new radially changing stimulus class:
+    - looming circle stimulus and
+    - radial sine stimulus.
 - Experiment examples
   - Experiment we will actually use in simple form: red grating/black/white  spot.
 - Save infrastructure  https://www.pythonforthelab.com/blog/introduction-to-storing-data-in-files/
@@ -76,9 +90,11 @@ If you are just learning panda3d, you might consider installing the panda3d SDK,
 - panda3d doesn't listen to windows scale setting, so 800 is 800.
 - It typically looks like textures are drifting vertically/horizontally even when they are not. This is the well-known 'aperture problem'. To disambiguate, increase the window size until you can see their edges. Question: is this a problem when analyzing fish data?
 - Could be useful to disentangle chromatic, orientation, and motion representations using light sheet. Talk to linsday glickfeld. Look at more traditional spatiotemporal chromatic representations.
+- If you are just learning panda3d, you might consider installing the panda3d SDK, as it comes with useful examples (https://www.panda3d.org/download/). There is a good tutorial/manual online: https://www.panda3d.org/manual/
+
 
 #### To think about
-- Should we start at same position each time, or randomize phase?
+- For gratings/sinusoids, start at same position each time, or randomize phase?
 
 #### Conventions
 - UpperCamelCase for class names; lower_case_underscore for vars/functions.
