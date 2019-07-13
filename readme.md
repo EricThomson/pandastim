@@ -1,7 +1,7 @@
 # pandastim
 <img align = "right" width = "120" src=".\images\omr_sin_example.png ">
 
-Python package for generating visual stimuli using [Panda3d](https://www.panda3d.org/).
+Cross-platform Python package for generating visual stimuli using [Panda3d](https://www.panda3d.org/).
 
 ### Installation
 This assumes you are using Anaconda and Python 3. Create an environment and install stuff.
@@ -17,14 +17,13 @@ To install pandastim, just to go the directory where you want it installed and r
 
 To test the installation, try running one of the examples in [examples/examples_readme.md](examples/examples_readme.md). For instance, `examples/drifting_fullfield_sin.py`. Note that panda3d doesn't always play nicely with IDEs, so I typically run scripts from the command line (e.g., `python -m examples.drifting_fullfield_sin.py`).
 
-
 ### Structure
 There are three main modules:
 - `textures.py`: defines the textures used in stimulus classes (2d numpy arrays)
 - `stimulus_classes.py`: defines classes used to show stimuli (e.g., full field drifting texture). This is the main interface with panda3d.
-- `experiments.py`: defines classes used to run experiments, which are sets of stimuli. Saves as json [note currently, experiment classes are in `stimulus_classes.py`]
+- `experiments.py`: defines classes used to run experiments, which are sets of stimuli. Saves data as json.
 
-The `examples` folder contains many examples of how to present different stimuli or run different types of experiments. If you want to roll your own, I would use those examples as a starting point.
+If you run any of those modules, `__main__` will run examples. Further, the `examples` folder contains many examples of how to present different stimuli or run different types of experiments. If you want to roll your own, I would use those examples as a starting point.
 
 
 ### To do (short term)
