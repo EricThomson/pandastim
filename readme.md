@@ -27,9 +27,11 @@ If you run any of those modules, `__main__` will run examples. Further, the `exa
 
 
 ### To do (short term)
-- Create new radially changing stimulus class:
-    - looming circle stimulus and
-    - radial sine stimulus.
+- Create new updating stimulus classes
+    - looming circle stimulus (static_fullfield_circle)
+    - randomly updating stimulus (tex_random_working.py)
+    - radial sine stimulus (use their code)
+    - radial grating stimulus: https://github.com/pygobject/pycairo
 - Experiment examples
   - Experiment we will actually use in simple form: red grating/black/white  spot.
 - Save infrastructure  https://www.pythonforthelab.com/blog/introduction-to-storing-data-in-files/

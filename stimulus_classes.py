@@ -125,7 +125,74 @@ class FullFieldStatic(FullFieldDrift):
         super().__init__(texture_array, angle, self.velocity, window_size, texture_size)
         self.window_properties.setTitle("FullFieldStatic")
         ShowBaseGlobal.base.win.requestProperties(self.window_properties)  #base is a panda3d global
+    
+class Scaling(ShowBase):
+    """
+    Show a single full-field texture that scales up or down in time, repeating. 
+
+    """
+    def __init__(self, texture_array, scale = 0.2, window_size = 512, texture_size = 512):
+        super().__init__()
+        self.scale = scale       
+        self.texture_array = texture_array
+        self.texture_dtype = type(self.texture_array.flat[0])
+        self.ndims = self.texture_array.ndim
         
+        #Set window title
+        self.window_properties = WindowProperties()
+        self.window_properties.setSize(window_size, window_size)
+        self.window_properties.setTitle("FullFieldDrift")
+        ShowBaseGlobal.base.win.requestProperties(self.window_properties)  #base is a panda3d global
+        
+        #Create texture stage
+        self.texture = Texture("Stimulus")
+               
+        #Select Texture ComponentType (e.g., uint8 or whatever)
+        if self.texture_dtype == np.uint8:
+            self.texture_component_type = Texture.T_unsigned_byte
+        elif self.texture_dtype == np.uint16:
+            self.texture_component_type = Texture.T_unsigned_short
+        
+        #Select Texture Format (color or b/w etc)
+        if self.ndims == 2:
+            self.texture_format = Texture.F_luminance #grayscale
+            self.texture.setup2dTexture(texture_size, texture_size, 
+                                   self.texture_component_type, self.texture_format)  
+            self.texture.setRamImageAs(self.texture_array, "L") 
+        elif self.ndims == 3:
+            self.texture_format = Texture.F_rgb8
+            self.texture.setup2dTexture(texture_size, texture_size, 
+                                   self.texture_component_type, self.texture_format)  
+            self.texture.setRamImageAs(self.texture_array, "RGB") 
+        else:
+            raise ValueError("Texture needs to be 2d or 3d")
+       
+        self.textureStage = TextureStage("Stimulus")
+                                                                    
+        #Create scenegraph
+        cm = CardMaker('card1')
+        cm.setFrameFullscreenQuad()
+        self.card1 = self.aspect2d.attachNewNode(cm.generate())  
+        self.card1.setTexture(self.textureStage, self.texture)  #ts, tx
+       
+        #Set the scale on the card (note this is different from scaling the texture)
+        self.card1.setScale(np.sqrt(2))
+
+        
+        if self.scale != 0:
+            #Add task to taskmgr to translate texture 
+            self.taskMgr.add(self.scaleTextureTask, "scaleTextureTask")
+        
+    #Move the texture
+    def scaleTextureTask(self, task):
+        if task.time > 1:
+            new_scale = task.time*(self.scale)
+            self.card1.setTexScale(self.textureStage, new_scale, new_scale) #u_scale, v
+            #Set conditional so when it reaches 0 or some max it resets to 1
+            
+        return Task.cont       
+           
+    
 class BinocularDrift(ShowBase):
     """
     Show binocular drifting textures forever.
@@ -344,8 +411,8 @@ class BinocularStatic(BinocularDrift):
 #%%
 if __name__ == '__main__':
     
-    usage_note = "\nCommand line arguments:\n1: To test FullFieldStatic() [default]\n2: FullfieldDrift()\n"
-    usage_note += "3: BinocularStatic()\n4: BinocularDrift()"
+    usage_note = "\nCommand line arguments:\n1: To test FullFieldStatic [default]\n2: FullfieldDrift\n"
+    usage_note += "3: BinocularStatic\n4: BinocularDrift\n5: Scaling"
     
     if len(sys.argv) == 1:
         print(sys.argv[0], ": ", usage_note)
@@ -410,7 +477,14 @@ if __name__ == '__main__':
                                            texture_size = texture_size)
         binocular_drifting.run()
         
-
+    elif test_case == '5':
+        stim_params = {'radius': 20, 'center': (0, 0), 'bg_intensity': 50, 'face_intensity': 255}
+        texture_size = 512
+        window_size = 512
+        circle_texture = textures.circle_texture(texture_size, stim_params['center'], stim_params['radius'], 
+                                             stim_params['bg_intensity'], stim_params['face_intensity'])
+        circle_scaling = Scaling(circle_texture, scale = 1.2)
+        circle_scaling.run()
         
     else:
         print(usage_note)

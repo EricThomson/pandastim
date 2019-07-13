@@ -181,7 +181,7 @@ if __name__ == '__main__':
         timenow = datetime.now()
         now_string = timenow.strftime('%m%d%Y_%H%M%S')
         filename = r'experiment_data_' + now_string + '.json'
-        dir_path = Path(r'./working')
+        dir_path = Path(r'examples/working')
         file_path = dir_path / filename
         try:
             makedirs(dir_path)
