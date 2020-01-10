@@ -8,7 +8,7 @@ This assumes you are using Anaconda and Python 3. Create an environment and inst
 
     conda create --name pstim
     conda activate pstim
-    conda install numpy scipy matplotlib
+    conda install numpy scipy matplotlib zeromq
     pip install panda3d json-tricks
 
 To install pandastim, just to go the directory where you want it installed and run:    

@@ -1,7 +1,6 @@
 *.docx
 *~*
 todo.txt
-/working
 /__pycache__
 *dropbox*
 /examples/data/
