@@ -1118,83 +1118,13 @@ class Scaling(ShowBase):
 
 #%%
 if __name__ == '__main__':
-
-    print("\nNote for more full set of examples to get started, see stimulus_examples.py\n")
-
-    usage_note = "\nCommand line arguments:\n1: To test FullFieldStatic [default]\n2: FullfieldDrift\n"
-    usage_note += "3: BinocularStatic\n4: BinocularDrift\n5: Scaling"
-
-    if len(sys.argv) == 1:
-        print(sys.argv[0], ": ", usage_note)
-        test_case = '1'
-
-    else:
-        test_case = sys.argv[1]
-
-    if test_case == '1':
-        #Test FullFieldStatic()
-        stim_params = {'spatial_freq': 15, 'angle': -45}
-        texture_size = 512
-        window_size = 512
-        texture = textures.grating_texture(texture_size, stim_params['spatial_freq'])
-        pandastim_static = FullFieldStatic(texture, angle = stim_params["angle"],
-                                            window_size = window_size, texture_size = texture_size)
-        pandastim_static.run()
-
-    elif test_case == '2':
-        #Test FullFieldDrift()
-        stim_params = {'velocity': 0.125, 'spatial_freq': 10, 'angle': 40}
-        texture_size = 512
-        window_size = 512
-        tex_array = textures.sin_texture(texture_size, stim_params['spatial_freq'])
-        pandastim_drifter = FullFieldDrift(tex_array, angle = stim_params["angle"],
-                                           velocity = stim_params["velocity"], window_size = window_size,
-                                           texture_size = texture_size)
-        pandastim_drifter.run()
-
-    elif test_case == '3':
-
-        stim_params = {'spatial_freq': 20, 'stim_angles': (30, 90),
-                       'position': (0, 0), 'band_radius': 1}
-        strip_angle = 45  #this will change frequently in practice so not in dict
-        texture_size = 512
-        window_size = 512
-        texture = textures.grating_texture(texture_size, stim_params['spatial_freq'])
-        binocular_static = BinocularStatic(texture,
-                                           stim_angles = stim_params["stim_angles"],
-                                           strip_angle = strip_angle,
-                                           position = stim_params["position"],
-                                           band_radius = stim_params['band_radius'],
-                                           window_size = window_size,
-                                           texture_size = texture_size)
-        binocular_static.run()
-
-    elif test_case == '4':
-        stim_params = {'spatial_freq': 25, 'stim_angles': (-45, 90), 'velocities': (.03, .01),
-                       'position': (0.1, -.4), 'band_radius': 2}
-        strip_angle = 25
-        texture_size = 512
-        window_size = 512
-        texture = textures.sin_texture(texture_size, stim_params['spatial_freq'])
-
-        binocular_drifting = BinocularDrift(texture,
-                                           stim_angles = stim_params["stim_angles"],
-                                           strip_angle = strip_angle,
-                                           position = stim_params["position"],
-                                           velocities = stim_params["velocities"],
-                                           band_radius = stim_params['band_radius'],
-                                           window_size = window_size,
-                                           texture_size = texture_size)
-        binocular_drifting.run()
-
-    elif test_case == '5':
-        stim_params = {'radius': 20, 'center': (0, 0), 'bg_intensity': 50, 'face_intensity': 255}
-        texture_size = 512
-        window_size = 512
-        circle_texture = textures.circle_texture(texture_size, stim_params['center'], stim_params['radius'],
-                                             stim_params['bg_intensity'], stim_params['face_intensity'])
-        circle_scaling = Scaling(circle_texture, scale = 1.2)
-        circle_scaling.run()
-
-    else:
-        print(usage_note)
+    import textures
+    print("\nNote for more complete set of examples to get started, see stimulus_examples.py\n")
+    sin_red_tex = textures.SinRgbTex(texture_size = 512,
+                                     spatial_frequency = 20,
+                                     rgb = (255, 0, 0))
+    sin_red_stim = ShowTexMoving(sin_red_tex,
+                                 angle = 25, 
+                                 velocity = -0.05,
+                                 profile_on = False)
+    sin_red_stim.run()

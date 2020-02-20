@@ -31,22 +31,22 @@ Panda3d comes with a nice graphical code profiler. To ease access to it, the sti
 You can find `pstats.exe` in your conda directory in `\envs\pstim\Scripts`. To learn more about profiling panda3d code: https://docs.panda3d.org/1.10/python/optimization/index
 
 ### To do (short term)
-- Refactoring:
+- Refactoring (2 hour)
+    - Let window name be a keyword, use it in the stimuli.py example.
     - Basic runthrough of code: documented, relatively clean, etc., including readme.
-    -  - what is the deal with setColor versus setBackgroundColor? Also in 's' you are setting card color twice.
-    - Also genrally the qm-set or whatever?
-    - main in stimuli is fubar
+    - what is the deal with setColor versus setBackgroundColor? Also in 's' you are setting card color twice.
+    - Also the ColorBlendAttrib.M_add, when is that needed?
     - why for transform do you use card.setR for 's' but card.setTexRotate? Are these different?
     - what are these different bg colors? sometimes 0 0 0 0 sometimes .5 .5  etc
-    - Get names straight: stim_class or stim or texture for inputs to stim and calling it self.stim? profile_on is sometimes just profile.
-- Saving:
+    - Get names straight: stim_class or stim or texture for inputs to stim and calling it self.stim? didn't call it texture because that's largely taken. could do texture.texture or tex.texture. Maybe `tex`? Explicit is better than implcit, but maybe not for this.
+    - profile_on is sometimes just profile. make sure it is consistent.
+    - are the ndc2uv used/necessary and should they be in utils?
+- Saving (1 hour)
     - Save mechanism check. E.g. for save mechanism, save stimulus types and params at top of file before saving which ones were delivered.
     - Have it save start/end time?
-- Add usage note to stimuli for showing examples.
-- Should trim down number of examples. Don't need example of everything. Just enough for a smart person to figure it out: maybe instead of examples in main (just one there), just do stimulus_examples.py, no examples folder.
-- Document how to use ClosedLoopStim. Also put closed loop stim in examples.
-- are the ndc2uv used/necessary and should they be in utils?
-- How to make a new texture class.
+- Instead of examples folder, just do examples file? Probably not, but fewer. Port from examples_working.py (2 hours).
+- Document how to run/test closed loop stuff (1 hour)
+
 
 
 ### To do (medium term)
@@ -66,6 +66,7 @@ You can find `pstats.exe` in your conda directory in `\envs\pstim\Scripts`. To l
 - Add contrast to sines/gratings
 - Have a stim code/previous stim or whatever, and only update task manager if it changes. Add better mechanism so if the stim type is same as previous, just return: don't change stimulus type, don't save anything.
 - INstructions on how to integrate new stimulus class into closed loop.
+- Document how to make a new texture class.
 
 ### To do (long term)
 - check with photodiode at different locations on window: is it identical?
