@@ -25,13 +25,16 @@ The three main modules:
 
 The `examples/` folder contains many examples. If you want to roll your own, I would use one of those as a starting point. For testing closed-loop experiment code, you can run `pub_class_toggle.py`, a zeromq publisher socket that emits random 0's and 1's that can be consumed by the ClosedLoop class.
 
-### Profiling pandastim code
-Panda3d comes with a nice graphical code profiler. To ease access to it, the stimulus classes that subclass `ShowBase` include a `profile_on` flag (which defaults to `False`). To activate it, run `pstats.exe` and set that flag to `True` to run the profiler. This will also cause an FPS display to show on your stimulus window even if you aren't using the profiler.
+### Profiling pandastim
+Panda3d comes with a nice graphical code profiler for Windows users. The stimulus classes include a `profile_on` flag (which defaults to `False`). To activate it, you have to run `pstats` before starting your Python code, and set that flag to `True`r. This will also cause an FPS display to show on your stimulus window even if you aren't using the profiler.
 
-You can find `pstats.exe` in your conda directory in `\envs\pstim\Scripts`. To learn more about profiling panda3d code: https://docs.panda3d.org/1.10/python/optimization/index
+On Windows, `pstats.exe` in your conda directory in `\envs\pstim\Scripts` (in Linux, `pstats` is in `\envs\pstim\bin` -- run it from the command line with `./pstats` -- you may need to install the module `libcanberra-gtk-module` first: `sudo apt-get install libcanberra-gtk-module`).
+
+To learn more about optimizaing/profiling in panda3d: https://docs.panda3d.org/1.10/python/optimization/index
+
 
 ### To do (short term)
-- Refactoring (2 hour)
+- Refactoring
     - Let window name be a keyword, use it in the stimuli.py example.
     - Basic runthrough of code: documented, relatively clean, etc., including readme.
     - what is the deal with setColor versus setBackgroundColor? Also in 's' you are setting card color twice.
@@ -41,7 +44,7 @@ You can find `pstats.exe` in your conda directory in `\envs\pstim\Scripts`. To l
     - Get names straight: stim_class or stim or texture for inputs to stim and calling it self.stim? didn't call it texture because that's largely taken. could do texture.texture or tex.texture. Maybe `tex`? Explicit is better than implcit, but maybe not for this.
     - profile_on is sometimes just profile. make sure it is consistent.
     - are the ndc2uv used/necessary and should they be in utils?
-- Saving (1 hour)
+- Saving
     - Save mechanism check. E.g. for save mechanism, save stimulus types and params at top of file before saving which ones were delivered.
     - Have it save start/end time?
 - Instead of examples folder, just do examples file? Probably not, but fewer. Port from examples_working.py (2 hours).
@@ -67,6 +70,7 @@ You can find `pstats.exe` in your conda directory in `\envs\pstim\Scripts`. To l
 - Have a stim code/previous stim or whatever, and only update task manager if it changes. Add better mechanism so if the stim type is same as previous, just return: don't change stimulus type, don't save anything.
 - INstructions on how to integrate new stimulus class into closed loop.
 - Document how to make a new texture class.
+- How to close programatically? Would be useful for smoothness and also could add time/close signal code to save file.
 
 ### To do (long term)
 - check with photodiode at different locations on window: is it identical?

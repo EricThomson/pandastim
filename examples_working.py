@@ -8,14 +8,15 @@ import textures
 import utils
 from datetime import datetime
 
-example_ind = 9
+example_ind = 1
 
 if example_ind == 0:
     sin_grey_tex = textures.SinGrayTex(texture_size = 512,
                                        spatial_frequency = 20)
     sin_stim = stimuli.ShowTexStatic(sin_grey_tex,
                                      angle = -30,
-                                     profile_on = False)
+                                     profile_on = False,
+                                     window_name = 'gray static sin example')
     sin_stim.run()
 
 
@@ -26,8 +27,9 @@ elif example_ind == 1:
     sin_red_stim = stimuli.ShowTexMoving(sin_red_tex,
                                          angle = 33, 
                                          velocity = -0.05,
-                                         fps = 40,
-                                         profile_on = False)
+                                         fps = 30,
+                                         window_name = 'red sin moving example',
+                                         profile_on = True)
     sin_red_stim.run()
 
 elif example_ind == 2:
@@ -85,9 +87,10 @@ elif example_ind == 4:
     binocular_show = stimuli.BinocularDrift(stim,
                                             position = (-0.5, 0.25),
                                             stim_angles = (40, 40),
-                                            strip_angle = 130,
+                                            strip_angle = 40, #130,
                                             strip_width = 6,
-                                            velocities = (-0.05, -0.05),
+                                            velocities = (-0.05, 0.05),
+                                            window_name = 'binocular red sin ex', 
                                             profile_on = True)
     binocular_show.run()
 

@@ -39,8 +39,8 @@ class ShowTexMoving(ShowBase):
         Positive angles are clockwise, negative ccw.
         Velocity is normalized to window size, so 1.0 is the entire window width (i.e., super-fast).
     """
-    def __init__(self, stim, angle = 0, velocity = 0.1, 
-                 fps = 30, window_size = None, profile_on = False):
+    def __init__(self, stim, angle = 0, velocity = 0.1, fps = 30,
+                 window_name = "ShowTexMoving", window_size = None, profile_on = False):
         super().__init__()
         if window_size is None:
             self.window_size = stim.texture_size
@@ -51,6 +51,7 @@ class ShowTexMoving(ShowBase):
         self.velocity = velocity
         self.bgcolor = (1, 1, 1, 1)
         self.texture_stage = TextureStage("texture_stage") 
+        self.window_name = window_name
         
         # Set frame rate (fps)
         ShowBaseGlobal.globalClock.setMode(ClockObject.MLimited)
@@ -58,13 +59,16 @@ class ShowTexMoving(ShowBase):
         
         #Set up profiling if desired
         if profile_on:
-            PStatClient.connect()
+            try:
+                PStatClient.connect() # this will only work if pstats is running
+            except:
+                print(f"self.__name__: pstats not running")
             ShowBaseGlobal.base.setFrameRateMeter(True)  #Show frame rate
             
         #Window properties set up 
         self.window_properties = WindowProperties()
         self.window_properties.setSize(self.window_size, self.window_size)
-        self.window_properties.setTitle("ShowTexMoving")
+        self.window_properties.setTitle(window_name)
         ShowBaseGlobal.base.win.requestProperties(self.window_properties)
         
         #Create scenegraph, attach stimulus to card.
@@ -99,11 +103,12 @@ class ShowTexStatic(ShowTexMoving):
         stim_show = ShowTexStatic(stim, fps = 10, profile_on = True)
         stim_show.run()
     """
-    def __init__(self, stim, angle = 0,  fps = 30, window_size = None, profile_on = False):     
+    def __init__(self, stim, angle = 0,  fps = 30, window_size = None, 
+                 window_name = "ShowTexStatic", profile_on = False):     
         super().__init__(stim, angle = angle, velocity = 0, 
                          fps = fps, window_size = window_size, 
-                         profile_on = profile_on )
-        self.window_properties.setTitle("ShowTexStatic")
+                         profile_on = profile_on, window_name = window_name)
+        self.window_properties.setTitle(self.window_name)
         ShowBaseGlobal.base.win.requestProperties(self.window_properties)
 
 
@@ -132,7 +137,7 @@ class BinocularDrift(ShowBase):
     """
     def __init__(self, stim, stim_angles = (0, 0), strip_angle = 0, position = (0,0),
                  velocities = (0,0), strip_width = 4, fps = 30, window_size = None,
-                 profile_on = False):
+                 window_name = 'BinocularDrift', profile_on = False):
         super().__init__()
         self.stim = stim
         if window_size == None:
@@ -149,11 +154,12 @@ class BinocularDrift(ShowBase):
         self.right_velocity = velocities[1]
         self.strip_angle = strip_angle #this will change fairly frequently
         self.fps = fps
+        self.window_name = window_name
 
         #Set window title and size
         self.window_properties = WindowProperties()
         self.window_properties.setSize(self.window_size, self.window_size)
-        self.window_properties.setTitle("BinocularDrift")
+        self.window_properties.setTitle(self.window_name)
         ShowBaseGlobal.base.win.requestProperties(self.window_properties)  #base is a panda3d global
 
         #CREATE MASK ARRAYS
@@ -236,7 +242,10 @@ class BinocularDrift(ShowBase):
         
         #Set up profiling if desired
         if profile_on:
-            PStatClient.connect()
+            try:
+                PStatClient.connect() # this will only work if pstats is running
+            except:
+                pass
             ShowBaseGlobal.base.setFrameRateMeter(True)  #Show frame rate
 
         # Following will show a small x at the center
@@ -347,10 +356,13 @@ class ClosedLoop(ShowBase):
         ShowBaseGlobal.globalClock.setMode(ClockObject.MLimited)
         ShowBaseGlobal.globalClock.setFrameRate(self.fps)  
         
-        # Profile the unsub
+        #Set up profiling if desired
         if profile_on:
-            PStatClient.connect()
-            ShowBaseGlobal.base.setFrameRateMeter(True) 
+            try:
+                PStatClient.connect() # this will only work if pstats is running
+            except:
+                print("pstat not on")
+            ShowBaseGlobal.base.setFrameRateMeter(True)  #Show frame rate
             
         #Set initial texture(s)
         self.set_stimulus(str(self.current_stim_num))
@@ -1126,5 +1138,6 @@ if __name__ == '__main__':
     sin_red_stim = ShowTexMoving(sin_red_tex,
                                  angle = 25, 
                                  velocity = -0.05,
+                                 window_name = 'red sin test stim',
                                  profile_on = False)
     sin_red_stim.run()
