@@ -31,25 +31,22 @@ Panda3d comes with a nice graphical code profiler. To ease access to it, the sti
 You can find `pstats.exe` in your conda directory in `\envs\pstim\Scripts`. To learn more about profiling panda3d code: https://docs.panda3d.org/1.10/python/optimization/index
 
 ### To do (short term)
-- Light refactoring:
+- Refactoring:
     - Basic runthrough of code: documented, relatively clean, etc., including readme.
     -  - what is the deal with setColor versus setBackgroundColor? Also in 's' you are setting card color twice.
     - Also genrally the qm-set or whatever?
-- main in stimuli is fubar
+    - main in stimuli is fubar
+    - why for transform do you use card.setR for 's' but card.setTexRotate? Are these different?
+    - what are these different bg colors? sometimes 0 0 0 0 sometimes .5 .5  etc
+    - Get names straight: stim_class or stim or texture for inputs to stim and calling it self.stim? profile_on is sometimes just profile.
 - Saving:
     - Save mechanism check. E.g. for save mechanism, save stimulus types and params at top of file before saving which ones were delivered.
     - Have it save start/end time?
-
-- why for transform do you use card.setR for 's' but card.setTexRotate? Are these different?
-- what are these different bg colors? sometimes 0 0 0 0 sometimes .5 .5  etc
-- Get names straight: stim_class or stim or texture for inputs to stim and calling it self.stim? profile_on is sometimes just profile.
 - Add usage note to stimuli for showing examples.
-- Should trim down number of examples. Don't need example of everything. Just enough for a smart person to figure it out.
-- Clean up stimulus_classes versus experiments (former includes experiments)
-- Experiment examples
-  - Experiment we will actually use in simple form: red grating/black/white  spot.
-- Clean up examples and working directories and document the files better.
+- Should trim down number of examples. Don't need example of everything. Just enough for a smart person to figure it out: maybe instead of examples in main (just one there), just do stimulus_examples.py, no examples folder.
 - Document how to use ClosedLoopStim. Also put closed loop stim in examples.
+- are the ndc2uv used/necessary and should they be in utils?
+- How to make a new texture class.
 
 
 ### To do (medium term)
@@ -68,6 +65,7 @@ You can find `pstats.exe` in your conda directory in `\envs\pstim\Scripts`. To l
 - Add drifting noise stimulus to drifting_fullfield examples.
 - Add contrast to sines/gratings
 - Have a stim code/previous stim or whatever, and only update task manager if it changes. Add better mechanism so if the stim type is same as previous, just return: don't change stimulus type, don't save anything.
+- INstructions on how to integrate new stimulus class into closed loop.
 
 ### To do (long term)
 - check with photodiode at different locations on window: is it identical?
@@ -83,11 +81,11 @@ You can find `pstats.exe` in your conda directory in `\envs\pstim\Scripts`. To l
 - If you are just learning panda3d, consider working through their tutorial (https://www.panda3d.org/manual/). Also you might consider installing their SDK, as it comes with useful examples (https://www.panda3d.org/download/).
 - panda3d doesn't listen to your OS scale setting, so 800 pixel window is an 800 pixel window, it will not be scaled by your OS.
 - It often looks like textures are drifting vertically/horizontally even when they are not. This is the well-known 'aperture problem'. To disambiguate, increase the window size until you can see their edges.
-- `stimuli.KeyboardToggleStim` is largely a debugging class: it is really helpful for for testing out code snippits you are thinking of pushing to the closed loop stimuli. Try to keep it up to date with those classes.
+- `stimuli.KeyboardToggleStim` is largely a debugging class: it is really helpful for for testing out new stimulus classes you are thinking of pushing to `ClosedLoop`.
 
 
 #### Conventions
-Mostly we are trying to follow PEP8. Naming conventions: UpperCamelCase for classes; lower_case_underscore for vars/functions/methods. Explicit is better than implicit.
+PEP8, largely. UpperCamelCase for classes; lower_case_underscore for vars/functions/methods. Explicit is better than implicit.
 
 #### Acknowledgments
-Thanks to the panda3d developers, especially rdb provided lots of help figuring out how to efficiently do 2d things in a 3d game engine.
+Thanks to rdb (developer of panda3d) who provided lots of help figuring out how to efficiently do 2d things in a 3d game engine. Also the panda3d community in general has been very helpful.

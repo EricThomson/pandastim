@@ -194,7 +194,7 @@ elif example_ind == 8:
         closed_loop.filestream.close()
 
 elif example_ind == 9:
-    print("For this to work make sure you are running pub_class_toggle.py at same time.")
+    print("For this to work make sure you are running pub_class_toggle3.py at same time.")
     sub = utils.Subscriber(topic = "stim", port = "1234")
     monitor = utils.Monitor(sub)
 

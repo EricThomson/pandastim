@@ -317,7 +317,8 @@ class OpenLoopStim(ShowBase):
 
 class ClosedLoop(ShowBase):
     """
-    Generic closed loop class takes in list of 
+    Generic closed loop class takes in list of texture classes, and stimulus parameters (angles),
+    and presents them in closed loop with zmq signals. 
     """
     def __init__(self, tex_classes, stim_params, initial_stim_ind = 0, window_size = 512, 
                  profile_on = False, fps = 30, save_path = None):
@@ -351,8 +352,6 @@ class ClosedLoop(ShowBase):
             PStatClient.connect()
             ShowBaseGlobal.base.setFrameRateMeter(True) 
             
-
-         
         #Set initial texture(s)
         self.set_stimulus(str(self.current_stim_num))
         
@@ -363,8 +362,6 @@ class ClosedLoop(ShowBase):
         # Wrinkle: should we set this here or there?
         self.taskMgr.add(self.move_textures, "move textures")
 
-        
-        
     def set_tasks(self):
         if self.current_stim_params['stim_type'] == 'b':
             self.taskMgr.add(self.textures_update, "move_both")
@@ -398,8 +395,8 @@ class ClosedLoop(ShowBase):
     def create_cards(self):
         """ 
         Create cards: these are panda3d objects that are required for displaying textures.
-        You can't just have a disembodied texture. IN pandastim (at least for now) we are
-        only showing 2d projections of textures, so we can use cards.
+        You can't just have a disembodied texture. In pandastim (at least for now) we are
+        only showing 2d projections of textures, so we use cards.
         """
         if self.current_stim_params['stim_type'] == 'b':
             #CREATE CARDS/SCENEGRAPH
@@ -453,7 +450,10 @@ class ClosedLoop(ShowBase):
     
     def set_stimulus(self, data):
         """ 
-        Invoked with different 
+        Uses events from zmq to set the stimulus value. 
+        
+        Matt: this should be more general. Right now it is set up to consume 3
+        different inputs.
         """
             
         if not self.stimulus_initialized:
@@ -465,7 +465,6 @@ class ClosedLoop(ShowBase):
 
         if data == '0':
             self.current_stim_num = 0
-            
         elif data == '1':
             self.current_stim_num = 1
         elif data == '2':
@@ -485,8 +484,6 @@ class ClosedLoop(ShowBase):
         self.set_transforms()
                           
         return
-
-
 
     def set_transforms(self):
         """ 
@@ -567,13 +564,10 @@ class ClosedLoop(ShowBase):
             self.card.removeNode()
         return
         
-
-
-
     def trs_transform(self):
         """ 
         trs = translate-rotate-scale transform for mask stage
-        rdb contributed to this code
+        panda3d developer rdb contributed to this code
         """
         pos = 0.5 + self.mask_position_uv[0], 0.5 + self.mask_position_uv[1]
         center_shift = TransformState.make_pos2d((-pos[0], -pos[1]))
@@ -1124,6 +1118,8 @@ class Scaling(ShowBase):
 
 #%%
 if __name__ == '__main__':
+
+    print("\nNote for more full set of examples to get started, see stimulus_examples.py\n")
 
     usage_note = "\nCommand line arguments:\n1: To test FullFieldStatic [default]\n2: FullfieldDrift\n"
     usage_note += "3: BinocularStatic\n4: BinocularDrift\n5: Scaling"
