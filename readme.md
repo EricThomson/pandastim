@@ -47,12 +47,14 @@ To learn more about optimizaing/profiling in panda3d: https://docs.panda3d.org/1
 - Saving
     - Save mechanism check. E.g. for save mechanism, save stimulus types and params at top of file before saving which ones were delivered.
     - Have it save start/end time?
+- Put x in ClosedLoop at position.
 - Instead of examples folder, just do examples file? Probably not, but fewer. Port from examples_working.py (2 hours).
 - Document how to run/test closed loop stuff (1 hour)
 
 
 
 ### To do (medium term)
+- What is difference b/w card.detachNode() and card.removeNode(), and do we need to do clearTexture(stage) first? They both seem to work fine. Is detach safer?
 - Create new updating stimulus classes
     - looming circle stimulus (static_fullfield_circle)
     - randomly updating stimulus (tex_random_working.py)

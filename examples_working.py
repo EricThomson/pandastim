@@ -8,7 +8,7 @@ import textures
 import utils
 from datetime import datetime
 
-example_ind = 1
+example_ind = 2
 
 if example_ind == 0:
     sin_grey_tex = textures.SinGrayTex(texture_size = 512,
@@ -167,36 +167,6 @@ elif example_ind == 7:
         
         
 elif example_ind == 8:
-    print("For this to work make sure you are running pub_class_toggle.py at same time.")
-    sub = utils.Subscriber(topic = "stim", port = "1234")
-    monitor = utils.Monitor(sub)
-
-    tex1 = textures.SinRgbTex(rgb = (255, 0, 0))
-    params1 = {'stim_type': 's', 'angle': 45, 'velocity': 0.1}
-
-    tex2 = textures.GratingGrayTex(spatial_frequency = 20)
-    params2 = {'stim_type': 's',  'angle': 80, 'velocity': -0.05}
-
-    stim_texts = [tex1, tex2]
-    stim_params = [params1, params2]
-    current_dt = datetime.now()
-    filename = current_dt.strftime(("toggle_%Y%m%d_%H%M%S.txt"))
-    save_dir = r'C:/Users/Eric/Desktop/tmp_stuff/pstim_data/'
-    file_path = save_dir + filename
-    
-    frame_rate = 30
-    closed_loop = stimuli.ClosedLoop(stim_texts,
-                                     stim_params,
-                                     initial_stim_ind = 0,
-                                     profile_on = True,
-                                     fps = frame_rate, 
-                                     save_path = None)
-    closed_loop.run()
-    monitor.kill()
-    if closed_loop.filestream:
-        closed_loop.filestream.close()
-
-elif example_ind == 9:
     print("For this to work make sure you are running pub_class_toggle3.py at same time.")
     sub = utils.Subscriber(topic = "stim", port = "1234")
     monitor = utils.Monitor(sub)
@@ -222,9 +192,9 @@ elif example_ind == 9:
     closed_loop = stimuli.ClosedLoop(stim_texts,
                                      stim_params,
                                      initial_stim_ind = 0,
-                                     profile_on = True,
+                                     profile_on = False,
                                      fps = frame_rate, 
-                                     save_path = file_path)
+                                     save_path = None)
     closed_loop.run()
     monitor.kill()
     if closed_loop.filestream:

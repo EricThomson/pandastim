@@ -9,9 +9,8 @@ Component types (texture data types in panda3d):
 https://www.panda3d.org/reference/python/classpanda3d_1_1core_1_1Texture.html#a81f78fc173dedefe5a049c0aa3eed2c0
 
 To do:
-    You could make texture size x/y different. Currently constrained to be a square (setup2dTexture method)
+    Consider making texture size x/y different. Currently constrained to square (setup2dTexture method)
 """
-import sys
 import numpy as np
 from datetime import datetime
 
@@ -32,21 +31,21 @@ class ShowTexMoving(ShowBase):
     
     Usage:
         stim = SinGreyTex()
-        stim_show = ShowTexMoving(stim, angle = 30, velocity = 0.1, fps = 40, profile_on = True)
+        stim_show = ShowTexMoving(tex, angle = 30, velocity = 0.1, fps = 40, profile_on = True)
         stim_show.run()
         
     Note(s):
         Positive angles are clockwise, negative ccw.
         Velocity is normalized to window size, so 1.0 is the entire window width (i.e., super-fast).
     """
-    def __init__(self, stim, angle = 0, velocity = 0.1, fps = 30,
+    def __init__(self, tex, angle = 0, velocity = 0.1, fps = 30,
                  window_name = "ShowTexMoving", window_size = None, profile_on = False):
         super().__init__()
         if window_size is None:
             self.window_size = stim.texture_size
         else:
             self.window_size = window_size
-        self.stim = stim
+        self.tex = tex
         self.angle = angle
         self.velocity = velocity
         self.bgcolor = (1, 1, 1, 1)
@@ -59,10 +58,7 @@ class ShowTexMoving(ShowBase):
         
         #Set up profiling if desired
         if profile_on:
-            try:
-                PStatClient.connect() # this will only work if pstats is running
-            except:
-                print(f"self.__name__: pstats not running")
+            PStatClient.connect() # this will only work if pstats is running
             ShowBaseGlobal.base.setFrameRateMeter(True)  #Show frame rate
             
         #Window properties set up 
@@ -78,7 +74,7 @@ class ShowTexMoving(ShowBase):
         # Scale is so it can handle arbitrary rotations and shifts in binocular case
         self.card.setScale(np.sqrt(8))
         self.card.setColor(self.bgcolor)  
-        self.card.setTexture(self.texture_stage, self.stim.texture)
+        self.card.setTexture(self.texture_stage, self.tex.texture)
        
         #Transform the card
         self.card.setR(self.angle)
@@ -99,13 +95,13 @@ class ShowTexStatic(ShowTexMoving):
     Most useful for testing stimuli. Obviously no need to set fps high.
     
     Usage:
-        stim = SinGreyTex()
-        stim_show = ShowTexStatic(stim, fps = 10, profile_on = True)
+        tex = SinGreyTex()
+        stim_show = ShowTexStatic(tex, fps = 10, profile_on = True)
         stim_show.run()
     """
-    def __init__(self, stim, angle = 0,  fps = 30, window_size = None, 
+    def __init__(self, tex, angle = 0,  fps = 30, window_size = None, 
                  window_name = "ShowTexStatic", profile_on = False):     
-        super().__init__(stim, angle = angle, velocity = 0, 
+        super().__init__(tex, angle = angle, velocity = 0, 
                          fps = fps, window_size = window_size, 
                          profile_on = profile_on, window_name = window_name)
         self.window_properties.setTitle(self.window_name)
@@ -475,13 +471,9 @@ class ClosedLoop(ShowBase):
         else:
             self.clear_cards() #clear the textures before adding new ones
 
-        if data == '0':
-            self.current_stim_num = 0
-        elif data == '1':
-            self.current_stim_num = 1
-        elif data == '2':
-            self.current_stim_num = 2
-            
+        # This assumes data streaming is string numbers 0, 1, etc.
+        self.current_stim_num = int(data)
+
         #Save stim to file
         if self.filestream:
             current_datetime = str(datetime.now())
@@ -565,15 +557,18 @@ class ClosedLoop(ShowBase):
         Clear cards when new stimulus: stim-class sensitive
         """
         if self.current_stim_params['stim_type'] == 'b':
-            self.left_card.clearTexture(self.left_texture_stage)  #turn off stage
-            self.left_card.clearTexture(self.left_mask_stage)
-            self.right_card.clearTexture(self.right_texture_stage)
-            self.right_card.clearTexture(self.right_mask_stage)
+            #self.left_card.clearTexture(self.left_texture_stage)  #turn off stage
+            #self.left_card.clearTexture(self.left_mask_stage)
+            #self.right_card.clearTexture(self.right_texture_stage)
+            #self.right_card.clearTexture(self.right_mask_stage)
             self.left_card.removeNode()
             self.right_card.removeNode()
+            #self.left_card.detachNode()
+            #self.right_card.detachNode()
         elif self.current_stim_params['stim_type'] == 's':
-            self.card.clearTexture(self.texture_stage)  #turn off stage
+            #self.card.clearTexture(self.texture_stage)  #turn off stage
             self.card.removeNode()
+            #self.card.detachNode()
         return
         
     def trs_transform(self):
@@ -699,10 +694,8 @@ class ClosedLoopBinocular(ShowBase):
             clear previous texture otherwise it will cover new textures."""
             self.self_initialized = True
         else:
-            self.left_card.clearTexture(self.left_texture_stage)  #turn off stage
-            self.left_card.clearTexture(self.left_mask_stage)
-            self.right_card.clearTexture(self.right_texture_stage)
-            self.right_card.clearTexture(self.right_mask_stage)
+            self.left_card.removeNode()  #or detachNode()
+            self.right_card.removeNode()
         
         #Save stim to file
         if self.filestream:
@@ -890,7 +883,7 @@ class ClosedLoopStim(ShowBase):
             clear previous texture otherwise it will cover new textures."""
             self.self_initialized = True
         else:
-            self.card.clearTexture(self.texture_stage)  #turn off stage
+            self.card.removeNode()  #or detachNode()
         
         #Save stim to file
         if self.filestream:
@@ -1007,7 +1000,8 @@ class KeyboardToggleStim(ShowBase):
             Otherwise clear previous texture so they do not overlap."""
             self.self_initialized = True
         else:
-            self.card.clearTexture(self.texture_stage)  #turn off stage
+            #self.card.clearTexture(self.texture_stage)
+            self.card.detachNode()  #removeNode v detachNode?
 
 
         if data == '0':
