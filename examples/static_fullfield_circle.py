@@ -8,7 +8,7 @@ Part of pandastim package: https://github.com/EricThomson/pandastim
 import sys
 sys.path.append('..')  #put parent directory in python path
 
-from stimulus_classes import FullFieldStatic
+from stimuli import FullFieldStatic
 from textures import circle_texture
 
 stim_params = {'radius': 20, 'center': (100, -100), 'bg_intensity': 50, 'face_intensity': 255}

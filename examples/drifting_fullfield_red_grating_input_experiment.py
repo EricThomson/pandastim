@@ -2,7 +2,7 @@
 """
 pandastim/examples/drifting_fullfield_red_grating_input_experiment.py
 Example of how to show a drifting grating in an experiment, interspersed with black rgb texture,
-toggled with input. Plan on using serial package (umm, no just use keyboard at first).
+toggled with input (in this example, just keyboard)
 
 Note this is not finished, am working on getting it functional.
 
@@ -17,6 +17,7 @@ from os import makedirs
 from datetime import datetime
 from experiments import FullFieldDriftInputExperiment
 from textures import grating_texture_rgb, rgb_texture
+
 
 #Set up save path
 timenow = datetime.now()
@@ -35,13 +36,22 @@ Note we set up texture functions as a dictionary that is passed in, rather than 
 giving the function direction, so we can encode/save the name and not have to deal with encoding/saving
 the function objecty itself (e.g., it is a lazy way to circumvent jsonifying a function object directly)
 """
+#stim_params = {'velocity': -0.18, 'spatial_freq': 13, 'angle': -30, 'rgb': (255, 0, 0)}
+#texture_size = 512
+#window_size = 512
+#frame_rate = 50
+
 window_size = 512
-spatial_freq = 30
-speed = 0.10
+spatial_freq = 20
+speed = -0.1
+angle = -30
+frame_rate = 50
 texture_size = window_size
+# rgb grating and pure color (rgb) are the two textures
 texture_functions = {'rgb_grating': grating_texture_rgb,
                      'rgb': rgb_texture}
-stim_params = [{'texture': 'rgb_grating', 'angle':  0, 'velocity': speed,
+# Parameters for the texture functions: red rgb_grating, and black full field.
+stim_params = [{'texture': 'rgb_grating', 'angle':  angle, 'velocity': speed,
                 'kwargs': {'spatial_frequency': spatial_freq, 'texture_size': texture_size, 'rgb': (255,0,0)}},
                {'texture': 'rgb', 'angle': 0, 'velocity': 0,
                 'kwargs': {'rgb': (0, 0, 0), 'texture_size': texture_size}},
@@ -49,6 +59,6 @@ stim_params = [{'texture': 'rgb_grating', 'angle':  0, 'velocity': speed,
 #Arrays of stimulus values and durations
 exp_app = FullFieldDriftInputExperiment(stim_params, texture_functions,
                                    window_size = window_size, texture_size = texture_size,
-                                   file_path = file_path)
+                                   file_path = file_path, profile = True, fps = frame_rate)
 #app.plot_timeline()
 exp_app.run()

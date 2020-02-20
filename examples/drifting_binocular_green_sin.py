@@ -8,10 +8,10 @@ Part of pandastim package: https://github.com/EricThomson/pandastim
 import sys
 sys.path.append('..')  #put parent directory in python path
 
-from stimulus_classes import BinocularDrift
+from stimuli import BinocularDrift
 from textures import sin_texture_rgb
 
-stim_params = {'spatial_freq': 20, 'stim_angles': (30, -30), 'velocities': (0.05, -.03),
+stim_params = {'spatial_freq': 20, 'stim_angles': (30, -25), 'velocities': (0.05, -.06),
                'position': (0, 0), 'band_radius': 1}
 mask_angle = 20  #this will change frequently in practice so not in dict
 texture_size = 512

@@ -8,15 +8,17 @@ Part of pandastim package: https://github.com/EricThomson/pandastim
 import sys
 sys.path.append('..')  #put parent directory in python path
 
-from stimulus_classes import FullFieldDrift
+from stimuli import FullFieldDrift
 from textures import sin_texture_2byte
 
 stim_params = {'velocity': 0.2, 'spatial_freq': 5, 'angle': -45}
 texture_size = 512
 window_size = 512
+fps = 40
 sin_texture = sin_texture_2byte(texture_size, stim_params['spatial_freq'])
 sin_drifter = FullFieldDrift(sin_texture, angle = stim_params["angle"], 
                                    velocity = stim_params["velocity"], 
                                    window_size = window_size, 
-                                   texture_size = texture_size)
+                                   texture_size = texture_size,
+                                   frame_rate = fps)
 sin_drifter.run()

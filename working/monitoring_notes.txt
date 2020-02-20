@@ -1,0 +1,46 @@
+In general it wouldn't hurt to read about socket handling in Python. There is a really good overview:
+    https://realpython.com/python-sockets/
+Also pretty good: 
+    https://pymotw.com/2/select/
+This is often recommended:
+    https://docs.python.org/3/howto/sockets.html
+    
+Consuming an event loop in zmq:
+
+    Built-in event loop in zmq:
+        https://learning-0mq-with-pyzmq.readthedocs.io/en/latest/pyzmq/multisocket/tornadoeventloop.html
+        https://het.as.utexas.edu/HET/Software/pyZMQ/eventloop.html
+        
+        
+    Examples or SO questions
+        https://stackoverflow.com/questions/15991504/pyzmq-create-a-process-with-its-own-socket
+        https://www.programcreek.com/python/example/103268/zmq.eventloop.zmqstream.ZMQStream
+        https://stackoverflow.com/questions/31791349/creating-a-zmqstream-for-using-in-tornado-ioloop
+        https://pyzmq.readthedocs.io/en/latest/eventloop.html
+        https://learning-0mq-with-pyzmq.readthedocs.io/en/latest/pyzmq/multisocket/tornadoeventloop.html
+  
+Pandastim has built-in networking features probably will be great but are poorly documented and a bit confusing:
+    Examples:
+        https://docs.panda3d.org/1.10/python/programming/networking/datagram-protocol/client-server-connection
+        
+        https://discourse.panda3d.org/t/need-help-with-simple-server/10368/4
+        https://discourse.panda3d.org/t/object-oriented-networking-code-with-panda3d-foundation/4508/5
+        https://discourse.panda3d.org/t/panda3d-network-example/908/2
+        https://discourse.panda3d.org/t/opening-a-udp-connection/15830
+    References:
+        https://docs.panda3d.org/1.10/python/programming/networking/index
+    
+    More in the weeds:
+        https://discourse.panda3d.org/t/sending-objects-through-datagram/13644
+        https://discourse.panda3d.org/t/python-interpreter-crashes-with-datagram-datagramiterator/9972
+    
+nanomsg: cutting edge and has asyncio support with new libraries like trio
+     https://github.com/codypiersall/pynng
+     https://pynng.readthedocs.io/en/latest/core.html#pynng.Sub0
+OTOH: stytra uses zmq, so you should probably just use that yourself and not be a pita.
+
+Consider using trio instead of multithreading:
+    https://trio.readthedocs.io/en/stable/index.html
+     
+
+

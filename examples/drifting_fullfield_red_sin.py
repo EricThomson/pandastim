@@ -8,7 +8,7 @@ Part of pandastim package: https://github.com/EricThomson/pandastim
 import sys
 sys.path.append('..')  #put parent directory in python path
 
-from stimulus_classes import FullFieldDrift
+from stimuli import FullFieldDrift
 from textures import sin_texture_rgb
 
 stim_params = {'velocity': -0.15, 'angle': -35}

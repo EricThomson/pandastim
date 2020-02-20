@@ -13,7 +13,7 @@ import numpy as np
 from pathlib import Path
 from os import makedirs
 from datetime import datetime
-from stimulus_classes import FullFieldDriftExperiment
+from experiments import FullFieldDriftExperiment
 from textures import grating_texture, rgb_texture
 
 #Set up save path
@@ -33,6 +33,9 @@ except FileExistsError:
 #the function objecty itself (e.g., it is a lazy way to circumvent jsonifying a function object directly)
 window_size = 512
 texture_size = window_size 
+
+
+
 texture_functions = {'grating': grating_texture,
                      'rgb': rgb_texture}  #this is needed b/c I'm not going to jsonify the functions themselves when saving
 stim_params = [{'texture': 'grating', 'angle': -20, 'velocity': 0.10, 'kwargs': {'spatial_frequency': 15, 'texture_size': texture_size}},

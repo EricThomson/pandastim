@@ -8,7 +8,7 @@ Part of pandastim package: https://github.com/EricThomson/pandastim
 import sys
 sys.path.append('..')  #put parent directory in python path
 
-from stimulus_classes import BinocularDrift
+from stimuli import BinocularDrift
 from textures import grating_texture
 
 stim_params = {'spatial_freq': 20, 'stim_angles': (45, 45), 'velocities': (0.05, .05),
