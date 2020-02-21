@@ -54,6 +54,9 @@ class TextureBase:
             
         plt.title(self.texture_name)
         plt.show()
+        
+    def __str__(self):
+        pass
     
 
 class RgbTex(TextureBase):
@@ -75,6 +78,9 @@ class RgbTex(TextureBase):
         rgb_texture[..., 1] = self.rgb[1]
         rgb_texture[..., 2] = self.rgb[2]
         return rgb_texture
+    
+    def __str__(self):
+        return f"{type(self).__name__} size:{self.texture_size} rgb:{self.rgb} "
 
 
 class CircleGrayTex(TextureBase):
@@ -103,7 +109,11 @@ class CircleGrayTex(TextureBase):
         circle_mask = (X - self.center[0])**2 + (Y - self.center[1])**2 <= self.radius**2
         circle_texture[circle_mask] = self.fg_intensity
         return np.uint8(circle_texture)
-    
+
+    def __str__(self):
+        part1 =  f"{type(self).__name__} size:{self.texture_size} center:{self.center} "
+        part2 = f"radius:{self.radius} bg:{self.bg_intensity} fg:{self.fg_intensity} "
+        return part1 + part2
   
 class SinGrayTex(TextureBase):
     """
@@ -123,7 +133,9 @@ class SinGrayTex(TextureBase):
         array, Y = np.meshgrid(x[: self.texture_size],y[: self.texture_size])
         return utils.sin_byte(array, freq = self.frequency) 
     
-
+    def __str__(self):
+        return f"{type(self).__name__} size:{self.texture_size} frequency:{self.frequency} "
+    
 class SinRgbTex(TextureBase):
     """
     Sinusoid that goes from black to the given rgb value. 
@@ -153,6 +165,9 @@ class SinRgbTex(TextureBase):
         rgb_sin[...,2] = B
         return rgb_sin
     
+    def __str__(self):
+        return f"{type(self).__name__} size:{self.texture_size} frequency:{self.frequency} rgb:{self.rgb} "
+    
     
 class GratingGrayTex(TextureBase):
     """
@@ -168,6 +183,9 @@ class GratingGrayTex(TextureBase):
         y = np.linspace(0, 2*np.pi, self.texture_size+1)
         X, Y = np.meshgrid(x[: self.texture_size],y[: self.texture_size])
         return utils.grating_byte(X, freq = self.frequency)
+    
+    def __str__(self):
+        return f"{type(self).__name__} size:{self.texture_size} frequency:{self.frequency} "
     
     
 class GratingRgbTex(TextureBase):
@@ -195,12 +213,15 @@ class GratingRgbTex(TextureBase):
         rgb_grating[...,2] = B
         return rgb_grating 
         
-        
+    def __str__(self):
+        return f"{type(self).__name__} size:{self.texture_size} frequency:{self.frequency} rgb:{self.rgb} "
+    
 #%%  
 if __name__ == '__main__':
     example = 5
     if example == 0:
         pink_rgb = RgbTex(rgb = (255, 150, 150))
+        
         pink_rgb.view()
     
     if example == 1:

@@ -33,9 +33,9 @@ elif example_ind == 1:
     sin_red_stim.run()
 
 elif example_ind == 2:
-    stim1 = textures.SinRgbTex(rgb = (50, 255, 255))
-    stim2 = textures.SinRgbTex(rgb = (0, 0, 255))
-    stim_classes = [stim1, stim2]
+    tex1 = textures.SinRgbTex(rgb = (50, 255, 255))
+    tex2 = textures.SinRgbTex(rgb = (0, 0, 255))
+    tex_classes = [tex1, tex2]
     stim_params = [{'angle': 45, 'velocity': 0.1},
                    {'angle': -45, 'velocity': -0.1}]
     frame_rate = 40
@@ -43,12 +43,13 @@ elif example_ind == 2:
     filename = current_dt.strftime(("liftoff_%Y%m%d_%H%M%S.txt"))
     save_dir = r'C:/Users/Eric/Desktop/tmp_stuff/pstim_data/'
     file_path = save_dir + filename
-    toggle_show = stimuli.KeyboardToggleStim(stim_classes,
-                                             stim_params,
-                                             profile_on = False,
-                                             fps = frame_rate,
-                                             save_path = file_path)
+    toggle_show = stimuli.KeyboardToggleTex(tex_classes,
+                                            stim_params,
+                                            profile_on = False,
+                                            fps = frame_rate,
+                                            save_path = file_path)
     toggle_show.run()
+    # close open file
     if toggle_show.filestream:
         toggle_show.filestream.close()
     
@@ -156,7 +157,7 @@ elif example_ind == 7:
     frame_rate = 30
     closed_bin = stimuli.ClosedLoop(stim_texts,
                                     stim_params,
-                                    initial_stim_ind = 0,
+                                    initial_tex_ind = 0,
                                     profile_on = False,
                                     fps = frame_rate,
                                     save_path = None)

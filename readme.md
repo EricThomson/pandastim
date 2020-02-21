@@ -35,7 +35,7 @@ To learn more about optimizaing/profiling in panda3d: https://docs.panda3d.org/1
 
 ### To do (short term)
 - Refactoring
-    - Let window name be a keyword, use it in the stimuli.py example.
+    - Need a print or whatever for the Tex classes for insertion during Stim displays during filesaving.
     - Basic runthrough of code: documented, relatively clean, etc., including readme.
     - what is the deal with setColor versus setBackgroundColor? Also in 's' you are setting card color twice.
     - Also the ColorBlendAttrib.M_add, when is that needed?
