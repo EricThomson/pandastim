@@ -23,9 +23,9 @@ The three main modules:
 - `textures.py`: texture classes used by the stimulus classes. They are all instances of the `TextureBase` abstract base class defined therein. If you run textures by itself, you can toggle different examples in `main` for fun and debugging.
 - `utils.py`: helper code used across different classes: the interface classes for zmq sockets are here.
 
-The `examples/` folder contains many examples. If you want to roll your own, I would use one of those as a starting point. For testing closed-loop experiment code, you can run `pub_class_toggle.py`, a zeromq publisher socket that emits random 0's and 1's that can be consumed by the ClosedLoop class.
+The `examples/` folder contains many examples. If you want to roll your own, I would use one of those as a starting point. For testing closed-loop experiment code, you can run `pub_class_toggle.py`, a zeromq publisher socket that emits random 0's and 1's that can be consumed by the `InputControlStim` class.
 
-### Profiling pandastim
+### Profiling pandastim apps
 Panda3d comes with a nice graphical code profiler for Windows users. The stimulus classes include a `profile_on` flag (which defaults to `False`). To activate it, you have to run `pstats` before starting your Python code, and set that flag to `True`r. This will also cause an FPS display to show on your stimulus window even if you aren't using the profiler.
 
 On Windows, `pstats.exe` in your conda directory in `\envs\pstim\Scripts` (in Linux, `pstats` is in `\envs\pstim\bin` -- run it from the command line with `./pstats` -- you may need to install the module `libcanberra-gtk-module` first: `sudo apt-get install libcanberra-gtk-module`).
@@ -35,20 +35,19 @@ To learn more about optimizaing/profiling in panda3d: https://docs.panda3d.org/1
 
 ### To do (short term)
 - Refactoring: are things clean and documented, including this?
-    - what is the deal with setColor versus setBackgroundColor? Also in 's' you are setting card color twice.
-    - Also the ColorBlendAttrib.M_add, when is that needed?
     - why for transform do you use card.setR for 's' but card.setTexRotate? Are these different?
     - what are these different bg colors? sometimes 0 0 0 0 sometimes .5 .5  etc
     - Get names straight: stim_class or stim or texture for inputs to stim and calling it self.stim? didn't call it texture because that's largely taken. could do texture.texture or tex.texture. Maybe `tex`? Explicit is better than implcit, but maybe not for this.
     - profile_on is sometimes just profile. make sure it is consistent.
     - are the ndc2uv used/necessary and should they be in utils?
     - what text is shown in window? initializing?
+    - It doesn't capture the first signal from zmq
 - Just do a few examples in examples folder, clean that up.
-- How to ensure there is a texture? Seems you could easily have a tex before binocular, and then it will try to clear binocular tex's, and vice-versa. Shouldn't you create the cards once  early on? Shouldn't you be clearing binocular if it was tex, and tex if it was binicoular? Seems confusing.
 
 
 ### To do (medium term)
-- Filtering out repeats: do in Monitor or continue doing in set_stimulus? Whatever is easiest for user.
+- How to ensure there is a texture (avoid `Assertion failed: !is_empty()`) Seems you are asking for bugs. Note cards made most recently will show on top of other cards. You could make them invisible temporarily or something. Ultimately add a third stim type and test this it will be a bit messy: you will want to generate a list of stim types, and then when you have one type, delete the other types in clear_cards, not just the one we are about to switch away from.
+- Filtering out repeats: do in Monitor or in set_stimulus or in sender application? Whatever is easiest for user you can do any of them, really.
 - What is difference b/w card.detachNode() and card.removeNode(), and do we need to do clearTexture(stage) first? They both seem to work fine. Is detach safer?
 - Create new updating stimulus classes
     - looming circle stimulus (static_fullfield_circle)

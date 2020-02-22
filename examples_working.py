@@ -8,7 +8,7 @@ import textures
 import utils
 from datetime import datetime
 
-example_ind = 5
+example_ind = 4
 
 
 if example_ind == 0:
@@ -130,15 +130,16 @@ elif example_ind == 6:
     save_dir = r'C:/Users/Eric/Desktop/tmp_stuff/pstim_data/'
     file_path = save_dir + filename
     frame_rate = 30
-    closed_bin = stimuli.InputControlStim(stim_texts,
-                                          stim_params,
-                                          profile_on = False,
-                                          fps = frame_rate,
-                                          save_path = file_path)
-    closed_bin.run()
+    binocular = stimuli.InputControlStim(stim_texts,
+                                         stim_params,
+                                         initial_tex_ind = 0,
+                                         profile_on = False,
+                                         fps = frame_rate,
+                                         save_path = file_path)
+    binocular.run()
     monitor.kill()
-    if closed_bin.filestream:
-        closed_bin.filestream.close()
+    if binocular.filestream:
+        binocular.filestream.close()
         
         
 elif example_ind == 7:
@@ -166,8 +167,8 @@ elif example_ind == 7:
     frame_rate = 30
     closed_loop = stimuli.InputControlStim(stim_texts,
                                            stim_params,
-                                           initial_stim_ind = 0,
-                                           profile_on = False,
+                                           initial_tex_ind = 0,
+                                           profile_on = True,
                                            fps = frame_rate, 
                                            save_path = None)
     closed_loop.run()
