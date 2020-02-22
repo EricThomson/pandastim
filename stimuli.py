@@ -22,9 +22,10 @@ from direct.task import Task
 from direct.gui.OnscreenText import OnscreenText   #for binocular stim
 from panda3d.core import PStatClient
 
- 
+import utils
 
-class ShowTexMoving(ShowBase):
+
+class TexMoving(ShowBase):
     """
     Shows single texture drifting across the window at specified velocity and angle.
     
@@ -47,7 +48,6 @@ class ShowTexMoving(ShowBase):
             self.window_size = window_size
         self.angle = angle
         self.velocity = velocity
-        self.bgcolor = (1, 1, 1, 1)
         self.texture_stage = TextureStage("texture_stage") 
         self.window_name = window_name
         
@@ -72,7 +72,7 @@ class ShowTexMoving(ShowBase):
         self.card = self.aspect2d.attachNewNode(cm.generate())
         # Scale is so it can handle arbitrary rotations and shifts in binocular case
         self.card.setScale(np.sqrt(8))
-        self.card.setColor(self.bgcolor)  
+        self.card.setColor((1, 1, 1, 1)) 
         self.card.setTexture(self.texture_stage, self.tex.texture)
        
         #Transform the card
@@ -89,8 +89,7 @@ class ShowTexMoving(ShowBase):
         return Task.cont
     
                 
-    
-class ShowTexStatic(ShowTexMoving):
+class TexFixed(TexMoving):
     """
     Presents single texture without any motion. Useful for debugging: no need to set fps high.
     
@@ -108,132 +107,8 @@ class ShowTexStatic(ShowTexMoving):
         ShowBaseGlobal.base.win.requestProperties(self.window_properties)
 
 
-class KeyboardToggleTex(ShowBase):
-    """
-    toggles between different textures based on keyboard inputs (0 and 1)
-    
-    Useful for testing things out quickly before pushing to the [XXX] classes.
-    """
-    def __init__(self, tex_classes, stim_params, window_size = 512, 
-                 profile_on = False, fps = 30, save_path = None):
-        super().__init__()
 
-        self.tex_classes = tex_classes
-        self.current_tex_num = 0
-        self.stim_params = stim_params
-        self.window_size = window_size
-        self.bgcolor = (0.5, 0.5, 0.5, 1)
-        self.stimulus_initialized = False  #to handle case from -1 (uninitalize) to 0 (first stim)
-        self.fps = fps
-        self.save_path = save_path
-        if self.save_path:
-            self.filestream = open(self.save_path, "a")
-            for ind_tex, tex_class in enumerate(tex_classes):
-                self.filestream.write(f"{tex_class}\n")
-                self.filestream.flush()
-            self.filestream.write("\n")
-            self.filestream.flush()
-        else:
-            self.filestream = None
-        
-        #Set up key control mechanism
-        self.zero_button = KeyboardButton.ascii_key('0')
-        self.one_button = KeyboardButton.ascii_key('1')
-        self.is_down = ShowBaseGlobal.base.mouseWatcherNode.is_button_down
-
-        #Window properties
-        self.windowProps = WindowProperties()
-        self.windowProps.setSize(self.window_size, self.window_size)
-        self.set_title("Initializing")
-
-        #Create scenegraph
-        cm = CardMaker('card')
-        cm.setFrameFullscreenQuad()
-        self.card = self.aspect2d.attachNewNode(cm.generate())
-        self.card.setScale(np.sqrt(8))
-        self.card.setColor(self.bgcolor)  #make this an add mode
-        self.texture_stage = TextureStage("texture_stage") 
-        
-        # Set frame rate
-        ShowBaseGlobal.globalClock.setMode(ClockObject.MLimited)
-        ShowBaseGlobal.globalClock.setFrameRate(self.fps)  #can lock this at whatever
-        
-        if profile_on:
-            PStatClient.connect()
-            ShowBaseGlobal.base.setFrameRateMeter(True) 
-            
-        #Set initial texture
-        self.set_stimulus(str(self.current_tex_num))
-        
-        # Set up event handlers and tasks
-        self.accept('0', self.set_stimulus, ['0']) #event handler
-        self.accept('1', self.set_stimulus, ['1'])
-        self.taskMgr.add(self.move_texture_task, "move_texture") #task
-
-
-    @property
-    def current_stim_params(self):
-        """ 
-        returns parameters of current stimulus
-        """
-        return self.stim_params[self.current_tex_num]
-    
-    
-    def set_stimulus(self, data):
-        """ 
-        Called with relevant keyboard events
-        """
-        if not self.stimulus_initialized:
-            """
-            If the first texture has not yet been shown, then toggle initialization
-            and do not clear previous texture (there is no previous texture). 
-            Otherwise clear previous texture so they do not overlap."""
-            self.self_initialized = True
-        else:
-            #self.card.clearTexture(self.texture_stage)
-            self.card.detachNode()  #removeNode v detachNode?
-
-
-        if data == '0':
-            self.current_tex_num = 0
-        elif data == '1':
-            self.current_tex_num = 1
-
-        if self.filestream:
-            current_datetime = str(datetime.now())
-            self.filestream.write(f"{current_datetime}\t{data}\n")
-            self.filestream.flush()
-        print(self.current_tex_num, self.current_stim_params)
-        self.tex = self.tex_classes[self.current_tex_num]
-
-        self.card.setColor((1, 1, 1, 1))
-        self.card.setTexture(self.texture_stage, self.tex.texture)
-        self.card.setR(self.current_stim_params['angle'])
-        self.set_title(f"{self.current_tex_num}")
-
-        return
-       
-        
-    def move_texture_task(self, task):
-        """
-        The stimulus (texture) is set: now move it if needed.
-        """
-        if self.current_stim_params['velocity'] == 0:
-            pass
-        else:
-            new_position = -task.time*self.current_stim_params['velocity']
-            self.card.setTexPos(self.texture_stage, new_position, 0, 0) #u, v, w
-        return task.cont 
-
-
-    def set_title(self, title):
-        self.windowProps.setTitle(title)
-        ShowBaseGlobal.base.win.requestProperties(self.windowProps)  #base is a panda3d global
-
-
-
-
-class BinocularDrift(ShowBase):
+class BinocularMoving(ShowBase):
     """
     Show binocular drifting textures forever.
     Takes in texture object and other parameters, and shows texture drifting indefinitely.
@@ -256,13 +131,13 @@ class BinocularDrift(ShowBase):
         - strip_width is just the width of the strip down the middle. It can be 0. Even is better.
         - The texture array can be 2d (gray) or NxNx3 (rgb) with unit8 or uint16 elements.
     """
-    def __init__(self, stim, stim_angles = (0, 0), strip_angle = 0, position = (0,0),
+    def __init__(self, tex, stim_angles = (0, 0), strip_angle = 0, position = (0,0),
                  velocities = (0,0), strip_width = 4, fps = 30, window_size = None,
                  window_name = 'BinocularDrift', profile_on = False):
         super().__init__()
-        self.stim = stim
+        self.tex = tex
         if window_size == None:
-            self.window_size = stim.texture_size
+            self.window_size = tex.texture_size
         else:
             self.window_size = window_size
         self.mask_position_ndc = position
@@ -284,16 +159,16 @@ class BinocularDrift(ShowBase):
         ShowBaseGlobal.base.win.requestProperties(self.window_properties)  #base is a panda3d global
 
         #CREATE MASK ARRAYS
-        self.left_mask_array = 255*np.ones((self.stim.texture_size, self.stim.texture_size), dtype=np.uint8)
-        self.left_mask_array[:, self.stim.texture_size//2 - strip_width//2 :] = 0
-        self.right_mask_array = 255*np.ones((self.stim.texture_size, self.stim.texture_size), dtype=np.uint8)
-        self.right_mask_array[:, : self.stim.texture_size//2 + strip_width//2] = 0
+        self.left_mask_array = 255*np.ones((self.tex.texture_size, self.tex.texture_size), dtype=np.uint8)
+        self.left_mask_array[:, self.tex.texture_size//2 - strip_width//2 :] = 0
+        self.right_mask_array = 255*np.ones((self.tex.texture_size, self.tex.texture_size), dtype=np.uint8)
+        self.right_mask_array[:, : self.tex.texture_size//2 + strip_width//2] = 0
 
         #TEXTURE STAGES FOR LEFT CARD
         self.left_texture_stage = TextureStage('left_texture_stage')
         #Mask
         self.left_mask = Texture("left_mask_texture")
-        self.left_mask.setup2dTexture(self.stim.texture_size, self.stim.texture_size,
+        self.left_mask.setup2dTexture(self.tex.texture_size, self.tex.texture_size,
                                                Texture.T_unsigned_byte, Texture.F_luminance)
         self.left_mask.setRamImage(self.left_mask_array)
         self.left_mask_stage = TextureStage('left_mask_array')
@@ -308,7 +183,7 @@ class BinocularDrift(ShowBase):
         self.right_texture_stage = TextureStage('right_texture_stage')
         #Mask
         self.right_mask = Texture("right_mask_texture")
-        self.right_mask.setup2dTexture(self.stim.texture_size, self.stim.texture_size,
+        self.right_mask.setup2dTexture(self.tex.texture_size, self.tex.texture_size,
                                                Texture.T_unsigned_byte, Texture.F_luminance)
         self.right_mask.setRamImage(self.right_mask_array)
         self.right_mask_stage = TextureStage('right_mask_stage')
@@ -329,9 +204,9 @@ class BinocularDrift(ShowBase):
         self.right_card.setAttrib(ColorBlendAttrib.make(ColorBlendAttrib.M_add))
 
         #ADD TEXTURE STAGES TO CARDS
-        self.left_card.setTexture(self.left_texture_stage, self.stim.texture)
+        self.left_card.setTexture(self.left_texture_stage, self.tex.texture)
         self.left_card.setTexture(self.left_mask_stage, self.left_mask)
-        self.right_card.setTexture(self.right_texture_stage, self.stim.texture)
+        self.right_card.setTexture(self.right_texture_stage, self.tex.texture)
         self.right_card.setTexture(self.right_mask_stage, self.right_mask)
 
         #TRANSFORMS
@@ -417,7 +292,7 @@ class BinocularDrift(ShowBase):
     
         
         
-class BinocularStatic(BinocularDrift):
+class BinocularFixed(BinocularMoving):
     """
     Presents binocular stim class without any motion.
     Most useful for testing stimuli. Obviously no need to set fps high.
@@ -445,17 +320,20 @@ class OpenLoopStim(ShowBase):
     pass
 
 
-class ClosedLoop(ShowBase):
+class KeyboardToggleTex(ShowBase):
     """
-    Generic closed loop class takes in list of texture classes, and stimulus parameters (angles),
-    and presents them in closed loop with zmq signals. 
+    toggles between different textures based on keyboard inputs (0 and 1). Not set up
+    for binocular stim.
+    
+    Useful for testing things out quickly before pushing to the InputControlStim class,
+    which can be gnarly.
     """
-    def __init__(self, tex_classes, stim_params, initial_stim_ind = 0, window_size = 512, 
+    def __init__(self, tex_classes, stim_params, window_size = 512, 
                  profile_on = False, fps = 30, save_path = None):
         super().__init__()
 
-        self.current_tex_num = initial_stim_ind
         self.tex_classes = tex_classes
+        self.current_tex_num = 0
         self.stim_params = stim_params
         self.window_size = window_size
         self.bgcolor = (0.5, 0.5, 0.5, 1)
@@ -463,7 +341,123 @@ class ClosedLoop(ShowBase):
         self.fps = fps
         self.save_path = save_path
         if self.save_path:
-            self.filestream = open(self.save_path, "a")
+            self.filestream = utils.save_initialize(save_path, tex_classes, stim_params)
+        else:
+            self.filestream = None
+        
+        #Set up key control mechanism
+        self.zero_button = KeyboardButton.ascii_key('0')
+        self.one_button = KeyboardButton.ascii_key('1')
+        self.is_down = ShowBaseGlobal.base.mouseWatcherNode.is_button_down
+
+        #Window properties
+        self.windowProps = WindowProperties()
+        self.windowProps.setSize(self.window_size, self.window_size)
+        self.set_title("Initializing")
+
+        #Create scenegraph
+        cm = CardMaker('card')
+        cm.setFrameFullscreenQuad()
+        self.card = self.aspect2d.attachNewNode(cm.generate())
+        self.card.setScale(np.sqrt(8))
+        self.card.setColor(self.bgcolor)  #make this an add mode
+        self.texture_stage = TextureStage("texture_stage") 
+        
+        # Set frame rate
+        ShowBaseGlobal.globalClock.setMode(ClockObject.MLimited)
+        ShowBaseGlobal.globalClock.setFrameRate(self.fps)  #can lock this at whatever
+        
+        if profile_on:
+            PStatClient.connect()
+            ShowBaseGlobal.base.setFrameRateMeter(True) 
+            
+        #Set initial texture
+        self.set_stimulus(str(self.current_tex_num))
+        
+        # Set up event handlers and tasks
+        self.accept('0', self.set_stimulus, ['0']) #event handler
+        self.accept('1', self.set_stimulus, ['1'])
+        self.taskMgr.add(self.move_texture_task, "move_texture") #task
+
+    @property
+    def current_stim_params(self):
+        """ 
+        returns parameters of current stimulus
+        """
+        return self.stim_params[self.current_tex_num]
+    
+    def set_stimulus(self, data):
+        """ 
+        Called with relevant keyboard events
+        """
+        if not self.stimulus_initialized:
+            """
+            If the first texture has not yet been shown, then toggle initialization
+            and do not clear previous texture (there is no previous texture). 
+            Otherwise clear previous texture so they do not overlap."""
+            self.self_initialized = True
+        else:
+            #self.card.clearTexture(self.texture_stage)
+            self.card.detachNode()  #removeNode v detachNode?
+
+
+        if data == '0':
+            self.current_tex_num = 0
+        elif data == '1':
+            self.current_tex_num = 1
+
+        if self.filestream:
+            current_datetime = str(datetime.now())
+            self.filestream.write(f"{current_datetime}\t{data}\n")
+            self.filestream.flush()
+        print(self.current_tex_num, self.current_stim_params)
+        self.tex = self.tex_classes[self.current_tex_num]
+
+        self.card.setColor((1, 1, 1, 1))
+        self.card.setTexture(self.texture_stage, self.tex.texture)
+        self.card.setR(self.current_stim_params['angle'])
+        other_stim = 1 if self.current_tex_num == 0 else 0
+        self.set_title(f"Press {other_stim} to switch")
+
+        return
+              
+    def move_texture_task(self, task):
+        """
+        The stimulus (texture) is set: now move it if needed.
+        """
+        if self.current_stim_params['velocity'] == 0:
+            pass
+        else:
+            new_position = -task.time*self.current_stim_params['velocity']
+            self.card.setTexPos(self.texture_stage, new_position, 0, 0) #u, v, w
+        return task.cont 
+
+    def set_title(self, title):
+        self.windowProps.setTitle(title)
+        ShowBaseGlobal.base.win.requestProperties(self.windowProps)  #base is a panda3d global
+        
+        
+class InputControlStim(ShowBase):
+    """
+    Generic input-controll stimulus class: takes in list of texture classes, and stimulus parameters 
+    with stimulus shown dependent on events produced by utils.Monitor() class. Currently
+    equipped to handle three textures: should be scalable.
+    """
+    def __init__(self, tex_classes, stim_params, initial_stim_ind = 0, window_size = 512, 
+                 profile_on = False, fps = 30, save_path = None):
+        super().__init__()
+
+        self.current_tex_num = initial_stim_ind
+        self.previous_tex_num = None
+        self.tex_classes = tex_classes
+        self.stim_params = stim_params
+        self.window_size = window_size
+        self.bgcolor = (0.5, 0.5, 0.5, 1)
+        self.stimulus_initialized = False  # for setting up first stim (don't clear cards they don't exist)
+        self.fps = fps
+        self.save_path = save_path
+        if self.save_path:
+            self.filestream = utils.save_initialize(save_path, tex_classes, stim_params)
         else:
             self.filestream = None 
         self.scale = np.sqrt(8)  #so it can handle arbitrary rotations and shifts
@@ -504,14 +498,21 @@ class ClosedLoop(ShowBase):
         if self.current_stim_params['stim_type'] == 'b':
             left_tex_position =  -task.time*self.current_stim_params['velocities'][0] #negative b/c texture stage
             right_tex_position = -task.time*self.current_stim_params['velocities'][1]
-            self.left_card.setTexPos(self.left_texture_stage, left_tex_position, 0, 0)
-            self.right_card.setTexPos(self.right_texture_stage, right_tex_position, 0, 0)
+            try:
+                self.left_card.setTexPos(self.left_texture_stage, left_tex_position, 0, 0)
+                self.right_card.setTexPos(self.right_texture_stage, right_tex_position, 0, 0)
+            except Exception as e:
+                print(e)
         elif self.current_stim_params['stim_type'] == 's':
             if self.current_stim_params['velocity'] == 0:
                 pass
             else:
                 new_position = -task.time*self.current_stim_params['velocity']
-                self.card.setTexPos(self.texture_stage, new_position, 0, 0) #u, v, w
+                # Sometimes setting position fails when the texture stage isn't fully set
+                try:
+                    self.card.setTexPos(self.texture_stage, new_position, 0, 0) #u, v, w
+                except Exception as e:
+                    print(e)
         return task.cont
     
     @property
@@ -535,7 +536,7 @@ class ClosedLoop(ShowBase):
             #CREATE CARDS/SCENEGRAPH
             cm = CardMaker('stimcard')
             cm.setFrameFullscreenQuad()
-            self.setBackgroundColor((0,0,0,1))
+            self.setBackgroundColor((0,0,0,1))  #?
             self.left_card = self.aspect2d.attachNewNode(cm.generate())
             self.left_card.setAttrib(ColorBlendAttrib.make(ColorBlendAttrib.M_add))
     
@@ -546,7 +547,7 @@ class ClosedLoop(ShowBase):
             cm.setFrameFullscreenQuad()
             self.card = self.aspect2d.attachNewNode(cm.generate())
             self.card.setScale(self.scale)
-            self.card.setColor((0.5, 0.5, 0.5, 1))
+            self.card.setColor((0.5, 0.5, 0.5, 1)) #?
         return
         
     def create_texture_stages(self):
@@ -590,30 +591,53 @@ class ClosedLoop(ShowBase):
         """
             
         if not self.stimulus_initialized:
+            print("Initializing")
             # If this is first stim, then toggle initialization to on, and
             # do not clear previous texture (there is no previous texture).
             self.stimulus_initialized = True
+            self.data_previous = data
+        elif data == self.data_previous:
+            return
         else:
+            self.data_previous = data
             self.clear_cards() #clear the textures before adding new ones
 
         # This assumes data streaming is string numbers 0, 1, etc.
         self.current_tex_num = int(data)
-
+            
         #Save stim to file
         if self.filestream:
             current_datetime = str(datetime.now())
             self.filestream.write(f"{current_datetime}\t{data}\n")
             self.filestream.flush()
-            
+        # Set new texture stages/cards etc
         print(self.current_tex_num, self.current_stim_params) #for debugging
-        self.stim = self.tex_classes[self.current_tex_num]
+        self.tex = self.tex_classes[self.current_tex_num]
         self.create_texture_stages()
         self.create_cards()
         self.set_texture_stages()
         self.set_transforms()
                           
         return
-
+    
+    def clear_cards(self):
+        """ 
+        Clear cards when new stimulus: stim-class sensitive
+        """
+        if self.current_stim_params['stim_type'] == 'b':
+            # self.left_card.clearTexture(self.left_texture_stage)  #turn off stage
+            # self.left_card.clearTexture(self.left_mask_stage)
+            # self.right_card.clearTexture(self.right_texture_stage)
+            # self.right_card.clearTexture(self.right_mask_stage)
+            self.left_card.removeNode()
+            self.right_card.removeNode()
+            # self.left_card.detachNode()
+            # self.right_card.detachNode()
+        elif self.current_stim_params['stim_type'] == 's':
+            #self.card.clearTexture(self.texture_stage)  #turn off stage
+            # self.card.removeNode()
+            self.card.detachNode()
+            
     def set_transforms(self):
         """ 
         Set up the transforms to apply to textures/cards (e.g., rotations/scales)
@@ -655,7 +679,7 @@ class ClosedLoop(ShowBase):
     
             #ADD TEXTURE STAGES TO CARDS
             self.left_mask.setRamImage(self.left_mask_array)
-            self.left_card.setTexture(self.left_texture_stage, self.stim.texture)
+            self.left_card.setTexture(self.left_texture_stage, self.tex.texture)
             self.left_card.setTexture(self.left_mask_stage, self.left_mask)
             #Multiply the texture stages together
             self.left_mask_stage.setCombineRgb(TextureStage.CMModulate,
@@ -664,7 +688,7 @@ class ClosedLoop(ShowBase):
                                         TextureStage.CSPrevious,
                                         TextureStage.COSrcColor)
             self.right_mask.setRamImage(self.right_mask_array)
-            self.right_card.setTexture(self.right_texture_stage, self.stim.texture)
+            self.right_card.setTexture(self.right_texture_stage, self.tex.texture)
             self.right_card.setTexture(self.right_mask_stage, self.right_mask)
             #Multiply the texture stages together
             self.right_mask_stage.setCombineRgb(TextureStage.CMModulate,
@@ -674,27 +698,12 @@ class ClosedLoop(ShowBase):
                                         TextureStage.COSrcColor)
         elif self.current_stim_params['stim_type'] == 's':
             self.card.setColor((1, 1, 1, 1))
-            self.card.setTexture(self.texture_stage, self.stim.texture)
+            self.card.setTexture(self.texture_stage, self.tex.texture)
         return
         
-    def clear_cards(self):
-        """ 
-        Clear cards when new stimulus: stim-class sensitive
-        """
-        if self.current_stim_params['stim_type'] == 'b':
-            #self.left_card.clearTexture(self.left_texture_stage)  #turn off stage
-            #self.left_card.clearTexture(self.left_mask_stage)
-            #self.right_card.clearTexture(self.right_texture_stage)
-            #self.right_card.clearTexture(self.right_mask_stage)
-            self.left_card.removeNode()
-            self.right_card.removeNode()
-            #self.left_card.detachNode()
-            #self.right_card.detachNode()
-        elif self.current_stim_params['stim_type'] == 's':
-            #self.card.clearTexture(self.texture_stage)  #turn off stage
-            self.card.removeNode()
-            #self.card.detachNode()
-        return
+
+            
+
         
     def trs_transform(self):
         """ 
@@ -720,8 +729,123 @@ class ClosedLoop(ShowBase):
         self.windowProps.setTitle(title)
         ShowBaseGlobal.base.win.requestProperties(self.windowProps)  #base is a panda3d global
     
+class InputControlTex(ShowBase):
+    """
+    Switches between (currently two) different full-field textures depending on messages produced by 
+    utils.Monitor() that looks for input signals published from zmq.
+    
+    For more realistic cases (that will mix stimulus types) you will use 
+    
+    For example of usage, see examples/
+    """
+    def __init__(self, tex_classes, stim_params, window_size = 512, 
+                 profile_on = False, fps = 30, save_path = None):
+        super().__init__()
+
+        self.tex_classes = tex_classes
+        self.current_tex_num = 0
+        self.stim_params = stim_params
+        self.window_size = window_size
+        self.scale = np.sqrt(8)
+        self.stimulus_initialized = False  #to handle case from -1 (uninitalize) to 0 (first stim)
+        self.fps = fps
+        self.save_path = save_path
+        if self.save_path:
+            self.filestream = utils.save_initialize(save_path, tex_classes, stim_params)
+        else:
+            self.filestream = None 
+        
+        # Set frame rate
+        ShowBaseGlobal.globalClock.setMode(ClockObject.MLimited)
+        ShowBaseGlobal.globalClock.setFrameRate(self.fps)  #can lock this at whatever
+        
+        if profile_on:
+            PStatClient.connect()
+            ShowBaseGlobal.base.setFrameRateMeter(True) 
+            
+        #Window properties
+        self.windowProps = WindowProperties()
+        self.windowProps.setSize(self.window_size, self.window_size)
+        self.set_title("Initializing")
+
+        # Create initial card and texture stage
+        cm = CardMaker('card')
+        cm.setFrameFullscreenQuad()
+        self.card = self.aspect2d.attachNewNode(cm.generate())
+        self.card.setScale(self.scale)
+        self.card.setColor((0.5, 0.5, 0.5, 1))
+        self.texture_stage = TextureStage("texture_stage") 
+                   
+        #Set initial texture
+        self.set_stimulus(str(self.current_tex_num))
+        
+        # Set up event handlers and tasks
+        self.accept('stim0', self.set_stimulus, ['0']) #event handler
+        self.accept('stim1', self.set_stimulus, ['1'])
+        self.taskMgr.add(self.move_texture_task, "move_texture") #task
+
+
+    @property
+    def current_stim_params(self):
+        """ 
+        returns actual value of current stimulus 
+        """
+        return self.stim_params[self.current_tex_num]
+    
+    
+    def set_stimulus(self, data):
+        """ 
+        Invoked with different 
+        """
+        if not self.stimulus_initialized:
+            """
+            If the first texture has not yet been shown, then toggle initialization to on
+            and do not clear previous texture (there is no previous texture). Otherwise
+            clear previous texture otherwise it will cover new textures."""
+            self.self_initialized = True
+        else:
+            self.card.removeNode()  #or detachNode()
+        
+        #Save stim to file
+        if self.filestream:
+            current_datetime = str(datetime.now())
+            self.filestream.write(f"{current_datetime}\t{data}\n")
+            self.filestream.flush()
+            
+        if data == '0':
+            self.current_tex_num = 0
+        elif data == '1':
+            self.current_tex_num = 1
+
+        print(self.current_tex_num, self.current_stim_params)
+        self.tex = self.tex_classes[self.current_tex_num]
+
+        self.card.setColor((1, 1, 1, 1))
+        self.card.setTexture(self.texture_stage, self.tex.texture)
+        self.card.setR(self.current_stim_params['angle'])
+        self.set_title(f"{self.current_tex_num}")
+
+        return
+               
+    def move_texture_task(self, task):
+        """
+        The stimulus (texture) is set: now move it if needed.
+        """
+        if self.current_stim_params['velocity'] == 0:
+            pass
+        else:
+            new_position = -task.time*self.current_stim_params['velocity']
+            self.card.setTexPos(self.texture_stage, new_position, 0, 0) #u, v, w
+        return task.cont 
+
+    def set_title(self, title):
+        self.windowProps.setTitle(title)
+        ShowBaseGlobal.base.win.requestProperties(self.windowProps)  #base is a panda3d global
+
+
+ 
    
-class ClosedLoopBinocular(ShowBase):
+class InputControlBinocular(ShowBase):
     """
     toggles between different stim depending on messages produced by ZmqHandler
     
@@ -739,7 +863,7 @@ class ClosedLoopBinocular(ShowBase):
         self.fps = fps
         self.save_path = save_path
         if self.save_path:
-            self.filestream = open(self.save_path, "a")
+            self.filestream = utils.save_initialize(save_path, tex_classes, stim_params)
         else:
             self.filestream = None 
         self.scale = np.sqrt(8)  #so it can handle arbitrary rotations and shifts
@@ -835,7 +959,7 @@ class ClosedLoopBinocular(ShowBase):
             self.current_tex_num = 1
 
         print(self.current_tex_num, self.current_stim_params)
-        self.stim = self.tex_classes[self.current_tex_num]
+        self.tex = self.tex_classes[self.current_tex_num]
 
         self.mask_position_ndc = self.current_stim_params['position']
         self.mask_position_uv = (self.ndc2uv(self.mask_position_ndc[0]),
@@ -851,7 +975,7 @@ class ClosedLoopBinocular(ShowBase):
        
         #ADD TEXTURE STAGES TO CARDS
         self.left_mask.setRamImage(self.left_mask_array)
-        self.left_card.setTexture(self.left_texture_stage, self.stim.texture)
+        self.left_card.setTexture(self.left_texture_stage, self.tex.texture)
         self.left_card.setTexture(self.left_mask_stage, self.left_mask)
         self.left_mask_stage.setCombineRgb(TextureStage.CMModulate,
                                     TextureStage.CSTexture,
@@ -860,7 +984,7 @@ class ClosedLoopBinocular(ShowBase):
                                     TextureStage.COSrcColor)
         
         self.right_mask.setRamImage(self.right_mask_array)
-        self.right_card.setTexture(self.right_texture_stage, self.stim.texture)
+        self.right_card.setTexture(self.right_texture_stage, self.tex.texture)
         self.right_card.setTexture(self.right_mask_stage, self.right_mask)
         #Multiply the texture stages together
         self.right_mask_stage.setCombineRgb(TextureStage.CMModulate,
@@ -928,123 +1052,6 @@ class ClosedLoopBinocular(ShowBase):
         self.windowProps.setTitle(title)
         ShowBaseGlobal.base.win.requestProperties(self.windowProps)  #base is a panda3d global
 
-
-
-
-    
-class ClosedLoopStim(ShowBase):
-    """
-    toggles between different textures depending on messages produced by ZmqHandler
-    
-    Note:
-        I toyed with combining tex_classes/stim_params into one list:
-            list(zip(tex_classes, stim_params))
-        While that is more compact, to make the code more readable I just end up 
-        separating them in the class. Something to think about though.
-    """
-    def __init__(self, tex_classes, stim_params, window_size = 512, 
-                 profile_on = False, fps = 30, save_path = None):
-        super().__init__()
-
-        self.tex_classes = tex_classes
-        self.current_tex_num = 0
-        self.stim_params = stim_params
-        self.window_size = window_size
-        self.scale = np.sqrt(8)
-        self.stimulus_initialized = False  #to handle case from -1 (uninitalize) to 0 (first stim)
-        self.fps = fps
-        self.save_path = save_path
-        if self.save_path:
-            self.filestream = open(self.save_path, "a")
-        else:
-            self.filestream = None 
-        
-        # Set frame rate
-        ShowBaseGlobal.globalClock.setMode(ClockObject.MLimited)
-        ShowBaseGlobal.globalClock.setFrameRate(self.fps)  #can lock this at whatever
-        
-        if profile_on:
-            PStatClient.connect()
-            ShowBaseGlobal.base.setFrameRateMeter(True) 
-            
-        #Window properties
-        self.windowProps = WindowProperties()
-        self.windowProps.setSize(self.window_size, self.window_size)
-        self.set_title("Initializing")
-
-        # Create initial card and texture stage
-        cm = CardMaker('card')
-        cm.setFrameFullscreenQuad()
-        self.card = self.aspect2d.attachNewNode(cm.generate())
-        self.card.setScale(self.scale)
-        self.card.setColor((0.5, 0.5, 0.5, 1))
-        self.texture_stage = TextureStage("texture_stage") 
-                   
-        #Set initial texture
-        self.set_stimulus(str(self.current_tex_num))
-        
-        # Set up event handlers and tasks
-        self.accept('stim0', self.set_stimulus, ['0']) #event handler
-        self.accept('stim1', self.set_stimulus, ['1'])
-        self.taskMgr.add(self.move_texture_task, "move_texture") #task
-
-
-    @property
-    def current_stim_params(self):
-        """ 
-        returns actual value of current stimulus 
-        """
-        return self.stim_params[self.current_tex_num]
-    
-    
-    def set_stimulus(self, data):
-        """ 
-        Invoked with different 
-        """
-        if not self.stimulus_initialized:
-            """
-            If the first texture has not yet been shown, then toggle initialization to on
-            and do not clear previous texture (there is no previous texture). Otherwise
-            clear previous texture otherwise it will cover new textures."""
-            self.self_initialized = True
-        else:
-            self.card.removeNode()  #or detachNode()
-        
-        #Save stim to file
-        if self.filestream:
-            current_datetime = str(datetime.now())
-            self.filestream.write(f"{current_datetime}\t{data}\n")
-            self.filestream.flush()
-            
-        if data == '0':
-            self.current_tex_num = 0
-        elif data == '1':
-            self.current_tex_num = 1
-
-        print(self.current_tex_num, self.current_stim_params)
-        self.stim = self.tex_classes[self.current_tex_num]
-
-        self.card.setColor((1, 1, 1, 1))
-        self.card.setTexture(self.texture_stage, self.stim.texture)
-        self.card.setR(self.current_stim_params['angle'])
-        self.set_title(f"{self.current_tex_num}")
-
-        return
-               
-    def move_texture_task(self, task):
-        """
-        The stimulus (texture) is set: now move it if needed.
-        """
-        if self.current_stim_params['velocity'] == 0:
-            pass
-        else:
-            new_position = -task.time*self.current_stim_params['velocity']
-            self.card.setTexPos(self.texture_stage, new_position, 0, 0) #u, v, w
-        return task.cont 
-
-    def set_title(self, title):
-        self.windowProps.setTitle(title)
-        ShowBaseGlobal.base.win.requestProperties(self.windowProps)  #base is a panda3d global
 
 
 

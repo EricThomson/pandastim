@@ -29,7 +29,20 @@ def grating_byte(X, freq = 1):
     grating_transformed = (grating_float + 1)*127.5; #from 0-255
     return np.uint8(grating_transformed)
 
-        
+def save_initialize(file_path, tex_classes, stim_params):
+    """
+    Initializes saving: saves texture classes and params for 
+    input-coupled stimulus classes.
+    """
+    print(f"Saving data to {file_path}")
+    filestream = open(file_path, "a")
+    for ind_tex, tex_class in enumerate(tex_classes):
+        filestream.write(f"{ind_tex}: {tex_class} {stim_params[ind_tex]}\n")
+        filestream.flush()
+    filestream.write("\n")
+    filestream.flush()
+    return filestream
+ 
 class Publisher:
     """
     Publisher wrapper class for zmq.

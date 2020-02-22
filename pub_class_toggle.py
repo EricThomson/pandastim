@@ -15,7 +15,7 @@ from utils import Publisher as Pub
 pub = Pub(port = "1234")
 print("Starting publisher loop to generate random outputs...")
 while True:
-    delay_time = random.uniform(0.5, 3)
+    delay_time = random.uniform(0.25, 2)  #.5 3
     output = random.randint(0, 1)
     topic = b"stim"
     msg = str(output).encode('ascii')

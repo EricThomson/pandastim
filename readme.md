@@ -34,9 +34,7 @@ To learn more about optimizaing/profiling in panda3d: https://docs.panda3d.org/1
 
 
 ### To do (short term)
-- Refactoring
-    - Need a print or whatever for the Tex classes for insertion during Stim displays during filesaving.
-    - Basic runthrough of code: documented, relatively clean, etc., including readme.
+- Refactoring: are things clean and documented, including this?
     - what is the deal with setColor versus setBackgroundColor? Also in 's' you are setting card color twice.
     - Also the ColorBlendAttrib.M_add, when is that needed?
     - why for transform do you use card.setR for 's' but card.setTexRotate? Are these different?
@@ -44,16 +42,13 @@ To learn more about optimizaing/profiling in panda3d: https://docs.panda3d.org/1
     - Get names straight: stim_class or stim or texture for inputs to stim and calling it self.stim? didn't call it texture because that's largely taken. could do texture.texture or tex.texture. Maybe `tex`? Explicit is better than implcit, but maybe not for this.
     - profile_on is sometimes just profile. make sure it is consistent.
     - are the ndc2uv used/necessary and should they be in utils?
-- Saving
-    - Save mechanism check. E.g. for save mechanism, save stimulus types and params at top of file before saving which ones were delivered.
-    - Have it save start/end time?
-- Put x in ClosedLoop at position.
-- Instead of examples folder, just do examples file? Probably not, but fewer. Port from examples_working.py (2 hours).
-- Document how to run/test closed loop stuff (1 hour)
-
+    - what text is shown in window? initializing?
+- Just do a few examples in examples folder, clean that up.
+- How to ensure there is a texture? Seems you could easily have a tex before binocular, and then it will try to clear binocular tex's, and vice-versa. Shouldn't you create the cards once  early on? Shouldn't you be clearing binocular if it was tex, and tex if it was binicoular? Seems confusing.
 
 
 ### To do (medium term)
+- Filtering out repeats: do in Monitor or continue doing in set_stimulus? Whatever is easiest for user.
 - What is difference b/w card.detachNode() and card.removeNode(), and do we need to do clearTexture(stage) first? They both seem to work fine. Is detach safer?
 - Create new updating stimulus classes
     - looming circle stimulus (static_fullfield_circle)
@@ -73,6 +68,7 @@ To learn more about optimizaing/profiling in panda3d: https://docs.panda3d.org/1
 - INstructions on how to integrate new stimulus class into closed loop.
 - Document how to make a new texture class.
 - How to close programatically? Would be useful for smoothness and also could add time/close signal code to save file.
+- Saving: have it save start/end time? If you close programmatically would be easier to save end time of program. Seems unneeded frankly it only saves what was actually shown already.
 
 ### To do (long term)
 - check with photodiode at different locations on window: is it identical?

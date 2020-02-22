@@ -56,6 +56,10 @@ class TextureBase:
         plt.show()
         
     def __str__(self):
+        """
+        Return the string you want print(Tex) to show, and to save to file 
+        when saving catalog of stimuli.
+        """
         pass
     
 
@@ -80,7 +84,7 @@ class RgbTex(TextureBase):
         return rgb_texture
     
     def __str__(self):
-        return f"{type(self).__name__} size:{self.texture_size} rgb:{self.rgb} "
+        return f"{type(self).__name__} size:{self.texture_size} rgb:{self.rgb}"
 
 
 class CircleGrayTex(TextureBase):
@@ -112,7 +116,7 @@ class CircleGrayTex(TextureBase):
 
     def __str__(self):
         part1 =  f"{type(self).__name__} size:{self.texture_size} center:{self.center} "
-        part2 = f"radius:{self.radius} bg:{self.bg_intensity} fg:{self.fg_intensity} "
+        part2 = f"radius:{self.radius} bg:{self.bg_intensity} fg:{self.fg_intensity}"
         return part1 + part2
   
 class SinGrayTex(TextureBase):
@@ -134,7 +138,7 @@ class SinGrayTex(TextureBase):
         return utils.sin_byte(array, freq = self.frequency) 
     
     def __str__(self):
-        return f"{type(self).__name__} size:{self.texture_size} frequency:{self.frequency} "
+        return f"{type(self).__name__} size:{self.texture_size} frequency:{self.frequency}"
     
 class SinRgbTex(TextureBase):
     """
@@ -166,7 +170,7 @@ class SinRgbTex(TextureBase):
         return rgb_sin
     
     def __str__(self):
-        return f"{type(self).__name__} size:{self.texture_size} frequency:{self.frequency} rgb:{self.rgb} "
+        return f"{type(self).__name__} size:{self.texture_size} frequency:{self.frequency} rgb:{self.rgb}"
     
     
 class GratingGrayTex(TextureBase):
@@ -185,7 +189,7 @@ class GratingGrayTex(TextureBase):
         return utils.grating_byte(X, freq = self.frequency)
     
     def __str__(self):
-        return f"{type(self).__name__} size:{self.texture_size} frequency:{self.frequency} "
+        return f"{type(self).__name__} size:{self.texture_size} frequency:{self.frequency}"
     
     
 class GratingRgbTex(TextureBase):
@@ -214,7 +218,7 @@ class GratingRgbTex(TextureBase):
         return rgb_grating 
         
     def __str__(self):
-        return f"{type(self).__name__} size:{self.texture_size} frequency:{self.frequency} rgb:{self.rgb} "
+        return f"{type(self).__name__} size:{self.texture_size} frequency:{self.frequency} rgb:{self.rgb}"
     
 #%%  
 if __name__ == '__main__':
