@@ -26,7 +26,7 @@ The three main modules:
 The `examples/` folder contains representative examples. It is probably easiest to use these examples as a starting point for building your own experiments.
 
 ### Profiling pandastim apps
-Panda3d comes with a nice graphical code profiler for Windows users. The stimulus classes include a `profile_on` flag (which defaults to `False`). To activate it, you have to run `pstats` before starting your Python code, and set that flag to `True`r. This will also cause an FPS display to show on your stimulus window even if you aren't using the profiler, and it will cause a small 'x' to appear at the location of the center of the stimulus when that is a defined parameter (as it is for binocular stimuli).
+Panda3d comes with a nice graphical code profiler. The stimulus classes all include a `profile_on` flag (which defaults to `False`). To activate it, you have to run `pstats` before starting your Python code, and set that flag to `True`r. This will also cause an FPS display to show on your stimulus window even if you aren't using the profiler, and it will cause a small 'x' to appear at the location of the center of the stimulus when that is a defined parameter (as it is for binocular stimuli). See the examples folder if curious.
 
 On Windows, `pstats.exe` in your conda directory in `\envs\pstim\Scripts` (in Linux, `pstats` is in `\envs\pstim\bin` -- run it from the command line with `./pstats` -- you may need to install the module `libcanberra-gtk-module` first: `sudo apt-get install libcanberra-gtk-module`).
 
