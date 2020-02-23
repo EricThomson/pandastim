@@ -14,6 +14,7 @@ To do:
 import numpy as np
 from datetime import datetime
 
+
 from direct.showbase.ShowBase import ShowBase
 from direct.showbase import ShowBaseGlobal  #global vars defined by p3d
 from panda3d.core import Texture, CardMaker, TextureStage, KeyboardButton
@@ -59,6 +60,7 @@ class TexMoving(ShowBase):
         if profile_on:
             PStatClient.connect() # this will only work if pstats is running: see readme
             ShowBaseGlobal.base.setFrameRateMeter(True)  #Show frame rate
+            self.center_indicator = None
             
         #Window properties set up 
         self.window_properties = WindowProperties()
@@ -119,13 +121,14 @@ class BinocularMoving(ShowBase):
                         velocities = (0,0),
                         strip_width = 2,
                         window_size = 512,
-                        texture_size = 512)
+                        window_name = 'FunStim',
+                        profile_on  = False)
 
     Note(s):
         - angles are (left_texture_angle, right_texture_angle): >0 is cw, <0 ccw
-        - Velocity is in NDC, so 1.0 is the entire window width (i.e., super-fast).
         - Make texture_size a power of 2: this makes the GPU happier.
-        - position is x,y in NDC (from [-1 1]), so (.5, .5) will be in middle of top right quadrant
+        - position is x,y in card-based coordinates (from [-1 1]), so (.5, .5) will be in middle of top right quadrant
+        - Velocity is in card-based units, so 1.0 is the entire window width (i.e., super-fast).
         - strip_width is just the width of the strip down the middle. It can be 0. Even is better.
         - The texture array can be 2d (gray) or NxNx3 (rgb) with unit8 or uint16 elements.
     """
@@ -138,9 +141,9 @@ class BinocularMoving(ShowBase):
             self.window_size = tex.texture_size
         else:
             self.window_size = window_size
-        self.mask_position_ndc = position
-        self.mask_position_uv = (self.ndc2uv(self.mask_position_ndc[0]),
-                                 self.ndc2uv(self.mask_position_ndc[1]))
+        self.mask_position_card = position
+        self.mask_position_uv = (utils.card2uv(self.mask_position_card[0]),
+                                 utils.card2uv(self.mask_position_card[1]))
         self.scale = np.sqrt(8)  #so it can handle arbitrary rotations and shifts
         self.left_texture_angle = stim_angles[0]
         self.right_texture_angle = stim_angles[1]
@@ -149,6 +152,7 @@ class BinocularMoving(ShowBase):
         self.strip_angle = strip_angle #this will change fairly frequently
         self.fps = fps
         self.window_name = window_name
+        self.profile_on = profile_on
 
         #Set window title and size
         self.window_properties = WindowProperties()
@@ -206,6 +210,7 @@ class BinocularMoving(ShowBase):
         self.left_card.setTexture(self.left_mask_stage, self.left_mask)
         self.right_card.setTexture(self.right_texture_stage, self.tex.texture)
         self.right_card.setTexture(self.right_mask_stage, self.right_mask)
+        self.setBackgroundColor((0,0,0,1))  # without this the cards will appear washed out
 
         #TRANSFORMS
         #Masks
@@ -236,19 +241,16 @@ class BinocularMoving(ShowBase):
         
         #Set up profiling if desired
         if profile_on:
-            try:
-                PStatClient.connect() # this will only work if pstats is running
-            except:
-                pass
+            PStatClient.connect() # this will only work if pstats is running
             ShowBaseGlobal.base.setFrameRateMeter(True)  #Show frame rate
+            # Following will show a small x at the center
+            self.title = OnscreenText("x",
+                                      style = 1,
+                                      fg = (1,1,1,1),
+                                      bg = (0,0,0,.8),
+                                      pos = self.mask_position_card,
+                                      scale = 0.05)
 
-        # Following will show a small x at the center
-        self.title = OnscreenText("x",
-                                  style = 1,
-                                  fg = (1,1,1,1),
-                                  bg = (0,0,0,.8),
-                                  pos = self.mask_position_ndc,
-                                  scale = 0.05)
 
     #Move both textures
     def textures_update(self, task):
@@ -280,13 +282,6 @@ class BinocularMoving(ShowBase):
         translate = TransformState.make_pos2d((0.5, 0.5))
         return translate.compose(rotate.compose(scale.compose(center_shift)))
 
-    def ndc2uv(self, val):
-        """ from model-based normalized device coordinates to texture-based uv-coordinates"""
-        return 0.5*val
-
-    def uv2ndc(self, val):
-        """ from texture-based uv-coordinates to model-based normalized device coordinates"""
-        return 2*val
     
         
         
@@ -393,8 +388,7 @@ class KeyboardToggleTex(ShowBase):
             Otherwise clear previous texture so they do not overlap."""
             self.self_initialized = True
         else:
-            #self.card.clearTexture(self.texture_stage)
-            self.card.detachNode()  #removeNode v detachNode?
+            self.card.detachNode()  
 
 
         if data == '0':
@@ -435,12 +429,24 @@ class KeyboardToggleTex(ShowBase):
         
 class InputControlStim(ShowBase):
     """
-    Generic input-controll stimulus class: takes in list of texture classes, and stimulus parameters 
-    with stimulus shown dependent on events produced by utils.Monitor() class. Currently
-    equipped to handle three textures: should be scalable.
+    Generic input-controll stimulus class: takes in list of texture classes, and stimulus parameters.
+    Stimulus shown, in real-time, depends on events produced by utils.Monitor() class.
+    
+    Inputs:
+        Positional
+            tex_classes: m-element list of texture classes
+            stim_params: m-element list of dictionaries: each contains parameters (e.g., velocity)
+        
+        Keyword 
+            initial_tex_ind (0): index for first stim to show
+            window_size (512): size of the panda3d window (pixels)
+            window_name ('InputControlStim'): title of window in gui
+            profile_on (False): will show actual fps, profiler, and little x at center if True
+            fps (30): controls frame rate of display
+            save_path (None): if set to a file path, will save data about stimuli, and time they are delivered
     """
     def __init__(self, tex_classes, stim_params, initial_tex_ind = 0, window_size = 512, 
-                 profile_on = False, fps = 30, save_path = None):
+                 window_name = "InputControlStim", profile_on = False, fps = 30, save_path = None):
         super().__init__()
 
         self.current_tex_num = initial_tex_ind
@@ -450,28 +456,27 @@ class InputControlStim(ShowBase):
         self.window_size = window_size
         self.stimulus_initialized = False  # for setting up first stim (don't clear cards they don't exist)
         self.fps = fps
+        self.profile_on = profile_on
         self.save_path = save_path
         if self.save_path:
             self.filestream = utils.save_initialize(save_path, tex_classes, stim_params)
         else:
             self.filestream = None 
         self.scale = np.sqrt(8)  #so it can handle arbitrary rotations and shifts
+        self.window_name = window_name
         
         #Window properties
-        self.windowProps = WindowProperties()
-        self.windowProps.setSize(self.window_size, self.window_size)
-        self.set_title("Initializing")
+        self.window_props = WindowProperties()
+        self.window_props.setSize(self.window_size, self.window_size)
+        self.set_title(self.window_name)
 
         # Set frame rate
         ShowBaseGlobal.globalClock.setMode(ClockObject.MLimited)
         ShowBaseGlobal.globalClock.setFrameRate(self.fps)  
         
         #Set up profiling if desired
-        if profile_on:
-            try:
-                PStatClient.connect() # this will only work if pstats is running
-            except:
-                print("pstat not on")
+        if self.profile_on:
+            PStatClient.connect() # this will only work if pstats is running
             ShowBaseGlobal.base.setFrameRateMeter(True)  #Show frame rate
                        
         #Set initial texture(s)
@@ -517,7 +522,7 @@ class InputControlStim(ShowBase):
     @property
     def current_stim_params(self):
         """ 
-        returns actual value of current stimulus 
+        Parameters of current texture (e.g., velocity, stim_type) 
         """
         return self.stim_params[self.current_tex_num]
     
@@ -537,7 +542,13 @@ class InputControlStim(ShowBase):
     
             self.right_card = self.aspect2d.attachNewNode(cardmaker.generate())
             self.right_card.setAttrib(ColorBlendAttrib.make(ColorBlendAttrib.M_add))
-
+            if self.profile_on:
+                self.center_indicator = OnscreenText("x",
+                                                     style = 1,
+                                                     fg = (1,1,1,1),
+                                                     bg = (0,0,0,.8),
+                                                     pos = self.current_stim_params['position'],
+                                                     scale = 0.05)
         # Tex card
         elif self.current_stim_params['stim_type'] == 's':
             self.card = self.aspect2d.attachNewNode(cardmaker.generate())
@@ -582,13 +593,9 @@ class InputControlStim(ShowBase):
     def set_stimulus(self, data):
         """ 
         Uses events from zmq to set the stimulus value. 
-        
-        Matt: this should be more general. Right now it is set up to consume 3
-        different inputs.
         """
             
         if not self.stimulus_initialized:
-            print("Initializing")
             # If this is first stim, then toggle initialization to on, and
             # do not clear previous texture (there is no previous texture).
             self.stimulus_initialized = True
@@ -604,6 +611,7 @@ class InputControlStim(ShowBase):
             
         # Set new texture stages/cards etc
         self.tex = self.tex_classes[self.current_tex_num]
+        
         print(self.current_tex_num, self.tex) #for debugging
         self.create_texture_stages()
         self.create_cards()
@@ -613,7 +621,6 @@ class InputControlStim(ShowBase):
         if self.filestream:
             self.filestream.write(f"{str(datetime.now())}\t{data}\n")
             self.filestream.flush()
-                          
         return
     
     def clear_cards(self):
@@ -623,6 +630,8 @@ class InputControlStim(ShowBase):
         if self.current_stim_params['stim_type'] == 'b':
             self.left_card.detachNode()
             self.right_card.detachNode()
+            if self.profile_on:
+                self.center_indicator.detachNode()
         elif self.current_stim_params['stim_type'] == 's':
             self.card.detachNode()
         return
@@ -655,9 +664,8 @@ class InputControlStim(ShowBase):
         """
         #print("Setting texture stages")
         if self.current_stim_params['stim_type'] == 'b':
-            self.mask_position_ndc = self.current_stim_params['position']
-            self.mask_position_uv = (self.ndc2uv(self.mask_position_ndc[0]),
-                                      self.ndc2uv(self.mask_position_ndc[1]))
+            self.mask_position_uv = (utils.card2uv(self.current_stim_params['position'][0]),
+                                     utils.card2uv(self.current_stim_params['position'][1]))
             
             #CREATE MASK ARRAYS
             self.left_mask_array = 255*np.ones((self.texture_size, 
@@ -686,6 +694,7 @@ class InputControlStim(ShowBase):
                                                 TextureStage.COSrcColor,
                                                 TextureStage.CSPrevious,
                                                 TextureStage.COSrcColor)
+            
         elif self.current_stim_params['stim_type'] == 's':
             self.card.setTexture(self.texture_stage, self.tex.texture)
         return
@@ -701,27 +710,13 @@ class InputControlStim(ShowBase):
         rotate = TransformState.make_rotate2d(self.current_stim_params['strip_angle'])
         translate = TransformState.make_pos2d((0.5, 0.5))
         return translate.compose(rotate.compose(scale.compose(center_shift)))
-
-    def ndc2uv(self, val):
-        """ from model-based normalized device coordinates to texture-based uv-coordinates"""
-        return 0.5*val
-
-    def uv2ndc(self, val):
-        """ from texture-based uv-coordinates to model-based normalized device coordinates"""
-        return 2*val
-    
+   
     def set_title(self, title):
-        self.windowProps.setTitle(title)
-        ShowBaseGlobal.base.win.requestProperties(self.windowProps)  #base is a panda3d global
+        self.window_props.setTitle(title)
+        ShowBaseGlobal.base.win.requestProperties(self.window_props)  #base is a panda3d global
     
-    
 
-
-
-
-#%%  below stuff has NOT been refactored
-
-
+#%%  below stuff has NOT been refactors and probably will not work
 class Scaling(ShowBase):
     """
     Show a single full-field texture that scales up or down in time, repeating.
@@ -789,10 +784,6 @@ class Scaling(ShowBase):
         return Task.cont
     
     
-
-
-
-
 #%%
 if __name__ == '__main__':
     import textures
@@ -800,9 +791,9 @@ if __name__ == '__main__':
     sin_red_tex = textures.SinRgbTex(texture_size = 512,
                                      spatial_frequency = 20,
                                      rgb = (255, 0, 0))
-    sin_red_stim = ShowTexMoving(sin_red_tex,
-                                 angle = 25, 
-                                 velocity = -0.05,
-                                 window_name = 'red sin test stim',
-                                 profile_on = False)
+    sin_red_stim = TexMoving(sin_red_tex,
+                             angle = 25, 
+                             velocity = -0.05,
+                             window_name = 'red sin test stim',
+                             profile_on = False)
     sin_red_stim.run()

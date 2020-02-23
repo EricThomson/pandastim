@@ -8,7 +8,9 @@ import textures
 import utils
 from datetime import datetime
 
-example_ind = 4
+example_ind = 7
+
+
 
 
 if example_ind == 0:
@@ -53,7 +55,7 @@ elif example_ind == 3:
                                             stim_angles = (-40, -40),
                                             strip_angle = 50,
                                             strip_width = 8,
-                                            profile_on = False)
+                                            profile_on = True)
     binocular_stat.run()
     
     
@@ -133,7 +135,7 @@ elif example_ind == 6:
     binocular = stimuli.InputControlStim(stim_texts,
                                          stim_params,
                                          initial_tex_ind = 0,
-                                         profile_on = False,
+                                         profile_on = True,
                                          fps = frame_rate,
                                          save_path = file_path)
     binocular.run()

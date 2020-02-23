@@ -43,6 +43,24 @@ def save_initialize(file_path, tex_classes, stim_params):
     filestream.flush()
     return filestream
  
+def card2uv(val):
+    """ 
+    from model (card) -based normalized device coordinates (-1,-1 bottom left, 1,1 top right)
+    appropriate for cards to texture-based uv-coordinates. 
+    
+    For more on these different coordinate systems for textures:
+        https://docs.panda3d.org/1.10/python/programming/texturing/simple-texturing
+        
+    """
+    return 0.5*val
+
+def uv2card(val):
+    """
+    Transform from texture-based uv-coordinates to card-based normalized device coordinates
+    """
+    return 2*val
+    
+    
 class Publisher:
     """
     Publisher wrapper class for zmq.
