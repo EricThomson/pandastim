@@ -8,7 +8,7 @@ import textures
 import utils
 from datetime import datetime
 
-example_ind = 7
+example_ind = 5
 
 
 
@@ -113,7 +113,7 @@ elif example_ind == 5:
 
 
 elif example_ind == 6:
-    print("For this to work make sure you are running pub_class_toggle.py at same time.")
+    print("Make sure you are running pub_class_toggle.py at same time.")
     sub = utils.Subscriber(topic = "stim", port = "1234")
     monitor = utils.Monitor(sub)
 

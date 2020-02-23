@@ -34,13 +34,15 @@ To learn more about optimizaing/profiling in panda3d: https://docs.panda3d.org/1
 
 
 ### To do (short term)
-- It doesn't capture the first signal from zmq. Fix this.
-- Just do a few examples in examples folder, clean that up.
-
+- Just do a few examples in examples folder.
+- Cleanup
+    - examples folder
+    - working folder
+    - main folder
 
 ### To do (medium term)
 - Filtering out repeats: do in Monitor or in set_stimulus or in sender application? Whatever is easiest for user you can do any of them, really.
-- What is difference b/w card.detachNode() and card.removeNode(), and do we need to do clearTexture(stage) first? They both seem to work fine. Is detach safer?
+- It is a known issue that pub/sub in zeromq misses the first message published. To overcome this, sync up the pub/sub first, before you start publishing: https://stackoverflow.com/a/25580646/1886357. Or you could just send a bunch of 0's initially to get them sync'd up. :)
 - Create new updating stimulus classes
     - looming circle stimulus (static_fullfield_circle)
     - randomly updating stimulus (tex_random_working.py)

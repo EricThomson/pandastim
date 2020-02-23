@@ -111,7 +111,7 @@ class Monitor(DirectObject.DirectObject):
         while True:
             data = self.sub.socket.recv() #recv_string()
             topic, message = data.split()
-            #print(topic, message)
+            print(topic, message)
             #emit message for panda3d (convert from byte to string)
             messenger.send("stim" + str(message, 'utf-8'))
 
@@ -120,8 +120,12 @@ class Monitor(DirectObject.DirectObject):
         
         
 if __name__ == '__main__':
-    pass
-    
+    import time
+    # Monitor test: first turn on pub_class_toggle.py or pub_class_toggle3.py
+    sub = Subscriber(topic = "stim")
+    m = Monitor(sub)
+    time.sleep(60)
+    m.kill()
     
     
     

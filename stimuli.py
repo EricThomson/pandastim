@@ -11,9 +11,10 @@ https://www.panda3d.org/reference/python/classpanda3d_1_1core_1_1Texture.html#a8
 To do:
     Consider making texture size x/y different. Currently constrained to square (setup2dTexture method)
 """
+import sys
 import numpy as np
 from datetime import datetime
-
+import logging
 
 from direct.showbase.ShowBase import ShowBase
 from direct.showbase import ShowBaseGlobal  #global vars defined by p3d
@@ -24,6 +25,15 @@ from direct.gui.OnscreenText import OnscreenText   #for binocular stim
 from panda3d.core import PStatClient
 
 import utils
+
+# Set up a logger
+log_level = logging.INFO
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG) #because annoying reasons
+if not logger.hasHandlers():
+    log_handler = logging.StreamHandler(sys.stdout)
+    log_handler.setLevel(log_level)
+    logger.addHandler(log_handler)
 
 
 class TexMoving(ShowBase):
@@ -226,13 +236,10 @@ class BinocularMoving(ShowBase):
 
         #Set dynamic transforms
         if self.left_velocity != 0 and self.right_velocity != 0:
-            print("Moving both textures")
             self.taskMgr.add(self.textures_update, "move_both")
         elif self.left_velocity != 0 and self.right_velocity == 0:
-            print("Moving left texture")
             self.taskMgr.add(self.left_texture_update, "move_left")
         elif self.left_velocity == 0 and self.right_velocity != 0:
-            print("Moving right texture")
             self.taskMgr.add(self.right_texture_update, "move_right")
 
         # Set frame rate
@@ -315,11 +322,8 @@ class OpenLoopStim(ShowBase):
 
 class KeyboardToggleTex(ShowBase):
     """
-    toggles between different textures based on keyboard inputs (0 and 1). Not set up
-    for binocular stim.
-    
-    Useful for testing things out quickly before pushing to the InputControlStim class,
-    which can be gnarly.
+    toggles between two textures based on keyboard inputs (0 and 1). Not set up
+    for binocular stim. Similar call to InputControlStim
     """
     def __init__(self, tex_classes, stim_params, window_size = 512, 
                  profile_on = False, fps = 30, save_path = None):
@@ -400,7 +404,7 @@ class KeyboardToggleTex(ShowBase):
             current_datetime = str(datetime.now())
             self.filestream.write(f"{current_datetime}\t{data}\n")
             self.filestream.flush()
-        print(self.current_tex_num, self.current_stim_params)
+        logger.info(self.current_tex_num, self.current_stim_params)
         self.tex = self.tex_classes[self.current_tex_num]
 
         self.card.setColor((1, 1, 1, 1))
@@ -502,7 +506,7 @@ class InputControlStim(ShowBase):
                 self.left_card.setTexPos(self.left_texture_stage, left_tex_position, 0, 0)
                 self.right_card.setTexPos(self.right_texture_stage, right_tex_position, 0, 0)
             except Exception as e:
-                print(e)
+                logger.error(e)
         elif self.current_stim_params['stim_type'] == 's':
             if self.current_stim_params['velocity'] == 0:
                 pass
@@ -512,7 +516,7 @@ class InputControlStim(ShowBase):
                 try:
                     self.card.setTexPos(self.texture_stage, new_position, 0, 0) #u, v, w
                 except Exception as e:
-                    print(e)
+                    logger.error(e)
         return task.cont
     
     @property
@@ -564,7 +568,6 @@ class InputControlStim(ShowBase):
         
         For more on texture stages:
         https://docs.panda3d.org/1.10/python/programming/texturing/multitexture-introduction
-        
         """
         #Binocular cards
         if self.current_stim_params['stim_type'] == 'b':
@@ -594,7 +597,7 @@ class InputControlStim(ShowBase):
         """ 
         Uses events from zmq to set the stimulus value. 
         """
-            
+        logger.info("\tset_stimulus(%s)", data)
         if not self.stimulus_initialized:
             # If this is first stim, then toggle initialization to on, and
             # do not clear previous texture (there is no previous texture).
@@ -612,7 +615,7 @@ class InputControlStim(ShowBase):
         # Set new texture stages/cards etc
         self.tex = self.tex_classes[self.current_tex_num]
         
-        print(self.current_tex_num, self.tex) #for debugging
+        logger.debug("\t%d: %s", self.current_tex_num, self.tex) #for debugging
         self.create_texture_stages()
         self.create_cards()
         self.set_texture_stages()
@@ -662,7 +665,6 @@ class InputControlStim(ShowBase):
         """ 
         Add texture stages to cards
         """
-        #print("Setting texture stages")
         if self.current_stim_params['stim_type'] == 'b':
             self.mask_position_uv = (utils.card2uv(self.current_stim_params['position'][0]),
                                      utils.card2uv(self.current_stim_params['position'][1]))
@@ -787,7 +789,6 @@ class Scaling(ShowBase):
 #%%
 if __name__ == '__main__':
     import textures
-    print("\nNote for more complete set of examples to get started, see stimulus_examples.py\n")
     sin_red_tex = textures.SinRgbTex(texture_size = 512,
                                      spatial_frequency = 20,
                                      rgb = (255, 0, 0))
