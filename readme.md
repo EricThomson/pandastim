@@ -35,6 +35,8 @@ To learn more about optimizaing/profiling in panda3d: https://docs.panda3d.org/1
 
 ### To do (short term)
 - Just do a few examples in examples folder.
+- Mention logger levels in stimuli.py and how you can change them.
+
 - Cleanup
     - examples folder
     - working folder
