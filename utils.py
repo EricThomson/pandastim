@@ -111,7 +111,6 @@ class Monitor(DirectObject.DirectObject):
         while True:
             data = self.sub.socket.recv() #recv_string()
             topic, message = data.split()
-            print(topic, message)
             #emit message for panda3d (convert from byte to string)
             messenger.send("stim" + str(message, 'utf-8'))
 

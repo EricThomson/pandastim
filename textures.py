@@ -2,11 +2,14 @@
 pandastim/textures.py
 Texture classes defined for display in ShowBase stimulus classes. 
 
+Part of pandastim package: https://github.com/EricThomson/pandastim
+
 First defines the abstract base class, TextureBase. This defines the attributes
 of the textures, but leaves `create_texture` undefined, to be implemented
 in each subclass as a numpy array that looks how you want.
 
-Part of pandastim package: https://github.com/EricThomson/pandastim
+Component types (texture data types in panda3d):
+https://www.panda3d.org/reference/python/classpanda3d_1_1core_1_1Texture.html#a81f78fc173dedefe5a049c0aa3eed2c0
 """
 import numpy as np
 import matplotlib.pyplot as plt
@@ -126,8 +129,7 @@ class SinGrayTex(TextureBase):
     To do:
         Currently doesn't handle phase or contrast (usually handled by ShowBase)
     """
-    def __init__(self, texture_size = 512,  texture_name = "sin_gray", 
-                 spatial_frequency = 10):
+    def __init__(self, texture_size = 512, texture_name = "sin_gray", spatial_frequency = 10):
         self.frequency = spatial_frequency
         super().__init__(texture_size = texture_size, texture_name = texture_name)
 

@@ -72,7 +72,8 @@ To learn more about optimizaing/profiling in panda3d: https://docs.panda3d.org/1
 - Consider porting to `pixel2d` (basics are in working/).
 - Write up instructions on how to add new stimuli (basically make a numpy array, put it in stimuli.py, and then follow the examples whether you want a static, drifting stimulus, or experiment)
 - To make plaids is pretty easy, just supereimpose two guys at two angles as in BinocularDrift fail 1am 3//9/19.
-- Make a huge set of possible stimuli to show: the basis set (including plaids)
+- Add independent velocities/textures for binocular stimuli (so left/right can have different textures).
+-  Consider making texture/window size x/y different.
 
 #### Notes
 - If you are just learning panda3d, consider working through their tutorial (https://www.panda3d.org/manual/). Also you might consider installing their SDK, as it comes with useful examples (https://www.panda3d.org/download/).

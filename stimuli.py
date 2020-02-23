@@ -4,12 +4,6 @@ Classes to present visual stimuli in pandastim (subclasses of ShowBase, which
 implements the main event loop in panda3d).
 
 Part of pandastim package: https://github.com/EricThomson/pandastim
-
-Component types (texture data types in panda3d):
-https://www.panda3d.org/reference/python/classpanda3d_1_1core_1_1Texture.html#a81f78fc173dedefe5a049c0aa3eed2c0
-
-To do:
-    Consider making texture size x/y different. Currently constrained to square (setup2dTexture method)
 """
 import sys
 import numpy as np
@@ -597,7 +591,7 @@ class InputControlStim(ShowBase):
         """ 
         Uses events from zmq to set the stimulus value. 
         """
-        logger.info("\tset_stimulus(%s)", data)
+        logger.debug("\tset_stimulus(%s)", data)
         if not self.stimulus_initialized:
             # If this is first stim, then toggle initialization to on, and
             # do not clear previous texture (there is no previous texture).
@@ -615,7 +609,7 @@ class InputControlStim(ShowBase):
         # Set new texture stages/cards etc
         self.tex = self.tex_classes[self.current_tex_num]
         
-        logger.debug("\t%d: %s", self.current_tex_num, self.tex) #for debugging
+        logger.debug("\t%d: %s", self.current_tex_num, self.tex)
         self.create_texture_stages()
         self.create_cards()
         self.set_texture_stages()
