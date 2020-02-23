@@ -1,7 +1,7 @@
 # pandastim
 <img align = "right" width = "120" src=".\images\omr_sin_example.png ">
 
-Cross-platform Python package for generating visual stimuli using the [Panda3d](https://www.panda3d.org/) library.
+Cross-platform Python package for generating visual stimuli using the [Panda3d](https://www.panda3d.org/) library, a Python game-engine developed by Disney.
 
 ### Installation
 This assumes you are using Anaconda and Python 3:
@@ -11,17 +11,17 @@ This assumes you are using Anaconda and Python 3:
     conda install numpy scipy matplotlib zeromq
     pip install panda3d
 
-To install pandastim, just to go the directory where you want the directory installed, and run:    
+Once you've got your environment squared away, you can install pandastim by heading to the directory where you want it installed, and run:    
 
     git clone https://github.com/EricThomson/pandastim.git
 
-To test the installation, try running one of the examples in [examples/readme.md](examples/readme.md). Note that panda3d doesn't always play nicely with IDEs: I always run scripts from the command line (e.g., `python -m examples.drifting_binocular_grating`).
+To test the installation, try running one of the examples in [examples/readme.md](examples/readme.md). Note that panda3d is sometimes fickle with IDEs, I always run scripts from the command line (e.g., `python -m examples.drifting_binocular_grating`).
 
 ### Package structure
 The three main modules:
-- `stimuli.py`: instances of `ShowBase`, the panda3d class that is used to render scenes, used to show different stimuli.  Can be as simple as showing a static grey sinusoidal grating, or showing a sequence of stimuli locked to an input signal from some external source.
-- `textures.py`: texture classes used by the stimulus classes. They are all instances of the `TextureBase` abstract base class defined therein. If you run textures by itself, you can toggle different examples in `main` for fun and debugging.
-- `utils.py`: helper code used across different classes: the interface classes for zmq sockets are here.
+- `stimuli.py`: instances of `ShowBase`, the panda3d class that is used to render scenes.  Can be as simple as showing a static grey sinusoidal grating, or showing a sequence of stimuli locked to an input signal from some external source.
+- `textures.py`: texture classes used by stimuli. They are all instances of the `TextureBase` abstract base class defined therein. Creating your own textures is very easy: just create a numpy array that shows what you want!
+- `utils.py`: helper code used across different classes. For instance, the interface classes for zmq sockets are here.
 
 The `examples/` folder contains representative examples. It is probably easiest to use these examples as a starting point for building your own experiments.
 
@@ -35,10 +35,10 @@ To learn more about optimizaing/profiling in panda3d: https://docs.panda3d.org/1
 #### Notes
 - If you are just learning panda3d, consider working through their tutorial (https://www.panda3d.org/manual/). Also you might consider installing their SDK, as it comes with useful examples (https://www.panda3d.org/download/).
 - panda3d doesn't listen to your OS scale setting, so 800 pixel window is an 800 pixel window, it will not be scaled by your OS.
-- It often looks like textures are drifting vertically/horizontally even when they are not. This is the well-known 'aperture problem'. To disambiguate, increase the window size until you can see their edges.
-- To get more info about what is going on in `stimuli.py` you can use the logger set up there, either change the cutoff from INFO to DEBUG, or add some messages.
+- It often looks like textures are drifting vertically/horizontally even when they are not. This is the well-known 'aperture problem' from psychophysics. To disambiguate, increase the window size until you can see their edges.
+- To get more info about what is going on in `stimuli.py` you can use the logger set up there, either change the cutoff from INFO to DEBUG, or add some messages where you want more feedback.
 - Do versioning with git tag. E.g., `git tag -a "v0.1" -m "version v0.1"`
-- Filtering out stimulus repeats (so you don't change the stim when you get the same input) is currently done in `set_stimulus` (for instance in `examples/input_control_simple.py`) but it could be done by the subscriber, monitor, or sender (publisher) applications. Just do what is best for you.
+- On filtering out stimulus repeats (so you don't change the stim when you get the same input). This is currently done in `set_stimulus` (for instance in `examples/input_control_simple.py`) but it could be done by the subscriber, monitor, or sender (publisher) applications. Just do what is best for you.
 
 #### Conventions
 PEP8, largely. UpperCamelCase for classes; lower_case_underscore for vars/functions/methods. Explicit is better than implicit.
