@@ -32,13 +32,9 @@ There is a very-well commented config file in `panda3d\etc\Config.prc`: this inc
 
 This will *not* let you show video at frame rates faster than your monitor will allow, but can be useful to test how fast your code can run when not encumbered by such limitations.
 
-If your app is running more slowly than you'd like, panda3d comes with a nice graphical code profiler that will show you were the resources are being used. The stimulus classes all include a `profile_on` flag (which defaults to `False`). To activate this profiler, you have to run the standalone `pstats` program separately before starting your Python code (see below), and set that flag to `True`. 
+If your app is running more slowly than you'd like, panda3d comes with a nice graphical code profiler that will show you were the resources are being used. The stimulus classes all include a `profile_on` flag (which defaults to `False`). To activate this profiler, you have to run the standalone `pstats` program separately before starting your Python code (see below), and set that flag to `True`. Setting `profile_on` to `True` will also cause an FPS display to show on your stimulus window, and it will cause a small 'x' to appear at the center of the stimulus (when applicable). See the examples folder if curious.
 
-Setting `profile_on` to `True` will also cause an FPS display to show on your stimulus window, and it will cause a small 'x' to appear at the center of the stimulus (when applicable). See the examples folder if curious.
-
-On Windows, the correct `pstats.exe` file is in your conda directory in `\envs\pstim\Scripts` -- there is another instance of that pstats.exe in `pstim\Lib`  that will not work.  
-
-In Linux, `pstats` is in `\envs\pstim\bin` -- run it from the command line with `./pstats` -- you may need to install the module `libcanberra-gtk-module` first (`sudo apt-get install libcanberra-gtk-module`).
+On Windows, the correct `pstats.exe` file is in your conda directory in `\envs\pstim\Scripts` -- there is another instance of pstats.exe in `pstim\Lib` that will not work (not sure why). In Linux, `pstats` is in `\envs\pstim\bin` -- run it from the command line with `./pstats` -- you may need to install the module `libcanberra-gtk-module` first (`sudo apt-get install libcanberra-gtk-module`).
 
 To learn more about optimizing/profiling in panda3d: https://docs.panda3d.org/1.10/python/optimization/index
 
