@@ -15,7 +15,7 @@ Once you've got your environment squared away, you can install pandastim by head
 
     git clone https://github.com/EricThomson/pandastim.git
 
-To test the installation, try running one of the examples in [examples/readme.md](examples/readme.md). Note that panda3d is sometimes fickle with IDEs, I always run scripts from the command line (e.g., `python -m examples.drifting_binocular_grating`).
+To test the installation, try running one of the examples in [examples/readme.md](examples/readme.md). Since panda3d is sometimes fickle with IDEs, I always run scripts from the command line (e.g., `python -m examples.drifting_binocular_grating` if you are in the `pandastim` directory).
 
 ### Package structure
 The three main modules:
@@ -25,16 +25,26 @@ The three main modules:
 
 The `examples/` folder contains representative examples. It is probably easiest to use these examples as a starting point for building your own experiments.
 
-### Profiling pandastim apps
-Panda3d comes with a nice graphical code profiler. The stimulus classes all include a `profile_on` flag (which defaults to `False`). To activate it, you have to run `pstats` before starting your Python code, and set that flag to `True`r. This will also cause an FPS display to show on your stimulus window even if you aren't using the profiler, and it will cause a small 'x' to appear at the location of the center of the stimulus when that is a defined parameter (as it is for binocular stimuli). See the examples folder if curious.
+### Tweaking/profiling pandastim apps
+There is a very-well commented config file in `panda3d\etc\Config.prc`: this includes lots of parameters you can set (such as the window location and size). To uncap the frame rates of panda3d (which are limited to your monitor's refresh rate by default) you an add the following line:
 
-On Windows, `pstats.exe` in your conda directory in `\envs\pstim\Scripts` (in Linux, `pstats` is in `\envs\pstim\bin` -- run it from the command line with `./pstats` -- you may need to install the module `libcanberra-gtk-module` first: `sudo apt-get install libcanberra-gtk-module`).
+    sync-video #f
 
-To learn more about optimizaing/profiling in panda3d: https://docs.panda3d.org/1.10/python/optimization/index
+This will *not* let you show video at frame rates faster than your monitor will allow, but can be useful to test how fast your code can run when not encumbered by such limitations.
+
+If your app is running more slowly than you'd like, panda3d comes with a nice graphical code profiler that will show you were the resources are being used. The stimulus classes all include a `profile_on` flag (which defaults to `False`). To activate this profiler, you have to run the standalone `pstats` program separately before starting your Python code (see below), and set that flag to `True`. 
+
+Setting `profile_on` to `True` will also cause an FPS display to show on your stimulus window, and it will cause a small 'x' to appear at the center of the stimulus (when applicable). See the examples folder if curious.
+
+On Windows, the correct `pstats.exe` file is in your conda directory in `\envs\pstim\Scripts` -- there is another instance of that pstats.exe in `pstim\Lib`  that will not work.  
+
+In Linux, `pstats` is in `\envs\pstim\bin` -- run it from the command line with `./pstats` -- you may need to install the module `libcanberra-gtk-module` first (`sudo apt-get install libcanberra-gtk-module`).
+
+To learn more about optimizing/profiling in panda3d: https://docs.panda3d.org/1.10/python/optimization/index
 
 #### Notes
 - If you are just learning panda3d, consider working through their tutorial (https://www.panda3d.org/manual/). Also you might consider installing their SDK, as it comes with useful examples (https://www.panda3d.org/download/).
-- panda3d doesn't listen to your OS scale setting, so 800 pixel window is an 800 pixel window, it will not be scaled by your OS.
+- panda3d doesn't listen to your OS scale settings, so 800 pixel window is an 800 pixel window, it will not be scaled by your OS.
 - It often looks like textures are drifting vertically/horizontally even when they are not. This is the well-known 'aperture problem' from psychophysics. To disambiguate, increase the window size until you can see their edges.
 - To get more info about what is going on in `stimuli.py` you can use the logger set up there, either change the cutoff from INFO to DEBUG, or add some messages where you want more feedback.
 - Do versioning with git tag. E.g., `git tag -a "v0.1" -m "version v0.1"`
@@ -45,7 +55,6 @@ PEP8, largely. UpperCamelCase for classes; lower_case_underscore for vars/functi
 
 #### Acknowledgments
 Thanks to rdb (developer of panda3d) who provided lots of help figuring out how to efficiently do 2d things in a 3d game engine. Also the panda3d community in general has been very helpful.
-
 
 #### To do
 - Find good example of weird rendiering differences with two angles, and ask about it @panda3d.
@@ -69,3 +78,7 @@ Thanks to rdb (developer of panda3d) who provided lots of help figuring out how 
 - try compressing textures (https://www.panda3d.org/manual/?title=Texture_Compression)?
 - Consider porting to `pixel2d` (basics are in working/): then everything will be in pixel-based coordinates rather than normalized.
 -  Consider making texture/window size x/y different.
+- make conda installer for pandastim (or pip and then conda)
+- https://docs.conda.io/projects/conda-build/en/latest/user-guide/tutorials/build-pkgs-skeleton.html
+- https://medium.com/@giswqs/building-a-conda-package-and-uploading-it-to-anaconda-cloud-6a3abd1c5c52
+- https://realpython.com/pypi-publish-python-package/

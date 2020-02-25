@@ -26,7 +26,7 @@ stim_params = [params1, params2]
 
 # Set up filepath for saving
 current_dt = datetime.now()
-filename = current_dt.strftime(("toggle_%Y%m%d_%H%M%S.txt"))
+filename = current_dt.strftime(("ics_%Y%m%d_%H%M%S.txt"))
 save_dir = r'./examples/data/'
 file_path = save_dir + filename
 

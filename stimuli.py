@@ -335,11 +335,6 @@ class KeyboardToggleTex(ShowBase):
         else:
             self.filestream = None
         
-        #Set up key control mechanism
-        self.zero_button = KeyboardButton.ascii_key('0')
-        self.one_button = KeyboardButton.ascii_key('1')
-        self.is_down = ShowBaseGlobal.base.mouseWatcherNode.is_button_down
-
         #Window properties
         self.windowProps = WindowProperties()
         self.windowProps.setSize(self.window_size, self.window_size)

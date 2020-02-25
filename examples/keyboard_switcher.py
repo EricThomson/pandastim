@@ -20,7 +20,7 @@ stim_params = [{'angle': 45, 'velocity': 0.1},
 
 # Set up file path
 current_dt = datetime.now()
-filename = current_dt.strftime(("toggle_%Y%m%d_%H%M%S.txt"))
+filename = current_dt.strftime(("ks_%Y%m%d_%H%M%S.txt"))
 save_dir = r'./examples/data/'
 file_path = save_dir + filename
 
