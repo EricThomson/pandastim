@@ -26,11 +26,11 @@ The three main modules:
 The `examples/` folder contains representative examples. It is probably easiest to use these examples as a starting point for building your own experiments.
 
 ### Tweaking/profiling pandastim apps
-There is a very-well commented config file in `panda3d\etc\Config.prc`: this includes lots of parameters you can set (such as the window location and size). To uncap the frame rates of panda3d (which are limited to your monitor's refresh rate by default) you an add the following line:
+There is a well-commented config file in `panda3d\etc\Config.prc`: this includes lots of parameters you can set (such as the window location and size). To uncap the frame rate of panda3d you can add the following line:
 
     sync-video #f
 
-This will *not* let you show video at frame rates faster than your monitor will allow, but can be useful to test how fast your code can run when not encumbered by such limitations.
+This will *not* let you show video at frame rates faster than your monitor's maximum, but can be useful to test how fast your code could run when not encumbered by such limitations.
 
 If your app is running more slowly than you'd like, panda3d comes with a nice graphical code profiler that will show you were the resources are being used. The stimulus classes all include a `profile_on` flag (which defaults to `False`). To activate this profiler, you have to run the standalone `pstats` program separately before starting your Python code (see below), and set that flag to `True`. Setting `profile_on` to `True` will also cause an FPS display to show on your stimulus window, and it will cause a small 'x' to appear at the center of the stimulus (when applicable). See the examples folder if curious.
 
@@ -44,9 +44,9 @@ To learn more about optimizing/profiling in panda3d: https://docs.panda3d.org/1.
 - It often looks like textures are drifting vertically/horizontally even when they are not. This is the well-known 'aperture problem' from psychophysics. To disambiguate, increase the window size until you can see their edges.
 - To get more info about what is going on in `stimuli.py` you can use the logger set up there, either change the cutoff from INFO to DEBUG, or add some messages where you want more feedback.
 - Do versioning with git tag. E.g., `git tag -a "v0.1" -m "version v0.1"`
-- On filtering out stimulus repeats (so you don't change the stim when you get the same input). This is currently done in `set_stimulus` (for instance in `examples/input_control_simple.py`) but it could be done by the subscriber, monitor, or sender (publisher) applications. Just do what is best for you.
+- On filtering out stimulus repeats (so you don't change the stim when you get the same input): this is currently done in `set_stimulus` (for instance in `examples/input_control_simple.py`) but it could be done by the subscriber, monitor, or sender (publisher) applications. Just do what is best for you.
 - If you want to set antialiasing: https://docs.panda3d.org/1.10/python/programming/render-attributes/antialiasing .
-- If you want to programatically change camera, you need to disable the mouse: `ShowBaseGlobal.base.disableMouse()`. I don't use this mechanism but it may be useful at some point for drifting around a scene.
+- If you want to programatically change the camera position, you need to disable the mouse: `ShowBaseGlobal.base.disableMouse()`. pandastim don't currently use this mechanism, but it may be useful at some point for drifting around a scene.
 
 #### Conventions
 PEP8, largely. UpperCamelCase for classes; lower_case_underscore for vars/functions/methods. Explicit is better than implicit.
@@ -55,7 +55,7 @@ PEP8, largely. UpperCamelCase for classes; lower_case_underscore for vars/functi
 Thanks to rdb (developer of panda3d) who provided lots of help figuring out how to efficiently do 2d things in a 3d game engine. Also the panda3d community in general has been very helpful.
 
 #### To do
-- For InputControlParams, don't change if inputs are same.
+- For InputControlParams, add checks for same inputs -- don't change transform if the inputs are the same (decide how fine-grained to make this)
 - Find good example of weird rendiering differences with two angles, and ask about it @panda3d.
 - Create open loop stim class.
 - Create new stimulus classes
