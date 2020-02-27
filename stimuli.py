@@ -139,7 +139,7 @@ class InputControlParams(ShowBase):
                  velocities = (0,0), strip_width = 4, fps = 30, window_size = None,
                  window_name = 'BinocularDrift', profile_on = False):
         super().__init__()
-        #self.render.setAntialias(AntialiasAttrib.MMultisample)
+        self.render.setAntialias(AntialiasAttrib.MMultisample)
         self.tex = tex
         if window_size == None:
             self.window_size = tex.texture_size
@@ -245,6 +245,7 @@ class InputControlParams(ShowBase):
         elif self.left_velocity == 0 and self.right_velocity != 0:
             self.taskMgr.add(self.right_texture_update, "move_right")
 
+        # Event handler to process the messages
         self.accept("stim", self.process_stim, [])
 
         #Set up profiling if desired

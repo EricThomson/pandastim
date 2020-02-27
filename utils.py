@@ -121,9 +121,8 @@ class Monitor(DirectObject.DirectObject):
         
 class Emitter(DirectObject.DirectObject):
     """
-    Given three lists (x, y, theta): show the first elements, wait for pause seconds,
-    emit the xytheta values in the list with period seconds betwween
-    them, pause, and repeat.
+    Given three lists (x, y, theta): 
+    emit the xytheta values in the list with period seconds betwween them, pause, and repeat.
     """
     def __init__(self, x_vals, y_vals, theta_vals, period = 0.2, pause = 1.0):
         self.x_vals = x_vals

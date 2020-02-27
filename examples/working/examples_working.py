@@ -11,17 +11,29 @@ from datetime import datetime
 example_ind = -1
 
 if example_ind == -1:
-    stim = textures.SinRgbTex(rgb = (255, 0 , 0), spatial_frequency = 20)
-    binocular_show = stimuli.BinocularMovingCamera(stim,
-                                              position = (0, 0),
-                                              stim_angles = (40, 40),
-                                              strip_angle = 0, #130,
-                                              strip_width = 6,
-                                              velocities = (0.05, 0.05),
-                                              window_name = 'location consumer', 
-                                              profile_on = False)
+    from utils import Emitter
+    
+    #stim = textures.SinRgbTex(rgb = (255, 0 , 0), spatial_frequency = 40)
+    tex = textures.GratingGrayTex(spatial_frequency = 30, texture_size = 512)
+    binocular_show = stimuli.InputControlParams(tex,
+                                                initial_position = (0, 0),
+                                                stim_angles = (0, 0),
+                                                initial_angle = 0, #130,
+                                                strip_width = 6,
+                                                velocities = (-0.07, .07),
+                                                window_size = 512,
+                                                window_name = 'location consumer', 
+                                                profile_on = False)
+    
+    x = [0, .02, .03, .04, .05, .06, .07, 0.2, 0.19, 0.18, 0.17, 0.17, 0.17, 0.2, 0.2,  0.2, 0.2, 0.2,
+         0.2, 0.17, 0.17, 0.17, 0.18, 0.19, 0.2, 0.07, 0.06, 0.05, 0.04, 0.03, 0.02, 0]
+    y = [0, -.02, -.03, -.04, -.05, -.06, -.07, -0.2, -0.15, -0.12, -0.07, 0, 0.05, 0.1, 0.1, 0.1, 0.1, 0.1,
+         0.1, 0.05, 0, -0.07, -0.12, -0.15, -0.2, -0.07, -0.06, -0.05, -0.04, -0.03, -0.02, 0]
+    theta = [0, -2, -4, -5, -5, -5, -5, -20, -25, -27, -27, -30, -35, -40, -40, -40, -40, -40,
+             -40, -35, -30, -27, -27, -25, -20, -5, -5, -5, -5, -4, -2, 0]
+    em = Emitter(x, y, theta, period = .2, pause = 2)
     binocular_show.run()
-        
+    em.kil()
         
 
 elif example_ind == 0:
