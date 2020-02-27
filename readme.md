@@ -45,6 +45,8 @@ To learn more about optimizing/profiling in panda3d: https://docs.panda3d.org/1.
 - To get more info about what is going on in `stimuli.py` you can use the logger set up there, either change the cutoff from INFO to DEBUG, or add some messages where you want more feedback.
 - Do versioning with git tag. E.g., `git tag -a "v0.1" -m "version v0.1"`
 - On filtering out stimulus repeats (so you don't change the stim when you get the same input). This is currently done in `set_stimulus` (for instance in `examples/input_control_simple.py`) but it could be done by the subscriber, monitor, or sender (publisher) applications. Just do what is best for you.
+- If you want to set antialiasing: https://docs.panda3d.org/1.10/python/programming/render-attributes/antialiasing . 
+- If you want to programatically change camera, you need to disable the mouse: `ShowBaseGlobal.base.disableMouse()`. I don't use this mechanism but it may be useful at some point for drifting around a scene.
 
 #### Conventions
 PEP8, largely. UpperCamelCase for classes; lower_case_underscore for vars/functions/methods. Explicit is better than implicit.

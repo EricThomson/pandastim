@@ -4,11 +4,12 @@ Helper functions used in multiple classes in stimulu/textures
 
 Part of pandastim package: https://github.com/EricThomson/pandastim
 """
-
+import sys
 import numpy as np
 import threading
 from scipy import signal 
 import zmq
+import time
 
 from direct.showbase import DirectObject
 from direct.showbase.MessengerGlobal import messenger
@@ -118,14 +119,59 @@ class Monitor(DirectObject.DirectObject):
         self.run_thread.join()
         
         
+class Emitter(DirectObject.DirectObject):
+    """
+    Given three lists (x, y, theta): show the first elements, wait for pause seconds,
+    emit the xytheta values in the list with period seconds betwween
+    them, pause, and repeat.
+    """
+    def __init__(self, x_vals, y_vals, theta_vals, period = 0.2, pause = 1.0):
+        self.x_vals = x_vals
+        self.y_vals = y_vals
+        self.theta_vals = theta_vals
+        self.num_points = len(self.x_vals)
+        assert(len(x_vals) == len(y_vals) == len(theta_vals)), "x y and theta must be same length"
+        self.period = period
+        self.pause = pause
+        self.killed = False
+        self.run_thread = threading.Thread(target = self.run)
+        self.run_thread.daemon = True
+        self.run_thread.start()
+        
+    def run(self):
+        while True:
+            for ind, (x_val, y_val, theta_val) in enumerate(zip(self.x_vals, self.y_vals, self.theta_vals)):
+                #print(f"stim {x_val} {y_val} {theta_val}")
+                messenger.send("stim", [x_val, y_val, theta_val])
+                if ind == 0:
+                    time.sleep(self.pause)
+                else:
+                    time.sleep(self.period)
+            print(f"Pausing {self.pause} seconds.")
+            time.sleep(self.pause)
+             
+    def kill(self):
+        self.run_thread.join()
+
+        
+#%%        
 if __name__ == '__main__':
-    import time
-    # Monitor test: first turn on pub_class_toggle.py or pub_class_toggle3.py
-    sub = Subscriber(topic = "stim")
-    m = Monitor(sub)
-    time.sleep(60)
-    m.kill()
-    
+    to_test = 1
+    if to_test == 0:
+        # Monitor test: first turn on pub_class_toggle.py or pub_class_toggle3.py
+        sub = Subscriber(topic = "stim")
+        m = Monitor(sub)
+        time.sleep(60)
+        m.kill()
+    elif to_test == 1:
+        # Emitter test
+        x = [.1, .2, .3, .4, .5]
+        y = [.2, .2, .3, .4, .5]
+        theta = [10, 15, 20, 25, 30]
+        em = Emitter(x, y, theta, period = 1, pause = 2)
+        time.sleep(4)
+        em.kill()
+
     
     
     

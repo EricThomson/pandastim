@@ -14,6 +14,7 @@ from direct.showbase.ShowBase import ShowBase
 from direct.showbase import ShowBaseGlobal  #global vars defined by p3d
 from panda3d.core import Texture, CardMaker, TextureStage, KeyboardButton
 from panda3d.core import WindowProperties, ColorBlendAttrib, TransformState, ClockObject
+from panda3d.core import AntialiasAttrib
 from direct.task import Task
 from direct.gui.OnscreenText import OnscreenText   #for binocular stim
 from panda3d.core import PStatClient
@@ -112,6 +113,192 @@ class TexFixed(TexMoving):
 
 
 
+class InputControlParams(ShowBase):
+    """
+    Input signal sends in x, y, theta values for binocular stimuli to control
+    those parameters of the stim in real time. Need to expand to single texture.
+
+    Usage:
+        InputControlParams(texture_object,
+                        stim_angles = (0, 0),
+                        strip_angle = 0,
+                        position = (0,0),
+                        velocities = (0,0),
+                        strip_width = 2,
+                        window_size = 512,
+                        window_name = 'FunStim',
+                        profile_on  = False)
+
+    Note(s):
+        - angles are relative to strip angle
+        - position is x,y in card-based coordinates (from [-1 1]), so (.5, .5) will be in middle of top right quadrant
+        - Velocity is in same direction as angle, and units of window size (so 1 is super-fast)
+        - strip_width is just the width of the strip down the middle. Can be 0.
+    """
+    def __init__(self, tex, stim_angles = (0, 0), initial_angle = 0, initial_position = (0,0),
+                 velocities = (0,0), strip_width = 4, fps = 30, window_size = None,
+                 window_name = 'BinocularDrift', profile_on = False):
+        super().__init__()
+        #self.render.setAntialias(AntialiasAttrib.MMultisample)
+        self.tex = tex
+        if window_size == None:
+            self.window_size = tex.texture_size
+        else:
+            self.window_size = window_size
+        self.mask_position_card = initial_position
+        self.mask_position_uv = (utils.card2uv(self.mask_position_card[0]),
+                                 utils.card2uv(self.mask_position_card[1]))
+        self.scale = np.sqrt(8)  #so it can handle arbitrary rotations and shifts
+        self.strip_angle = initial_angle #this will change fairly frequently
+        self.stim_angles = stim_angles
+        self.left_texture_angle = self.stim_angles[0] + self.strip_angle  #make this a property
+        self.right_texture_angle = self.stim_angles[1] + self.strip_angle
+        self.left_velocity = velocities[0]
+        self.right_velocity = velocities[1]
+        self.fps = fps
+        self.window_name = window_name
+        self.profile_on = profile_on
+
+        
+        #Set window title and size
+        self.window_properties = WindowProperties()
+        self.window_properties.setSize(self.window_size, self.window_size)
+        self.window_properties.setTitle(self.window_name)
+        ShowBaseGlobal.base.win.requestProperties(self.window_properties)  #base is a panda3d global
+
+        # Set frame rate
+        ShowBaseGlobal.globalClock.setMode(ClockObject.MLimited)
+        ShowBaseGlobal.globalClock.setFrameRate(self.fps)  #can lock this at whatever
+        
+        #CREATE MASK ARRAYS
+        self.left_mask_array = 255*np.ones((self.tex.texture_size, self.tex.texture_size), dtype=np.uint8)
+        self.left_mask_array[:, self.tex.texture_size//2 - strip_width//2 :] = 0
+        self.right_mask_array = 255*np.ones((self.tex.texture_size, self.tex.texture_size), dtype=np.uint8)
+        self.right_mask_array[:, : self.tex.texture_size//2 + strip_width//2] = 0
+
+        #TEXTURE STAGES FOR LEFT CARD
+        self.left_texture_stage = TextureStage('left_texture_stage')
+        #Mask
+        self.left_mask = Texture("left_mask_texture")
+        self.left_mask.setup2dTexture(self.tex.texture_size, self.tex.texture_size,
+                                               Texture.T_unsigned_byte, Texture.F_luminance)
+        self.left_mask.setRamImage(self.left_mask_array)
+        self.left_mask_stage = TextureStage('left_mask_array')
+        #Multiply the texture stages together
+        self.left_mask_stage.setCombineRgb(TextureStage.CMModulate,
+                                    TextureStage.CSTexture,
+                                    TextureStage.COSrcColor,
+                                    TextureStage.CSPrevious,
+                                    TextureStage.COSrcColor)
+
+        #TEXTURE STAGES FOR RIGHT CARD
+        self.right_texture_stage = TextureStage('right_texture_stage')
+        #Mask
+        self.right_mask = Texture("right_mask_texture")
+        self.right_mask.setup2dTexture(self.tex.texture_size, self.tex.texture_size,
+                                               Texture.T_unsigned_byte, Texture.F_luminance)
+        self.right_mask.setRamImage(self.right_mask_array)
+        self.right_mask_stage = TextureStage('right_mask_stage')
+        #Multiply the texture stages together
+        self.right_mask_stage.setCombineRgb(TextureStage.CMModulate,
+                                    TextureStage.CSTexture,
+                                    TextureStage.COSrcColor,
+                                    TextureStage.CSPrevious,
+                                    TextureStage.COSrcColor)
+
+        #CREATE CARDS/SCENEGRAPH
+        cm = CardMaker('stimcard')
+        cm.setFrameFullscreenQuad()
+        #self.setBackgroundColor((0,0,0,1))
+        self.left_card = self.aspect2d.attachNewNode(cm.generate())
+        self.right_card = self.aspect2d.attachNewNode(cm.generate())
+        self.left_card.setAttrib(ColorBlendAttrib.make(ColorBlendAttrib.M_add))
+        self.right_card.setAttrib(ColorBlendAttrib.make(ColorBlendAttrib.M_add))
+
+        #ADD TEXTURE STAGES TO CARDS
+        self.left_card.setTexture(self.left_texture_stage, self.tex.texture)
+        self.left_card.setTexture(self.left_mask_stage, self.left_mask)
+        self.right_card.setTexture(self.right_texture_stage, self.tex.texture)
+        self.right_card.setTexture(self.right_mask_stage, self.right_mask)
+        self.setBackgroundColor((0,0,0,1))  # without this the cards will appear washed out
+        #self.left_card.setAntialias(AntialiasAttrib.MMultisample)
+        #self.right_card.setAntialias(AntialiasAttrib.MMultisample)
+        #TRANSFORMS
+        # Masks
+        self.mask_transform = self.trs_transform()
+        self.left_card.setTexTransform(self.left_mask_stage, self.mask_transform)
+        self.right_card.setTexTransform(self.right_mask_stage, self.mask_transform)
+        
+        # Textures
+        # Left
+        self.left_card.setTexScale(self.left_texture_stage, 1/self.scale)
+        self.left_card.setTexRotate(self.left_texture_stage, self.left_texture_angle)
+        # Right 
+        self.right_card.setTexScale(self.right_texture_stage, 1/self.scale)
+        self.right_card.setTexRotate(self.right_texture_stage, self.right_texture_angle)
+        
+        #Set task manager(s) for textures
+        if self.left_velocity != 0 and self.right_velocity != 0:
+            self.taskMgr.add(self.textures_update, "move_both")
+        elif self.left_velocity != 0 and self.right_velocity == 0:
+            self.taskMgr.add(self.left_texture_update, "move_left")
+        elif self.left_velocity == 0 and self.right_velocity != 0:
+            self.taskMgr.add(self.right_texture_update, "move_right")
+
+        self.accept("stim", self.process_stim, [])
+
+        #Set up profiling if desired
+        if profile_on:
+            PStatClient.connect() # this will only work if pstats is running
+            ShowBaseGlobal.base.setFrameRateMeter(True)  #Show frame rate
+
+
+    def process_stim(self, x, y, theta):
+        self.strip_angle = theta
+        self.right_texture_angle = self.stim_angles[1] + theta
+        self.left_texture_angle = self.stim_angles[0] + theta
+        #print(self.strip_angle, self.left_texture_angle, self.right_texture_angle)        
+        self.mask_position_uv = (utils.card2uv(x),
+                                  utils.card2uv(y))
+        self.mask_transform = self.trs_transform()
+        self.left_card.setTexTransform(self.left_mask_stage, self.mask_transform)
+        self.right_card.setTexTransform(self.right_mask_stage, self.mask_transform)
+        self.left_card.setTexRotate(self.left_texture_stage, self.left_texture_angle)
+        self.right_card.setTexRotate(self.right_texture_stage, self.right_texture_angle)
+        return
+        
+    #Move both textures
+    def textures_update(self, task):
+        left_tex_position = -task.time*self.left_velocity #negative b/c texture stage
+        right_tex_position = -task.time*self.right_velocity
+        self.left_card.setTexPos(self.left_texture_stage, left_tex_position, 0, 0)
+        self.right_card.setTexPos(self.right_texture_stage, right_tex_position, 0, 0)
+        return task.cont
+
+    def left_texture_update(self, task):
+        left_tex_position = -task.time*self.left_velocity #negative b/c texture stage
+        self.left_card.setTexPos(self.left_texture_stage, left_tex_position, 0, 0)
+        return task.cont
+
+    def right_texture_update(self, task):
+        right_tex_position = -task.time*self.right_velocity
+        self.right_card.setTexPos(self.right_texture_stage, right_tex_position, 0, 0)
+        return task.cont
+
+    def trs_transform(self):
+        """ 
+        trs = translate rotate scale transform for mask stage
+        rdb contributed to this code
+        """
+        #print(self.strip_angle)
+        pos = 0.5 + self.mask_position_uv[0], 0.5 + self.mask_position_uv[1]
+        center_shift = TransformState.make_pos2d((-pos[0], -pos[1]))
+        scale = TransformState.make_scale2d(1/self.scale)
+        rotate = TransformState.make_rotate2d(self.strip_angle)
+        translate = TransformState.make_pos2d((0.5, 0.5))
+        return translate.compose(rotate.compose(scale.compose(center_shift)))
+ 
+    
 class BinocularMoving(ShowBase):
     """
     Show binocular drifting textures forever.
@@ -418,8 +605,8 @@ class KeyboardToggleTex(ShowBase):
     def set_title(self, title):
         self.windowProps.setTitle(title)
         ShowBaseGlobal.base.win.requestProperties(self.windowProps)  #base is a panda3d global
-        
-        
+
+    
 class InputControlStim(ShowBase):
     """
     Generic input-controll stimulus class: takes in list of texture classes, and stimulus parameters.
