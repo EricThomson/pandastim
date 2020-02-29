@@ -47,6 +47,7 @@ To learn more about optimizing/profiling in panda3d: https://docs.panda3d.org/1.
 - On filtering out stimulus repeats (so you don't change the stim when you get the same input): this is currently done in `set_stimulus` (for instance in `examples/input_control_simple.py`) but it could be done by the subscriber, monitor, or sender (publisher) applications. Just do what is best for you.
 - If you want to set antialiasing: https://docs.panda3d.org/1.10/python/programming/render-attributes/antialiasing .
 - If you want to programatically change the camera position, you need to disable the mouse: `ShowBaseGlobal.base.disableMouse()`. pandastim don't currently use this mechanism, but it may be useful at some point for drifting around a scene.
+- Consider using apitrace to look at what is going on on the back end.
 
 #### Conventions
 PEP8, largely. UpperCamelCase for classes; lower_case_underscore for vars/functions/methods. Explicit is better than implicit.
@@ -64,20 +65,20 @@ Thanks to rdb (developer of panda3d) who provided lots of help figuring out how 
     - randomly updating stimulus (tex_random_working.py)
     - radial sine stimulus
     - radial grating stimulus:
-- Consider making monitor a process, or use zmq iostream features: see `working/monitoring_notes.txt`.
 - Add contrast to sines/gratings
 - Independent color of middle band? Right now it is constrained to be the background color (black)
 - Add independent velocities/textures for binocular stimuli (so left/right can have different textures).
+- Consider making monitor a process, or use zmq iostream features: see `working/monitoring_notes.txt`.
 - Document how to make a new texture class and stim class.
 - How to close programatically? Would be useful for smoothness and also could add time/close signal code to save file.
 - How to ensure there is a texture (avoid `Assertion failed: !is_empty()`) Seems you are asking for bugs. Note cards made most recently will show on top of other cards. You could make them invisible temporarily or something. Ultimately add a third stim type and test this it will be a bit messy: you will want to generate a list of stim types, and then when you have one type, delete the other types in clear_cards, not just the one we are about to switch away from.
 - It seems when stimuli switch over there is some shearing/tearing of the texture for the first few ms.
 - It is a known issue that pub/sub in zeromq misses the first message published. To overcome this, sync up the pub/sub first, before you start publishing: https://stackoverflow.com/a/25580646/1886357. Or you could just send a bunch of 0's initially to get them sync'd up.
 - check with photodiode at different locations on window: is it identical?
-- try compressing textures (https://www.panda3d.org/manual/?title=Texture_Compression)?
-- Consider porting to `pixel2d` (basics are in working/): then everything will be in pixel-based coordinates rather than normalized.
+- try compressing textures? (https://www.panda3d.org/manual/?title=Texture_Compression)
+- Consider porting to `pixel2d` (basics are in working/)? then everything will be in pixel-based coordinates rather than normalized.
 -  Consider making texture/window size x/y different.
-- make conda installer for pandastim (or pip and then conda)
-- https://docs.conda.io/projects/conda-build/en/latest/user-guide/tutorials/build-pkgs-skeleton.html
-- https://medium.com/@giswqs/building-a-conda-package-and-uploading-it-to-anaconda-cloud-6a3abd1c5c52
-- https://realpython.com/pypi-publish-python-package/
+- make conda installer for pandastim (or pip and then conda):
+    - https://docs.conda.io/projects/conda-build/en/latest/user-guide/tutorials/build-pkgs-skeleton.html
+    - https://medium.com/@giswqs/building-a-conda-package-and-uploading-it-to-anaconda-cloud-6a3abd1c5c52
+    - https://realpython.com/pypi-publish-python-package/

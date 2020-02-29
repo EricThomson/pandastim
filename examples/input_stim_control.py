@@ -31,7 +31,7 @@ stim_params = [params0, params1, params2]
 # Set up filepath for saving
 current_dt = datetime.now()
 filename = current_dt.strftime(("ic_%Y%m%d_%H%M%S.txt"))
-save_dir = r'C:/Users/Eric/Desktop/tmp_stuff/pstim_data/'
+save_dir = r'./examples/data/'
 file_path = save_dir + filename
 
 frame_rate = 30

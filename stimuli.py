@@ -137,17 +137,17 @@ class InputControlParams(ShowBase):
     """
     def __init__(self, tex, stim_angles = (0, 0), initial_angle = 0, initial_position = (0,0),
                  velocities = (0,0), strip_width = 4, fps = 30, window_size = None,
-                 window_name = 'BinocularDrift', profile_on = False):
+                 window_name = 'position control', profile_on = False, save_path = None):
         super().__init__()
         self.render.setAntialias(AntialiasAttrib.MMultisample)
+        self.aspect2d.prepareScene(ShowBaseGlobal.base.win.getGsg())  # pre-loads world
         self.tex = tex
         if window_size == None:
             self.window_size = tex.texture_size
         else:
             self.window_size = window_size
         self.mask_position_card = initial_position
-        self.mask_position_uv = (utils.card2uv(self.mask_position_card[0]),
-                                 utils.card2uv(self.mask_position_card[1]))
+        self.strip_width = strip_width
         self.scale = np.sqrt(8)  #so it can handle arbitrary rotations and shifts
         self.strip_angle = initial_angle #this will change fairly frequently
         self.stim_angles = stim_angles
@@ -158,7 +158,17 @@ class InputControlParams(ShowBase):
         self.fps = fps
         self.window_name = window_name
         self.profile_on = profile_on
-
+        print(save_path)
+        self.save_path = save_path
+        if self.save_path:
+            initial_params = {'angles': stim_angles, 'initial_angle': self.strip_angle, 
+                              'velocities': velocities, 'strip_width': self.strip_width,
+                              'initial_position': initial_position}
+            print(tex, initial_params)
+            self.filestream = utils.save_initialize(self.save_path, [tex], [initial_params])
+            print(self.filestream)
+        else:
+            self.filestream = None 
         
         #Set window title and size
         self.window_properties = WindowProperties()
@@ -172,9 +182,9 @@ class InputControlParams(ShowBase):
         
         #CREATE MASK ARRAYS
         self.left_mask_array = 255*np.ones((self.tex.texture_size, self.tex.texture_size), dtype=np.uint8)
-        self.left_mask_array[:, self.tex.texture_size//2 - strip_width//2 :] = 0
+        self.left_mask_array[:, self.tex.texture_size//2 - self.strip_width//2 :] = 0
         self.right_mask_array = 255*np.ones((self.tex.texture_size, self.tex.texture_size), dtype=np.uint8)
-        self.right_mask_array[:, : self.tex.texture_size//2 + strip_width//2] = 0
+        self.right_mask_array[:, : self.tex.texture_size//2 + self.strip_width//2] = 0
 
         #TEXTURE STAGES FOR LEFT CARD
         self.left_texture_stage = TextureStage('left_texture_stage')
@@ -254,19 +264,34 @@ class InputControlParams(ShowBase):
             ShowBaseGlobal.base.setFrameRateMeter(True)  #Show frame rate
 
 
+    @property
+    def mask_position_uv(self):
+        return (utils.card2uv(self.mask_position_card[0]),
+                                 utils.card2uv(self.mask_position_card[1]))
+        
     def process_stim(self, x, y, theta):
-        self.strip_angle = theta
-        self.right_texture_angle = self.stim_angles[1] + theta
-        self.left_texture_angle = self.stim_angles[0] + theta
-        #print(self.strip_angle, self.left_texture_angle, self.right_texture_angle)        
-        self.mask_position_uv = (utils.card2uv(x),
-                                  utils.card2uv(y))
-        self.mask_transform = self.trs_transform()
-        self.left_card.setTexTransform(self.left_mask_stage, self.mask_transform)
-        self.right_card.setTexTransform(self.right_mask_stage, self.mask_transform)
-        self.left_card.setTexRotate(self.left_texture_stage, self.left_texture_angle)
-        self.right_card.setTexRotate(self.right_texture_stage, self.right_texture_angle)
-        return
+        """
+        Event handler method for processing message about current x,y, theta
+        """
+        # If new values are same as previous, return to caller. Otherwise, reset
+        if (self.strip_angle, self.mask_position_card) == (theta, (x, y)):
+            return
+        else:
+            self.strip_angle = theta
+            self.right_texture_angle = self.stim_angles[1] + self.strip_angle
+            self.left_texture_angle = self.stim_angles[0] + self.strip_angle
+            #print(self.strip_angle, self.left_texture_angle, self.right_texture_angle)  
+            self.mask_position_card = (x, y)
+            self.mask_transform = self.trs_transform()
+            self.left_card.setTexTransform(self.left_mask_stage, self.mask_transform)
+            self.right_card.setTexTransform(self.right_mask_stage, self.mask_transform)
+            self.left_card.setTexRotate(self.left_texture_stage, self.left_texture_angle)
+            self.right_card.setTexRotate(self.right_texture_stage, self.right_texture_angle)
+            
+        if self.filestream:
+            self.filestream.write(f"{str(datetime.now())}\t{x}\t{y}\t{theta}\n")
+            self.filestream.flush()
+            return
         
     #Move both textures
     def textures_update(self, task):

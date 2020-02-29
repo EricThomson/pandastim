@@ -146,7 +146,7 @@ class Emitter(DirectObject.DirectObject):
                     time.sleep(self.pause)
                 else:
                     time.sleep(self.period)
-            print(f"Pausing {self.pause} seconds.")
+            print(f"Emitter cycle done: pausing {self.pause} seconds.")
             time.sleep(self.pause)
              
     def kill(self):
