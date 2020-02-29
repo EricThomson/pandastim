@@ -23,7 +23,7 @@ em = Emitter(x, y, theta, period = .1, pause = 2)
 # Set up filepath for saving
 current_dt = datetime.now()
 filename = current_dt.strftime(("ipc_%Y%m%d_%H%M%S.txt"))
-save_dir = r'C:/Users/Eric/Dropbox/Programming/pandastim/examples/data/'
+save_dir = r'./examples/data/'
 file_path = save_dir + filename
 
 tex = textures.GratingRgbTex(spatial_frequency = 30, texture_size = 1024, rgb = (255, 0, 0))
